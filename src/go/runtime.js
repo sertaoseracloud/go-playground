@@ -1,5 +1,11 @@
 /**
  * Executa código JS compilado pelo GopherJS em um contexto isolado.
+ *
+ * NOTA DE SEGURANÇA: Esta função usa `new Function()` para avaliar o código,
+ * o que NÃO é um sandbox de segurança real. Em produção, considere usar
+ * Web Workers ou o módulo `vm` do Node.js com restrições adequadas para
+ * isolar a execução do código compilado.
+ *
  * @param {string} js - O código JS compilado.
  * @param {string} [stdin] - Entrada padrão simulada.
  * @returns {Promise<{ stdout: string, stderr: string, exitCode: number }>}
