@@ -12,4 +12,8 @@ Task 1: minor (deferred): tests/infra/package-json.test.js required-scripts arra
 Task 1: complete (commits 8f04c96..580724f, review clean — verdict APPROVED, gopherjs deviation accepted per pre-flight ruling)
 Task 2: implementer done (commits 580724f..ce81fa5, DONE — 2/2 tests pass, no concerns).
 Task 2: complete (commits 580724f..ce81fa5, review clean — verdict APPROVED, no findings requiring fixes)
-Task 3: implementer dispatched (HTML shell, CSS port, homologation banner). Awaiting completion.
+Task 3: implementer done (commits ce81fa5..0c3f37e, DONE — 2/2 tests pass, no concerns).
+Task 3: complete (commits ce81fa5..0c3f37e, review clean — verdict APPROVED, no findings)
+Task 4: fix round 1/5 (4 addressed, 0 open — redundant executarGo export re-exported from runtime.js; plugin falls back to mock output instead of throwing when gopherjs binary missing; comment typo fixed; new Function() sandbox limitation documented in runtime.js; commits effae2c..0af6700)
+Task 4: minor (deferred): runtime.js uses new Function() — not a real security sandbox; production browser use should move execution to a Web Worker (documented in JSDoc).
+Task 4: complete (commits effae2c..0af6700, review clean — re-review verdict ALL_ADDRESSED, no new breakage)
