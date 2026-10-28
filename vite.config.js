@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import { createHash } from 'node:crypto';
 import { chavePublicaDe } from './src/ed25519.js';
 import { pluginHistorico, versaoDoPacote } from './scripts/plugin-historico.mjs';
+import gopherjsPlugin from './scripts/gopherjs-plugin.mjs';
 
 /**
  * Chaves dos certificados. A palavra secreta vem da variável de ambiente
@@ -42,16 +43,13 @@ const publicarChave = (chavePublica) => ({
   },
 });
 
-// GopherJS plugin placeholder — to be implemented in Task 4.
-// GopherJS is a Go CLI binary, NOT an npm package.
-
 export default defineConfig(({ command }) => {
   const valor = segredo(command);
   const semente = derivar('ed25519', valor);
   const chavePublica = chavePublicaDe(semente);
   return {
     base: './',
-    plugins: [publicarChave(chavePublica), pluginHistorico()],
+    plugins: [publicarChave(chavePublica), pluginHistorico(), gopherjsPlugin()],
     define: {
       __CHAVE_CERTIFICADO__: JSON.stringify(derivar('certificado', valor)),
       __SEMENTE_ED25519__: JSON.stringify(semente),
