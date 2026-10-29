@@ -7,9 +7,7 @@
  * bind TCP real.
  */
 
-const PREFIXO_ARMAZENAMENTO = typeof window !== 'undefined' && window.__DIVERGEGO_PREFIXO
-  ? window.__DIVERGEGO_PREFIXO
-  : 'go-playground:';
+import { PREFIXO_ARMAZENAMENTO } from '../ambiente.js';
 
 /** @type {Map<number, Function>} */
 const _registrados = new Map();
@@ -66,8 +64,11 @@ registrarServidor._registrados = _registrados;
  * Patch para GopherJS: substitui net/http.ListenAndServe.
  * Quando o código Go compilado chama ListenAndServe, redireciona
  * para registrarServidor em vez de tentar bind TCP.
+ * Idempotente: só patcheia uma vez.
  */
+let _patched = false;
 export function patchGopherJSHttp() {
+  if (_patched) return;
   if (typeof window === 'undefined') return;
 
   // Intercepta chamadas a $externalize que o GopherJS usa para net/http.
@@ -86,5 +87,6 @@ export function patchGopherJSHttp() {
       }
       return originalExternalize(jsVal, goType);
     };
+    _patched = true;
   }
 }

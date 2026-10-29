@@ -17,12 +17,14 @@ export function serviceWorkerSuportado() {
 
 /**
  * Registra o Service Worker public/sw.js de forma lazy.
- * Só registra uma vez por sessão.
+ * Só registra para módulos 7+ (HTTP simulation).
+ * @param {number} [moduloNumero] - Número do módulo atual.
  * @returns {Promise<ServiceWorkerRegistration | null>}
  */
-export async function registrarServiceWorker() {
+export async function registrarServiceWorker(moduloNumero) {
   if (_registrado) return null;
   if (!serviceWorkerSuportado()) return null;
+  if (typeof moduloNumero === 'number' && moduloNumero < 7) return null;
 
   try {
     const registration = await navigator.serviceWorker.register('/sw.js', {
