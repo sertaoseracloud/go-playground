@@ -1,5 +1,6 @@
 // Controla a posição do código e do terminal: modo (auto/lado/empilhado),
 // divisor arrastável e descrição que pode ser ocultada. A escolha fica salva.
+import { escolherModo, montarGrade } from './layout-calculo.js';
 import { lerPreferencia, gravarPreferencia } from '../progresso.js';
 import { $ } from './util.js';
 
@@ -22,7 +23,7 @@ export function criarLayout() {
   function aplicar() {
     if (!area || !divisor || !btnDescricao) return;
     const largura = window.innerWidth;
-    modoAtual = window.innerWidth < 900 ? 'celular' : prefs.modo === 'auto' ? 'lado' : prefs.modo;
+    modoAtual = window.innerWidth < 900 ? 'celular' : prefs.modo === 'auto' ? escolherModo({ largura, descricao: prefs.descricao }) : prefs.modo;
     const grade = montarGrade({ modo: modoAtual, largura, descricao: prefs.descricao, divisao: prefs.divisao });
     area.style.gridTemplateColumns = grade.colunas;
     area.style.gridTemplateRows = grade.linhas;
@@ -110,19 +111,5 @@ export function criarLayout() {
       aplicar();
     },
     aplicar,
-  };
-}
-
-// Stub simples para montarGrade quando layout-calculo.js não existe ainda.
-function montarGrade({ modo, largura, descricao, divisao }) {
-  if (modo === 'celular') {
-    return { colunas: '1fr', linhas: 'auto auto', areas: '"codigo" "preview"' };
-  }
-  const pct = `${divisao}%`;
-  const resto = `${100 - divisao}%`;
-  return {
-    colunas: descricao ? `${pct} ${resto}` : '1fr',
-    linhas: '1fr',
-    areas: descricao ? '"codigo preview"' : '"codigo"',
   };
 }

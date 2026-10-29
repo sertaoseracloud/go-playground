@@ -6,6 +6,7 @@ import { lerRota } from './compartilhar.js';
 import { iniciarAcessibilidade } from './ui/acessibilidade.js';
 import { renderLanding } from './ui/landing.js';
 import { iniciarMenu, iniciarFlutuantes } from './ui/menu.js';
+import { iniciarRegua, iniciarPausa } from './ui/neuro.js';
 import { resumoProgresso } from './ui/inicio.js';
 import { criarTelaItem } from './ui/item.js';
 import { criarLayout } from './ui/layout.js';
@@ -21,6 +22,8 @@ function init() {
   }
   iniciarMenu();
   iniciarFlutuantes();
+  iniciarRegua();
+  iniciarPausa({ ativo: () => acessibilidade.atuais().lembretePausa });
   const telaInicio = $('tela-inicio');
   const telaItem = $('tela-item');
   const telaLanding = $('tela-landing');
