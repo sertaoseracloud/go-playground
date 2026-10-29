@@ -3,9 +3,9 @@
 // em outro prefixo do localStorage e os certificados apontam para /homologacao/.
 // As constantes saem de um ternário sobre HOMOLOGACAO, que o minificador resolve no build:
 // assim o bundle de cada modo só leva o prefixo e o endereço dele.
-const ENDERECO = 'https://sertaoseracloud.github.io/go-playground/';
+const ENDERECO = 'https://sertaoseracloud.github.io/terraform-playground/';
 const PRINCIPAL = { homologacao: false, prefixo: 'go-playground:', site: ENDERECO };
-const TESTE = { homologacao: true, prefixo: 'go-playground-homologacao:', site: `${ENDERECO}homologacao/` };
+const TESTE = { homologacao: true, prefixo: 'terraform-playground-homologacao:', site: `${ENDERECO}homologacao/` };
 
 /** O ambiente de cada modo (função pura, para os testes). */
 export const configurarAmbiente = (homologacao) => ({ ...(homologacao ? TESTE : PRINCIPAL) });
