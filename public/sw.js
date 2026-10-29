@@ -10,6 +10,9 @@ const PREFIXO_PADRAO = 'go-playground:';
 /** @type {Map<string, number>} Mapeia URLs de handler para portas registradas. */
 const handlersPorPorta = new Map();
 
+/** @type {Map<string, {resolve: Function, reject: Function, timeoutId: number}>} Pending gRPC requests keyed by messageId. */
+const pendingGrpcRequests = new Map();
+
 self.addEventListener('install', () => {
   self.skipWaiting();
 });
@@ -19,15 +22,18 @@ self.addEventListener('activate', (event) => {
 });
 
 /**
- * Recebe mensagens do main thread com atualizações do registry.
+ * Listener persistente único para todas as respostas do main thread.
+ * Correlaciona respostas por messageId e resolve promises pendentes.
  */
 self.addEventListener('message', (event) => {
   const { data } = event;
-  if (data && data.tipo === 'REGISTRY_ATUALIZADO') {
+  if (!data) return;
+
+  // Handle registry updates.
+  if (data.tipo === 'REGISTRY_ATUALIZADO') {
     const { registry, prefixo } = data;
     const prefixoEfetivo = prefixo || PREFIXO_PADRAO;
 
-    // Limpa handlers antigos e reconstrói.
     handlersPorPorta.clear();
 
     for (const [portaStr] of Object.entries(registry)) {
@@ -36,7 +42,20 @@ self.addEventListener('message', (event) => {
         handlersPorPorta.set(`${prefixoEfetivo}port/${porta}`, porta);
       }
     }
+    return;
   }
+
+  // Handle gRPC-Web responses.
+  if (data.messageId && pendingGrpcRequests.has(data.messageId)) {
+    const pending = pendingGrpcRequests.get(data.messageId);
+    clearTimeout(pending.timeoutId);
+    pendingGrpcRequests.delete(data.messageId);
+    pending.resolve(data);
+    return;
+  }
+
+  // Handle HTTP responses (legacy pattern still uses per-request listeners).
+  // This is kept for backward compatibility with simularRespostaHttp.
 });
 
 /**
@@ -63,6 +82,7 @@ self.addEventListener('fetch', (event) => {
 
 /**
  * Traduz uma requisição gRPC-Web e retorna resposta formatada.
+ * Usa o listener persistente e o Map pendingGrpcRequests para correlação.
  * @param {Request} request
  * @returns {Promise<Response>}
  */
@@ -96,32 +116,13 @@ async function traduzirGrpcWeb(request) {
   const client = clients[0];
   const messageId = `sw-grpc-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
-  return new Promise((resolve) => {
-    const messageHandler = (event) => {
-      if (event.data && event.data.messageId === messageId) {
-        self.removeEventListener('message', messageHandler);
-        const { statusCode, body: responseBody } = event.data;
+  return new Promise((resolve, reject) => {
+    const timeoutId = setTimeout(() => {
+      pendingGrpcRequests.delete(messageId);
+      resolve(criarRespostaGrpcWebErro('Timeout do handler'));
+    }, 5000);
 
-        // Cria frame de resposta gRPC-Web.
-        const responsePayload = new TextEncoder().encode(responseBody || '');
-        const responseFrame = new Uint8Array(5 + responsePayload.length);
-        responseFrame[0] = 0; // sem compressão
-        responseFrame[1] = (responsePayload.length >> 24) & 0xFF;
-        responseFrame[2] = (responsePayload.length >> 16) & 0xFF;
-        responseFrame[3] = (responsePayload.length >> 8) & 0xFF;
-        responseFrame[4] = responsePayload.length & 0xFF;
-        responseFrame.set(responsePayload, 5);
-
-        resolve(
-          new Response(responseFrame, {
-            status: statusCode || 200,
-            headers: { 'Content-Type': 'application/grpc-web' },
-          })
-        );
-      }
-    };
-
-    self.addEventListener('message', messageHandler);
+    pendingGrpcRequests.set(messageId, { resolve, reject, timeoutId });
 
     client.postMessage({
       tipo: 'EXECUTAR_HANDLER_GRPC',
@@ -133,11 +134,28 @@ async function traduzirGrpcWeb(request) {
       },
       messageId,
     });
+  }).then((data) => {
+    if (data.statusCode === undefined) {
+      // Já é uma resposta de erro criada por timeout.
+      return data;
+    }
 
-    setTimeout(() => {
-      self.removeEventListener('message', messageHandler);
-      resolve(criarRespostaGrpcWebErro('Timeout do handler'));
-    }, 5000);
+    const { statusCode, body: responseBody } = data;
+
+    // Cria frame de resposta gRPC-Web.
+    const responsePayload = new TextEncoder().encode(responseBody || '');
+    const responseFrame = new Uint8Array(5 + responsePayload.length);
+    responseFrame[0] = 0; // sem compressão
+    responseFrame[1] = (responsePayload.length >> 24) & 0xFF;
+    responseFrame[2] = (responsePayload.length >> 16) & 0xFF;
+    responseFrame[3] = (responsePayload.length >> 8) & 0xFF;
+    responseFrame[4] = responsePayload.length & 0xFF;
+    responseFrame.set(responsePayload, 5);
+
+    return new Response(responseFrame, {
+      status: statusCode || 200,
+      headers: { 'Content-Type': 'application/grpc-web' },
+    });
   });
 }
 

@@ -92,5 +92,3 @@ export function buscarHandlerGrpc(servico, metodo) {
   return _servicosGrpc.get(chave);
 }
 
-/** Expõe o mapa interno apenas para testes. */
-registrarServicoGrpc._servicos = _servicosGrpc;
