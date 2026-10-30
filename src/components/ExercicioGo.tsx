@@ -1,21 +1,38 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import EditorGo from './EditorGo';
 import TerminalGo from './TerminalGo';
 import { compilarGo, executarGo } from '../go/compiler-browser.js';
+import { iniciarRedeSimulada, limparServidores } from '../go/network-browser.js';
 import type { ItemDaIlha } from '../lib/conteudo';
 
 interface ExercicioGoProps {
   item: ItemDaIlha;
+  modulo?: string;
 }
 
 /**
  * Ilha React para exercícios/licões da trilha: renderiza editor + terminal conectados.
  * Recebe os dados do item via props (serializados como JSON no HTML estático).
+ * Para exercícios do módulo Web, inicializa automaticamente a simulação de rede.
  */
-export default function ExercicioGo({ item }: ExercicioGoProps) {
+export default function ExercicioGo({ item, modulo }: ExercicioGoProps) {
   const [executando, setExecutando] = useState(false);
   const [saida, setSaida] = useState<string[]>([]);
   const arquivosRef = useRef<Record<string, string>>({});
+
+  // Inicializa infraestrutura de rede simulada para exercícios do módulo Web
+  useEffect(() => {
+    if (modulo === 'web') {
+      iniciarRedeSimulada(7).catch((err) => {
+        console.warn('[ExercicioGo] Falha ao iniciar rede simulada:', err);
+      });
+    }
+    return () => {
+      if (modulo === 'web') {
+        limparServidores();
+      }
+    };
+  }, [modulo]);
 
   const codigoInicial = item.inicial || '// Escreva seu código Go aqui\npackage main\n\nfunc main() {\n\t\n}\n';
 

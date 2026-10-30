@@ -45,7 +45,7 @@ const itemParaIlha: ItemDaIlha = paraIlha(exercicio);
     </section>
 
     <div class="ilha-exercicio" style="margin-top: 2rem;">
-      <ExercicioGo client:visible item={itemParaIlha} />
+      <ExercicioGo client:visible item={itemParaIlha} modulo={exercicio.modulo} />
     </div>
 
     <nav class="navegacao-exercicio-rodape" style="display: flex; justify-content: space-between; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--cor-borda, #333); font-size: 0.9rem;">
