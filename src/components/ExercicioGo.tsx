@@ -3,7 +3,7 @@ import EditorGo from './EditorGo';
 import TerminalGo from './TerminalGo';
 import { compilarGo, executarGo } from '../go/compiler-browser.js';
 import { iniciarRedeSimulada, limparServidores } from '../go/network-browser.js';
-import { lerRascunho, gravarRascunho } from '../progresso.js';
+import { lerRascunho, gravarRascunho, marcar } from '../progresso.js';
 import type { ItemDaIlha } from '../lib/conteudo';
 
 interface ExercicioGoProps {
@@ -16,6 +16,7 @@ interface ExercicioGoProps {
  * Recebe os dados do item via props (serializados como JSON no HTML estático).
  * Para exercícios do módulo Web, inicializa automaticamente a simulação de rede.
  * Salva/carrega rascunhos automaticamente via localStorage (Fase 9).
+ * Marca progresso automaticamente ao executar (Fase 10).
  */
 export default function ExercicioGo({ item, modulo }: ExercicioGoProps) {
   const [executando, setExecutando] = useState(false);
@@ -56,6 +57,9 @@ export default function ExercicioGo({ item, modulo }: ExercicioGoProps) {
     if (executando) return;
     setExecutando(true);
 
+    // Marca como "tentado" ao iniciar execução (Fase 10)
+    marcar(item.id, 'tentado');
+
     try {
       const principal = Object.keys(arquivosRef.current)[0];
       const codigo = principal ? arquivosRef.current[principal] : '';
@@ -84,13 +88,16 @@ export default function ExercicioGo({ item, modulo }: ExercicioGoProps) {
       }
       if (resultado.exitCode !== 0) {
         setSaida((prev) => [...prev, `exit status ${resultado.exitCode}`]);
+      } else {
+        // Execução bem-sucedida: marca como "resolvido" (Fase 10)
+        marcar(item.id, 'resolvido');
       }
     } catch (err) {
       setSaida((prev) => [...prev, `erro interno: ${err instanceof Error ? err.message : String(err)}`]);
     } finally {
       setExecutando(false);
     }
-  }, [executando]);
+  }, [executando, item.id]);
 
   return (
     <div className="exercicio-go">
