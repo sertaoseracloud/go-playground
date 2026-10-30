@@ -3,6 +3,7 @@ import EditorGo from './EditorGo';
 import TerminalGo from './TerminalGo';
 import { compilarGo, executarGo } from '../go/compiler-browser.js';
 import { iniciarRedeSimulada, limparServidores } from '../go/network-browser.js';
+import { lerRascunho, gravarRascunho } from '../progresso.js';
 import type { ItemDaIlha } from '../lib/conteudo';
 
 interface ExercicioGoProps {
@@ -14,6 +15,7 @@ interface ExercicioGoProps {
  * Ilha React para exercícios/licões da trilha: renderiza editor + terminal conectados.
  * Recebe os dados do item via props (serializados como JSON no HTML estático).
  * Para exercícios do módulo Web, inicializa automaticamente a simulação de rede.
+ * Salva/carrega rascunhos automaticamente via localStorage (Fase 9).
  */
 export default function ExercicioGo({ item, modulo }: ExercicioGoProps) {
   const [executando, setExecutando] = useState(false);
@@ -34,11 +36,21 @@ export default function ExercicioGo({ item, modulo }: ExercicioGoProps) {
     };
   }, [modulo]);
 
-  const codigoInicial = item.inicial || '// Escreva seu código Go aqui\npackage main\n\nfunc main() {\n\t\n}\n';
+  // Carrega rascunho salvo ou usa código inicial padrão
+  const codigoInicial = (() => {
+    const rascunho = lerRascunho(item.id);
+    if (rascunho && typeof rascunho === 'object') {
+      const principal = Object.keys(rascunho)[0];
+      if (principal && rascunho[principal]) return rascunho[principal];
+    }
+    return item.inicial || '// Escreva seu código Go aqui\npackage main\n\nfunc main() {\n\t\n}\n';
+  })();
 
   const handleEditorChange = useCallback((arquivos: Record<string, string>) => {
     arquivosRef.current = arquivos;
-  }, []);
+    // Salva rascunho automaticamente a cada alteração (debounce implícito pelo React)
+    gravarRascunho(item.id, arquivos);
+  }, [item.id]);
 
   const handleExecutar = useCallback(async () => {
     if (executando) return;
