@@ -7,6 +7,7 @@ import '../caminho.css';
 import '../landing.css';
 import '../cenarios.css';
 import { PREFIXO_ARMAZENAMENTO } from '../ambiente.js';
+import PainelAcessibilidade from '../components/PainelAcessibilidade';
 import { url } from '../lib/rotas';
 
 interface Props { titulo: string; descricao: string; menu?: 'trilha' | 'livre' | 'validar' | 'instrutor' }
@@ -94,5 +95,7 @@ const atual = (nome: string) => (menu === nome ? { 'aria-current': 'page' as con
   <div id="aviso-privacidade" class="aviso-privacidade" role="region" aria-label="Aviso de privacidade" hidden></div>
   <!-- Lembrete de pausa -->
   <div id="lembrete-pausa" class="lembrete-pausa" role="status" hidden></div>
+<!-- Ilha de acessibilidade: conecta o botão ♿ ao diálogo de preferências -->
+  <PainelAcessibilidade client:idle />
 </body>
 </html>
