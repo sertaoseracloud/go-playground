@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import EditorGo from './EditorGo';
 import TerminalGo from './TerminalGo';
+import FeedbackExercicio from './FeedbackExercicio';
 import { compilarGo, executarGo } from '../go/compiler-browser.js';
 import { iniciarRedeSimulada, limparServidores } from '../go/network-browser.js';
 import { lerRascunho, gravarRascunho, marcar } from '../progresso.js';
@@ -17,10 +18,14 @@ interface ExercicioGoProps {
  * Para exercícios do módulo Web, inicializa automaticamente a simulação de rede.
  * Salva/carrega rascunhos automaticamente via localStorage (Fase 9).
  * Marca progresso automaticamente ao executar (Fase 10).
+ * Exibe feedback contextual com dicas após execução (Fase 13).
  */
 export default function ExercicioGo({ item, modulo }: ExercicioGoProps) {
   const [executando, setExecutando] = useState(false);
   const [saida, setSaida] = useState<string[]>([]);
+  const [executou, setExecutou] = useState(false);
+  const [exitCode, setExitCode] = useState<number | null>(null);
+  const [errosCompilacao, setErrosCompilacao] = useState<string[]>([]);
   const arquivosRef = useRef<Record<string, string>>({});
 
   // Inicializa infraestrutura de rede simulada para exercícios do módulo Web
@@ -56,6 +61,9 @@ export default function ExercicioGo({ item, modulo }: ExercicioGoProps) {
   const handleExecutar = useCallback(async () => {
     if (executando) return;
     setExecutando(true);
+    setExecutou(false);
+    setExitCode(null);
+    setErrosCompilacao([]);
 
     // Marca como "tentado" ao iniciar execução (Fase 10)
     marcar(item.id, 'tentado');
@@ -66,6 +74,8 @@ export default function ExercicioGo({ item, modulo }: ExercicioGoProps) {
 
       if (!codigo.trim()) {
         setSaida((prev) => [...prev, '$ go run main.go', 'erro: nenhum código para executar']);
+        setExecutou(true);
+        setErrosCompilacao(['nenhum código para executar']);
         return;
       }
 
@@ -75,6 +85,8 @@ export default function ExercicioGo({ item, modulo }: ExercicioGoProps) {
 
       if (erros.length > 0) {
         setSaida((prev) => [...prev, ...erros.map((e) => `erro: ${e}`)]);
+        setErrosCompilacao(erros);
+        setExecutou(true);
         return;
       }
 
@@ -86,6 +98,8 @@ export default function ExercicioGo({ item, modulo }: ExercicioGoProps) {
       if (resultado.stderr) {
         setSaida((prev) => [...prev, resultado.stderr.trimEnd()]);
       }
+      setExitCode(resultado.exitCode);
+
       if (resultado.exitCode !== 0) {
         setSaida((prev) => [...prev, `exit status ${resultado.exitCode}`]);
       } else {
@@ -94,8 +108,10 @@ export default function ExercicioGo({ item, modulo }: ExercicioGoProps) {
       }
     } catch (err) {
       setSaida((prev) => [...prev, `erro interno: ${err instanceof Error ? err.message : String(err)}`]);
+      setErrosCompilacao([err instanceof Error ? err.message : String(err)]);
     } finally {
       setExecutando(false);
+      setExecutou(true);
     }
   }, [executando, item.id]);
 
@@ -135,6 +151,14 @@ export default function ExercicioGo({ item, modulo }: ExercicioGoProps) {
         <h2 style={{ margin: '0 0 0.75rem', fontSize: '1.1rem' }}>💻 Terminal</h2>
         <TerminalGo historico={saida} />
       </div>
+
+      {/* Feedback contextual pós-execução (Fase 13) */}
+      <FeedbackExercicio
+        item={item}
+        exitCode={exitCode}
+        errosCompilacao={errosCompilacao}
+        executou={executou}
+      />
     </div>
   );
 }

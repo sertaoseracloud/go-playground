@@ -35,9 +35,9 @@ const DIFICULDADES: Record<string, string> = { facil: 'Fácil', medio: 'Médio',
 export const rotuloDificuldade = (d: Item['dificuldade']) => DIFICULDADES[d] ?? d;
 
 /** O que a ilha do exercício recebe como props (vira JSON no HTML): nunca a solução. */
-export type ItemDaIlha = Pick<Item, 'id' | 'tipo' | 'titulo' | 'inicial' | 'existentes' | 'testes'>;
-export const paraIlha = ({ id, tipo, titulo, inicial, existentes, testes }: Item): ItemDaIlha =>
-  ({ id, tipo, titulo, inicial, existentes, testes });
+export type ItemDaIlha = Pick<Item, 'id' | 'tipo' | 'titulo' | 'inicial' | 'existentes' | 'testes' | 'dica'>;
+export const paraIlha = ({ id, tipo, titulo, inicial, existentes, testes, dica }: Item): ItemDaIlha =>
+  ({ id, tipo, titulo, inicial, existentes, testes, dica });
 
 /** Texto puro para meta description (o resumo pode conter HTML ou ser undefined em stubs). */
 export const semHtml = (html: string | undefined | null, limite = 155) => {
