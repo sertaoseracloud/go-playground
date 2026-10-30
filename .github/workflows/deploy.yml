@@ -1,4 +1,4 @@
-﻿name: Deploy
+name: Deploy
 
 # Gitflow: cada push em main ou develop republica o site inteiro a partir do Ãºltimo
 # commit de cada branch, para um nunca apagar o outro:

@@ -1,4 +1,4 @@
-﻿name: Auditoria semanal
+name: Auditoria semanal
 
 # Lighthouse no site que estÃ¡ no ar (principal e homologaÃ§Ã£o), todo domingo Ã  meia-noite
 # UTC: pega o que muda sem commit (CDN, navegador novo). O relatÃ³rio fica 30 dias nos
