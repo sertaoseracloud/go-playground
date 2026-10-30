@@ -2,7 +2,7 @@ name: Auditoria semanal
 
 # Lighthouse no site que está no ar (principal e homologação), todo domingo à meia-noite
 # UTC: pega o que muda sem commit (CDN, navegador novo). O relatório fica 30 dias nos
-# artefatos da execução.
+# artefatos da execução. O job comuns compara os arquivos comuns com os outros três playgrounds.
 on:
   schedule:
     - cron: '0 0 * * 0'
