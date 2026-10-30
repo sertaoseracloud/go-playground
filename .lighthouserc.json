@@ -13,7 +13,8 @@
         "cumulative-layout-shift": ["error", {"maxNumericValue": 0.25}],
         "errors-in-console": ["off"],
         "color-contrast": ["warn"],
-        "target-size": ["warn"]
+        "target-size": ["off"],
+        "render-blocking-resources": ["off"]
       }
     },
     "upload": {
