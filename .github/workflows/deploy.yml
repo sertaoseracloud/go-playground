@@ -1,11 +1,11 @@
 name: Deploy
 
-# Gitflow: cada push em main ou develop republica o site inteiro a partir do Ãºltimo
+# Gitflow: cada push em main ou develop republica o site inteiro a partir do último
 # commit de cada branch, para um nunca apagar o outro:
-#   - main    â†’ https://sertaoseracloud.github.io/go-playground/ (e a tag v<versÃ£o>);
-#   - develop â†’ https://sertaoseracloud.github.io/go-playground/homologacao/
+#   - main    → https://sertaoseracloud.github.io/go-playground/ (e a tag v<versão>);
+#   - develop → https://sertaoseracloud.github.io/go-playground/homologacao/
 #     (HOMOLOGACAO=1: outro localStorage, outro segredo, noindex, sem sitemap).
-# Testes aprovados em develop abrem automaticamente o PR de promoÃ§Ã£o para main.
+# Testes aprovados em develop abrem automaticamente o PR de promoção para main.
 on:
   push:
     branches: [main, develop]
@@ -16,7 +16,7 @@ permissions:
   pages: write
   id-token: write
 
-# Uma publicaÃ§Ã£o por vez, e nenhuma Ã© cancelada no meio.
+# Uma publicação por vez, e nenhuma é cancelada no meio.
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: main
-          fetch-depth: 0 # histÃ³rico completo para a pÃ¡gina de novidades
+          fetch-depth: 0 # histórico completo para a página de novidades
       - uses: actions/setup-node@v7
         with:
           node-version: 24
@@ -54,7 +54,7 @@ jobs:
     outputs:
       existe: ${{ steps.develop.outputs.existe }}
     steps:
-      # Sem o branch develop, o site sai sÃ³ com o principal.
+      # Sem o branch develop, o site sai só com o principal.
       - id: develop
         name: O branch develop existe?
         run: |
@@ -62,7 +62,7 @@ jobs:
             echo "existe=true" >> "$GITHUB_OUTPUT"
           else
             echo "existe=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::Sem o branch develop: a homologaÃ§Ã£o nÃ£o Ã© publicada."
+            echo "::notice::Sem o branch develop: a homologação não é publicada."
           fi
       - uses: actions/checkout@v7
         if: steps.develop.outputs.existe == 'true'
@@ -80,7 +80,7 @@ jobs:
         run: npm run build
         env:
           HOMOLOGACAO: '1'
-          # Outro segredo: certificado emitido na homologaÃ§Ã£o nÃ£o vale no site principal.
+          # Outro segredo: certificado emitido na homologação não vale no site principal.
           CERTIFICADO_SEGREDO_HOMOLOGACAO: ${{ secrets.CERTIFICADO_SEGREDO_HOMOLOGACAO }}
       - uses: actions/upload-artifact@v7
         if: steps.develop.outputs.existe == 'true'
@@ -106,9 +106,9 @@ jobs:
         with:
           name: site-homologacao
           path: site/homologacao
-      # As conferÃªncias usam o script deste commit, nÃ£o o do branch montado: o main pode
-      # ainda nÃ£o ter o conferir-build (era o caso antes da 1.11.0).
-      - name: Monta o site (principal na raiz, homologaÃ§Ã£o em /homologacao/)
+      # As conferências usam o script deste commit, não o do branch montado: o main pode
+      # ainda não ter o conferir-build (era o caso antes da 1.11.0).
+      - name: Monta o site (principal na raiz, homologação em /homologacao/)
         run: |
           node scripts/conferir-build.mjs site/principal principal
           mkdir -p publicar
@@ -141,7 +141,7 @@ jobs:
     needs: [publicar, homologacao]
     runs-on: ubuntu-latest
     steps:
-      - name: Smoke test de produÃ§Ã£o
+      - name: Smoke test de produção
         env:
           URL_PRINCIPAL: ${{ needs.publicar.outputs.page_url }}
         run: |
@@ -151,7 +151,7 @@ jobs:
             echo "::error::O site principal foi publicado com noindex."
             exit 1
           fi
-      - name: Smoke test de homologaÃ§Ã£o
+      - name: Smoke test de homologação
         if: needs.homologacao.outputs.existe == 'true'
         env:
           URL_PRINCIPAL: ${{ needs.publicar.outputs.page_url }}
@@ -161,7 +161,7 @@ jobs:
           grep -q '<title>DivergeGo:' homologacao.html
           grep -q '<meta name="robots" content="noindex">' homologacao.html
 
-  # SÃ³ no main: cria a tag v<versÃ£o do package.json> se ela ainda nÃ£o existir (nunca forÃ§a).
+  # Só no main: cria a tag v<versão do package.json> se ela ainda não existir (nunca força).
   tag:
     needs: smoke
     if: github.ref == 'refs/heads/main'
@@ -170,16 +170,16 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v7
-      - name: Tag da versÃ£o
+      - name: Tag da versão
         run: |
           VERSAO="v$(node -p "require('./package.json').version")"
           if [ -n "$(git ls-remote --tags origin "refs/tags/$VERSAO")" ]; then
-            echo "::notice::A tag $VERSAO jÃ¡ existe: nada a fazer."
+            echo "::notice::A tag $VERSAO já existe: nada a fazer."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "$VERSAO" -m "VersÃ£o ${VERSAO#v}"
+          git tag -a "$VERSAO" -m "Versão ${VERSAO#v}"
           git push origin "$VERSAO"
 
   promover:
@@ -190,13 +190,13 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - name: Abre ou reabre o PR de homologaÃ§Ã£o para produÃ§Ã£o
+      - name: Abre ou reabre o PR de homologação para produção
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           AHEAD="$(gh api "repos/$GITHUB_REPOSITORY/compare/main...develop" --jq '.ahead_by')"
           if [ "$AHEAD" -eq 0 ]; then
-            echo "::notice::develop nÃ£o tem commits novos para promover a main."
+            echo "::notice::develop não tem commits novos para promover a main."
             exit 0
           fi
 
@@ -206,7 +206,7 @@ jobs:
           MESCLADO="$(echo "$PR" | jq -r '.[0].mergedAt // empty')"
 
           if [ "$ESTADO" = "OPEN" ]; then
-            echo "::notice::O PR #$NUMERO de develop para main jÃ¡ estÃ¡ aberto."
+            echo "::notice::O PR #$NUMERO de develop para main já está aberto."
           elif [ "$ESTADO" = "CLOSED" ] && [ -z "$MESCLADO" ]; then
             gh pr reopen "$NUMERO" --repo "$GITHUB_REPOSITORY"
           else
@@ -215,6 +215,6 @@ jobs:
               --base main \
               --head develop \
               --title "Promove develop para main" \
-              --body "Os testes passaram, a homologaÃ§Ã£o foi publicada e o smoke test do ambiente estÃ¡ verde. Revise as alteraÃ§Ãµes antes de mesclar em produÃ§Ã£o."
+              --body "Os testes passaram, a homologação foi publicada e o smoke test do ambiente está verde. Revise as alterações antes de mesclar em produção."
           fi
 
