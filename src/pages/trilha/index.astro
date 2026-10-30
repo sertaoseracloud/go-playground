@@ -5,44 +5,50 @@
 import Base from '../../layouts/Base.astro';
 import { todosOsModulos } from '../../lib/conteudo';
 import { url } from '../../lib/rotas';
+import BarraProgresso from '../../components/BarraProgresso';
 
 const titulo = 'Trilha de Go — DivergeGo';
 const descricao = 'Exercícios progressivos de Go: do básico ao avançado, com simulador no navegador e certificados assinados.';
 ---
 
 <Base titulo={titulo} descricao={descricao} menu="trilha">
- <main class="tela-trilha" style="max-width: 48rem; margin: 0 auto; padding: 2rem 1rem;">
- <h1>🗺️ Trilha de Go</h1>
- <p>{descricao}</p>
+  <main class="tela-trilha" style="max-width: 48rem; margin: 0 auto; padding: 2rem 1rem;">
+    <h1>🗺️ Trilha de Go</h1>
+    <p>{descricao}</p>
 
- {todosOsModulos.length === 0 ? (
- <div class="aviso-vazio" style="margin-top: 2rem; padding: 1.5rem; border: 1px dashed var(--cor-borda, #444); border-radius: 0.5rem;">
- <p><strong>Trilha em construção.</strong> Os exercícios serão adicionados em breve.</p>
- <p>Mentanto, explore o <a href={url.livre()}>Playground livre</a> para experimentar Go sem compromisso.</p>
- </div>
- ) : (
- <div class="modulos-lista" style="display: flex; flex-direction: column; gap: 2rem; margin-top: 2rem;">
- {todosOsModulos.map((modulo) => (
- <section class="modulo-card" style="border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem; padding: 1.5rem;">
- <h2 style="margin: 0 0 0.5rem;">{modulo.icone ? `${modulo.icone} ` : ''}{modulo.titulo}</h2>
- <p style="margin: 0 0 1rem; opacity: 0.85;">{modulo.descricao}</p>
- {modulo.itens && modulo.itens.length > 0 ? (
- <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
- {modulo.itens.map((item) => (
- <li>
- <a href={url.item(item.id)} style="display: block; padding: 0.75rem 1rem; background: var(--cor-fundo-card, #2a2b36); border-radius: 0.25rem; text-decoration: none; color: inherit; transition: background 0.15s;">
- <span style="font-weight: 600;">{item.titulo}</span>
- <span style="float: right; opacity: 0.7; font-size: 0.85em;">{item.dificuldade} · {item.xp} XP</span>
- </a>
- </li>
- ))}
- </ul>
- ) : (
- <p style="opacity: 0.6; font-style: italic;">Nenhum exercício neste módulo ainda.</p>
- )}
- </section>
- ))}
- </div>
- )}
- </main>
+    <!-- Barra de progresso do aluno (Fase 8) -->
+    <div class="progresso-ilha" style="margin-top: 1.5rem;">
+      <BarraProgresso client:visible />
+    </div>
+
+    {todosOsModulos.length === 0 ? (
+      <div class="aviso-vazio" style="margin-top: 2rem; padding: 1.5rem; border: 1px dashed var(--cor-borda, #444); border-radius: 0.5rem;">
+        <p><strong>Trilha em construção.</strong> Os exercícios serão adicionados em breve.</p>
+        <p>Mentanto, explore o <a href={url.livre()}>Playground livre</a> para experimentar Go sem compromisso.</p>
+      </div>
+    ) : (
+      <div class="modulos-lista" style="display: flex; flex-direction: column; gap: 2rem; margin-top: 2rem;">
+        {todosOsModulos.map((modulo) => (
+          <section class="modulo-card" style="border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem; padding: 1.5rem;">
+            <h2 style="margin: 0 0 0.5rem;">{modulo.icone ? `${modulo.icone} ` : ''}{modulo.titulo}</h2>
+            <p style="margin: 0 0 1rem; opacity: 0.85;">{modulo.descricao}</p>
+            {modulo.itens && modulo.itens.length > 0 ? (
+              <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+                {modulo.itens.map((item) => (
+                  <li>
+                    <a href={url.item(item.id)} style="display: block; padding: 0.75rem 1rem; background: var(--cor-fundo-card, #2a2b36); border-radius: 0.25rem; text-decoration: none; color: inherit; transition: background 0.15s;">
+                      <span style="font-weight: 600;">{item.titulo}</span>
+                      <span style="float: right; opacity: 0.7; font-size: 0.85em;">{item.dificuldade} · {item.xp} XP</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p style="opacity: 0.6; font-style: italic;">Nenhum exercício neste módulo ainda.</p>
+            )}
+          </section>
+        ))}
+      </div>
+    )}
+  </main>
 </Base>
