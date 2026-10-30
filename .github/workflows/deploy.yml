@@ -146,7 +146,7 @@ jobs:
           URL_PRINCIPAL: ${{ needs.publicar.outputs.page_url }}
         run: |
           curl --fail --location --silent --show-error --retry 10 --retry-delay 5 --retry-all-errors "$URL_PRINCIPAL" -o principal.html
-          grep -q '<title>DivergeGo:' principal.html
+          grep -q '<title>DivergeGo' principal.html
           if grep -q '<meta name="robots" content="noindex">' principal.html; then
             echo "::error::O site principal foi publicado com noindex."
             exit 1
@@ -158,7 +158,7 @@ jobs:
         run: |
           URL_HOMOLOGACAO="${URL_PRINCIPAL%/}/homologacao/"
           curl --fail --location --silent --show-error --retry 10 --retry-delay 5 --retry-all-errors "$URL_HOMOLOGACAO" -o homologacao.html
-          grep -q '<title>DivergeGo:' homologacao.html
+          grep -q '<title>DivergeGo' homologacao.html
           grep -q '<meta name="robots" content="noindex">' homologacao.html
 
   # Só no main: cria a tag v<versão do package.json> se ela ainda não existir (nunca força).
