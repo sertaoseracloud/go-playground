@@ -16,6 +16,7 @@
     "lighthouse": "npx --yes @lhci/cli@0.15.1 autorun",
     "badges": "node scripts/gerar-badges.mjs",
     "lint": "eslint .",
+    "comuns": "node scripts/comuns.mjs",
     "conferir-build": "node scripts/conferir-build.mjs"
   },
   "type": "module",
