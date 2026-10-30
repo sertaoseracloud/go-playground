@@ -95,7 +95,37 @@ const atual = (nome: string) => (menu === nome ? { 'aria-current': 'page' as con
   <div id="aviso-privacidade" class="aviso-privacidade" role="region" aria-label="Aviso de privacidade" hidden></div>
   <!-- Lembrete de pausa -->
   <div id="lembrete-pausa" class="lembrete-pausa" role="status" hidden></div>
-<!-- Ilha de acessibilidade: conecta o botão ♿ ao diálogo de preferências -->
+<!-- Diálogo de acessibilidade: painel de preferências globais (tema, texto, leitura) -->
+  <dialog id="dialogo-a11y" class="dialogo-a11y" aria-labelledby="titulo-a11y">
+    <header>
+      <h2 id="titulo-a11y">♿ Acessibilidade</h2>
+      <button type="button" class="fechar-dialogo" aria-label="Fechar">×</button>
+    </header>
+    <fieldset>
+      <legend>Tema</legend>
+      <label><input type="radio" name="tema" value="dracula" checked /> Dracula (escuro)</label>
+      <label><input type="radio" name="tema" value="claro" /> Claro</label>
+      <label><input type="radio" name="tema" value="auto" /> Automático</label>
+    </fieldset>
+    <fieldset>
+      <legend>Tamanho do texto</legend>
+      <label><input type="radio" name="tamanho-texto" value="normal" checked /> Normal</label>
+      <label><input type="radio" name="tamanho-texto" value="grande" /> Grande</label>
+      <label><input type="radio" name="tamanho-texto" value="muito-grande" /> Muito grande</label>
+    </fieldset>
+    <fieldset>
+      <legend>Leitura e conforto</legend>
+      <label><input type="checkbox" id="opt-reduzir-animacoes" /> Reduzir animações</label>
+      <label><input type="checkbox" id="opt-alto-contraste" /> Alto contraste</label>
+      <label><input type="checkbox" id="opt-regua-leitura" /> Régua de leitura</label>
+      <label><input type="checkbox" id="opt-lembrete-pausa" /> Lembrete de pausa (25 min)</label>
+    </fieldset>
+    <footer>
+      <button type="button" class="btn-salvar-a11y">Salvar preferências</button>
+    </footer>
+  </dialog>
+
+  <!-- Ilha de acessibilidade: conecta o botão ♿ ao diálogo de preferências -->
   <PainelAcessibilidade client:idle />
 </body>
 </html>
