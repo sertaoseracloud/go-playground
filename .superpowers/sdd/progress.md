@@ -17,3 +17,26 @@ Task 3: complete (commits ce81fa5..0c3f37e, review clean — verdict APPROVED, n
 Task 4: fix round 1/5 (4 addressed, 0 open — redundant executarGo export re-exported from runtime.js; plugin falls back to mock output instead of throwing when gopherjs binary missing; comment typo fixed; new Function() sandbox limitation documented in runtime.js; commits effae2c..0af6700)
 Task 4: minor (deferred): runtime.js uses new Function() — not a real security sandbox; production browser use should move execution to a Web Worker (documented in JSDoc).
 Task 4: complete (commits effae2c..0af6700, review clean — re-review verdict ALL_ADDRESSED, no new breakage)
+Task 5: implementer done (commits 0af6700..8a6649a, DONE — 1/1 test pass). Review returned NEEDS_FIXES; adjudication parked 3 findings (trilha.js 1-module stub is correct per plan Task 10 design; seo.js JSON-LD/OG out of scope for parity; unused `esc` exists in terraform-playground too; linguagem-go stub acceptable per brief).
+Task 5: Ruling: trilha.js stub with 1 module stands — plan Task 10 defines trilha.js as a stub; landing.js iterates modulos dynamically, so the 10 cards appear when content plans populate the array. Cost if wrong: landing page ships with one card until content plans land.
+Task 5: Ruling: seo.js parity without JSON-LD/OG image tags stands — reference playgrounds have neither; adding them is a new feature, not parity. Cost if wrong: social previews lack a rich card until a later content task.
+Task 5: fix round 1/5 (2 addressed, 0 open — acessibilidade wired to iniciarRegua/iniciarPausa; layout-calculo.js imported and inline stub removed; commits 8a6649a..d0e0bf8)
+Task 5: complete (commits 0af6700..d0e0bf8, re-review verdict ALL_ADDRESSED, no new breakage, 3 findings parked with rulings)
+Task 6: implementer done (commits d0e0bf8..8af2b93, DONE — 27/27 tests pass, no concerns). Reviewer verdict APPROVED. Minor deferred: magic number delays (200/1000) could become named constants; reduzirAnimacoes access path slightly inconsistent between terminal.js (DOM class) and saida.js (option param) but both functional.
+Task 6: complete (commits d0e0bf8..8af2b93, review clean — verdict APPROVED)
+Task 7: implementer done (commits 8af2b93..094d8fb, DONE — 1/1 test pass). Review returned NEEDS_FIXES; adjudication kept 3 findings (ambiente.js import, module 7+ guard, idempotent patch) and parked 2 minors (test only checks internal Map state — acceptable per brief; SW-not-ready errors swallowed silently — deferred).
+Task 7: fix round 1/5 (3 addressed, 0 open — PREFIXO_ARMAZENAMENTO imported from ambiente.js; registrarServiceWorker(moduloNumero) guards modules < 7; patchGopherJSHttp idempotent via _patched flag; commits 094d8fb..ee0986d)
+Task 7: complete (commits 8af2b93..ee0986d, re-review verdict ALL_ADDRESSED, no new breakage, 2 minors deferred)
+Task 8: implementer done (commits ee0986d..89cb35c, DONE — 1/1 test pass). Review returned NEEDS_FIXES; adjudication kept 2 Important findings (per-request SW listener, internal Map exposure) and parked 1 minor (criarFrameGrpcWeb/buscarHandlerGrpc uncalled — YAGNI, deferred to final review).
+Task 8: fix round 1/5 (2 addressed, 0 open — persistent message listener with pendingGrpcRequests Map keyed by messageId; registrarServicoGrpc._servicos exposure removed; commits 89cb35c..91f4263)
+Task 8: complete (commits ee0986d..91f4263, re-review verdict ALL_ADDRESSED, no new breakage, 1 minor parked)
+Task 9: implementer done (commits 91f4263..f632c54, DONE — 1/1 test pass, no concerns). Reviewer verdict APPROVED, no Critical/Important findings. Minor deferred: conferir-build reads all JS assets into memory (acceptable for build-time check); gerar-badges imports from stub modules (expected, will pick up content when populated later).
+Task 9: complete (commits 91f4263..f632c54, review clean — verdict APPROVED)
+Task 10: implementer done (commits f632c54..0006250, DONE — 3/3 README tests pass, npm run build succeeded, conferir-build.mjs dist principal passed).
+Task 10: Ruling: task review skipped and accepted on implementer evidence — the reviewer dispatch failed 3× with transient claude-opus-5-5 classifier timeouts, and the user explicitly approved Task 10 ("aprova task 10 e continua"). Cost if wrong: any Task 10 defect (README structure, certificate prefix, trilha.js interface) reaches the final whole-branch review unfiltered.
+Task 10: complete (commits f632c54..0006250, user-approved per ruling above — no independent task review)
+All 10 tasks complete. Proceeding to final whole-branch review.
+Task 10: implementer done (commits f632c54..0006250, DONE — 3/3 README tests pass, npm run build succeeded, conferir-build.mjs dist principal passed).
+Task 10: Ruling: task review skipped and accepted on implementer evidence — the reviewer dispatch failed 3× with transient claude-opus-5-5 classifier timeouts, and the user explicitly approved Task 10 ("aprova task 10 e continua"). Cost if wrong: any Task 10 defect (README structure, certificate prefix, trilha.js interface) reaches the final whole-branch review unfiltered.
+Task 10: complete (commits f632c54..0006250, user-approved per ruling above — no independent task review)
+All 10 tasks complete. Proceeding to final whole-branch review.
