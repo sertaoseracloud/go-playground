@@ -4,7 +4,7 @@ import TerminalGo from './TerminalGo';
 import FeedbackExercicio from './FeedbackExercicio';
 import { compilarGo, executarGo } from '../go/compiler-browser.js';
 import { iniciarRedeSimulada, limparServidores } from '../go/network-browser.js';
-import { lerRascunho, gravarRascunho, marcar } from '../progresso.js';
+import { lerRascunho, gravarRascunho, marcar, statusDe, somarTentativa } from '../progresso.js';
 import type { ItemDaIlha } from '../lib/conteudo';
 
 interface ExercicioGoProps {
@@ -19,6 +19,7 @@ interface ExercicioGoProps {
  * Salva/carrega rascunhos automaticamente via localStorage (Fase 9).
  * Marca progresso automaticamente ao executar (Fase 10).
  * Exibe feedback contextual com dicas após execução (Fase 13).
+ * Rastreia tempo de tentativa enquanto o exercício está aberto (Fase 14).
  */
 export default function ExercicioGo({ item, modulo }: ExercicioGoProps) {
   const [executando, setExecutando] = useState(false);
@@ -27,6 +28,7 @@ export default function ExercicioGo({ item, modulo }: ExercicioGoProps) {
   const [exitCode, setExitCode] = useState<number | null>(null);
   const [errosCompilacao, setErrosCompilacao] = useState<string[]>([]);
   const arquivosRef = useRef<Record<string, string>>({});
+  const resolvidoRef = useRef(statusDe(item.id) === 'resolvido');
 
   // Inicializa infraestrutura de rede simulada para exercícios do módulo Web
   useEffect(() => {
@@ -41,6 +43,15 @@ export default function ExercicioGo({ item, modulo }: ExercicioGoProps) {
       }
     };
   }, [modulo]);
+
+  // Rastreia tempo de tentativa: soma 1s a cada segundo enquanto o exercício está montado e não resolvido (Fase 14)
+  useEffect(() => {
+    if (resolvidoRef.current) return;
+    const intervalo = setInterval(() => {
+      somarTentativa(item.id, 1);
+    }, 1000);
+    return () => clearInterval(intervalo);
+  }, [item.id]);
 
   // Carrega rascunho salvo ou usa código inicial padrão
   const codigoInicial = (() => {
@@ -103,8 +114,9 @@ export default function ExercicioGo({ item, modulo }: ExercicioGoProps) {
       if (resultado.exitCode !== 0) {
         setSaida((prev) => [...prev, `exit status ${resultado.exitCode}`]);
       } else {
-        // Execução bem-sucedida: marca como "resolvido" (Fase 10)
+        // Execução bem-sucedida: marca como "resolvido" e para o contador de tempo (Fase 10 + 14)
         marcar(item.id, 'resolvido');
+        resolvidoRef.current = true;
       }
     } catch (err) {
       setSaida((prev) => [...prev, `erro interno: ${err instanceof Error ? err.message : String(err)}`]);
