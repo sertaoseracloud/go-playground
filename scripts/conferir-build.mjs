@@ -15,11 +15,23 @@ if (!dist || !['principal', 'homologacao'].includes(modo)) {
 }
 
 const erros = [];
-const html = readFileSync(join(dist, 'index.html'), 'utf8');
-const bundle = readdirSync(join(dist, 'assets'))
-  .filter((a) => a.endsWith('.js'))
-  .map((a) => readFileSync(join(dist, 'assets', a), 'utf8'))
-  .join('\n');
+if (!dist || !existsSync(dist)) {
+  console.error(`conferir-build: diretório não encontrado: ${dist}`);
+  process.exit(2);
+}
+const indexPath = join(dist, 'index.html');
+if (!existsSync(indexPath)) {
+  console.error(`conferir-build: index.html não encontrado em ${dist}`);
+  process.exit(2);
+}
+const html = readFileSync(indexPath, 'utf8');
+const assetsDir = join(dist, 'assets');
+const bundle = existsSync(assetsDir)
+  ? readdirSync(assetsDir)
+      .filter((a) => a.endsWith('.js'))
+      .map((a) => readFileSync(join(assetsDir, a), 'utf8'))
+      .join('\n')
+  : '';
 const sitemap = existsSync(join(dist, 'sitemap.xml'));
 const noindex = html.includes('<meta name="robots" content="noindex">');
 

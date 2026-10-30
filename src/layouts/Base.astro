@@ -1,0 +1,98 @@
+---
+// Layout de todas as páginas: <head> com SEO da própria página, tema aplicado antes da
+// primeira pintura (sem piscar), topo, região aria-live e as ilhas globais (progresso e ♿).
+import { Font } from 'astro:assets';
+import '../estilo.css';
+import '../caminho.css';
+import '../landing.css';
+import '../cenarios.css';
+import { PREFIXO_ARMAZENAMENTO } from '../ambiente.js';
+import { url } from '../lib/rotas';
+
+interface Props { titulo: string; descricao: string; menu?: 'trilha' | 'livre' | 'validar' | 'instrutor' }
+const { titulo, descricao, menu } = Astro.props;
+// __HOMOLOGACAO__ é injetado via vite.define; declaro como any para evitar erro no astro check.
+declare const __HOMOLOGACAO__: boolean;
+const HOMOLOGACAO = __HOMOLOGACAO__;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const chavePrefs = `${PREFIXO_ARMAZENAMENTO}pref:acessibilidade`;
+const atual = (nome: string) => (menu === nome ? { 'aria-current': 'page' as const, class: 'ativo' } : {});
+---
+<!doctype html>
+<html lang="pt-BR" data-tema="dracula">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#21222c" />
+  <title>{titulo}</title>
+  <meta name="description" content={descricao} />
+  {HOMOLOGACAO ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+  <meta property="og:title" content={titulo} />
+  <meta property="og:description" content={descricao} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:locale" content="pt_BR" />
+  <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} type="image/svg+xml" />
+  <link rel="icon" href={`${import.meta.env.BASE_URL}icone-192.png`} type="image/png" sizes="192x192" />
+  <link rel="apple-touch-icon" href={`${import.meta.env.BASE_URL}apple-touch-icon.png`} />
+  <link rel="manifest" href={`${import.meta.env.BASE_URL}manifest.webmanifest`} />
+  <Font cssVariable="--fonte-codigo" preload />
+  <Font cssVariable="--fonte-texto" />
+  <!-- Tema salvo aplicado antes de pintar: sem "flash" de tema errado. Só lê; quem grava é a ilha ♿. -->
+  <script is:inline define:vars={{ chavePrefs }}>
+    try {
+      const p = JSON.parse(localStorage.getItem(chavePrefs) || 'null');
+      if (p && p.tema) document.documentElement.dataset.tema = p.tema;
+      if (p && p.tamanho) document.documentElement.style.setProperty('--escala', String(p.tamanho / 100));
+    } catch { /* sem armazenamento: tema padrão */ }
+  </script>
+  <slot name="head" />
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+  {HOMOLOGACAO && <aside id="faixa-homologacao" class="faixa-homologacao" aria-label="Aviso de homologação">🧪 Homologação: versão em teste do develop. <a href="../">ir para o site principal</a></aside>}
+  <div id="anuncio" class="sr" role="status" aria-live="polite"></div>
+  <noscript><p class="sem-js">O DivergeGo simula o Go no seu navegador e precisa de JavaScript ativado.</p></noscript>
+
+  <header class="topo">
+    <a href={url.inicio()} class="marca"><span aria-hidden="true">🏗️</span> DivergeGo</a>
+    <button type="button" id="btn-menu" class="btn-menu" aria-expanded="false" aria-controls="menu-topo" aria-label="Abrir menu">
+      <span aria-hidden="true">☰</span>
+    </button>
+    <div id="menu-topo" class="menu-topo">
+      <nav class="menu" aria-label="Principal">
+        <a href={url.trilha()} {...atual('trilha')}>🗺️ Trilha</a>
+        <a href={url.livre()} {...atual('livre')}>🧪 Playground livre</a>
+        <a href={url.validar()} {...atual('validar')}>🔎 Validar certificado</a>
+        <a href={url.instrutor()} {...atual('instrutor')}>👨‍🏫 Instrutor</a>
+      </nav>
+    </div>
+    <span id="progresso-topo" class="progresso-topo"></span>
+    <span id="status" class="status">Carregando…</span>
+  </header>
+
+  <div id="conteudo" class="conteudo" tabindex="-1">
+    <slot />
+  </div>
+
+  <!-- Botões flutuantes (canto inferior direito): ajuda e preferências, em qualquer tela -->
+  <aside class="flutuantes" id="flutuantes" aria-label="Ajuda e preferências">
+    <div class="flutuantes-itens" id="flutuantes-itens">
+      <button type="button" id="btn-tutorial" class="flutuante" aria-haspopup="dialog" aria-label="Tutorial" data-rotulo="Tutorial">
+        <span aria-hidden="true">❓</span></button>
+      <button type="button" id="btn-acessibilidade" class="flutuante" aria-haspopup="dialog" aria-label="Acessibilidade" data-rotulo="Acessibilidade">
+        <span aria-hidden="true">♿</span></button>
+      <a href={url.privacidade()} class="flutuante" data-menu="privacidade" aria-label="Privacidade e cookies" data-rotulo="Privacidade e cookies">
+        <span aria-hidden="true">🔒</span></a>
+    </div>
+    <button type="button" id="btn-flutuantes" class="flutuante" aria-expanded="false" aria-controls="flutuantes-itens" aria-label="Ajuda e preferências" data-rotulo="Ajuda e preferências">
+      <span aria-hidden="true">⚙️</span></button>
+  </aside>
+
+  <!-- Régua de leitura (opção do painel de acessibilidade) -->
+  <div id="regua-leitura" class="regua-leitura" aria-hidden="true"></div>
+  <!-- Aviso de privacidade (primeira visita) -->
+  <div id="aviso-privacidade" class="aviso-privacidade" role="region" aria-label="Aviso de privacidade" hidden></div>
+  <!-- Lembrete de pausa -->
+  <div id="lembrete-pausa" class="lembrete-pausa" role="status" hidden></div>
+</body>
+</html>
