@@ -1,8 +1,9 @@
 // Landing page (#/): apresenta o projeto e leva para a trilha (#/trilha).
-import { modulos } from '../conteudo/trilha.js';
+import { modulos, PROXIMOS_MODULOS } from '../conteudo/trilha.js';
 import { esc } from './util.js';
 
 export function renderLanding(el) {
+  const totalModulos = modulos.length + PROXIMOS_MODULOS.length;
   el.innerHTML = `
     <div class="landing">
       <section class="hero" aria-labelledby="landing-titulo">
@@ -14,7 +15,7 @@ export function renderLanding(el) {
           <a class="btn btn-fantasma btn-grande" href="#/livre">🧪 Playground livre</a>
         </div>
         <ul class="hero-numeros" aria-label="A trilha em números">
-          <li><b>${modulos.length}</b> módulos</li>
+          <li><b>${totalModulos}</b> módulos</li>
         </ul>
       </section>
       <section class="faixa" aria-labelledby="modulos-titulo">
@@ -25,6 +26,12 @@ export function renderLanding(el) {
               <span class="modulo-icone" aria-hidden="true">${m.icone}</span>
               <h3>${esc(m.titulo)}</h3>
               <p>${esc(m.descricao)}</p>
+            </li>`).join('')}
+          ${PROXIMOS_MODULOS.map((m) => `
+            <li class="modulo-card modulo-em-breve" data-modulo="${m.id}" aria-disabled="true">
+              <span class="modulo-icone" aria-hidden="true">${m.icone}</span>
+              <h3>${esc(m.titulo)} <span class="badge-em-breve">(em breve)</span></h3>
+              <p>Conteúdo planejado para as próximas versões.</p>
             </li>`).join('')}
         </ol>
       </section>
