@@ -235,4 +235,3 @@ jobs:
               --title "Promove develop para main" \
               --body "Os testes passaram, a homologação foi publicada e o smoke test do ambiente está verde. Revise as alterações antes de mesclar em produção."
           fi
-

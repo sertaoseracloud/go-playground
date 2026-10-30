@@ -41,4 +41,3 @@ jobs:
           node-version: 24
       - name: Arquivos comuns iguais nos quatro playgrounds
         run: node scripts/comuns.mjs comparar
-
