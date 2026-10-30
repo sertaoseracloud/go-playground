@@ -39,8 +39,9 @@ export type ItemDaIlha = Pick<Item, 'id' | 'tipo' | 'titulo' | 'inicial' | 'exis
 export const paraIlha = ({ id, tipo, titulo, inicial, existentes, testes }: Item): ItemDaIlha =>
   ({ id, tipo, titulo, inicial, existentes, testes });
 
-/** Texto puro para meta description (o resumo pode conter HTML). */
-export const semHtml = (html: string, limite = 155) => {
+/** Texto puro para meta description (o resumo pode conter HTML ou ser undefined em stubs). */
+export const semHtml = (html: string | undefined | null, limite = 155) => {
+  if (!html) return '';
   const texto = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
   return texto.length > limite ? `${texto.slice(0, limite - 1).replace(/\s+\S*$/, '')}…` : texto;
 };

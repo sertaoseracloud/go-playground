@@ -1,0 +1,60 @@
+---
+// Página dinâmica de exercício/licão: renderiza enunciado + editor + terminal para cada item da trilha.
+// Gera rotas estáticas via getStaticPaths; a ilha ExercícioGo conecta editor/terminal ao compilador browser.
+import Base from '../../layouts/Base.astro';
+import { todosOsItens, item, vizinhosDe, rotuloDificuldade, semHtml, paraIlha } from '../../lib/conteudo';
+import { url } from '../../lib/rotas';
+import type { ItemDaIlha } from '../../lib/conteudo';
+import ExercicioGo from '../../components/ExercicioGo';
+
+export function getStaticPaths() {
+  return todosOsItens.map((i) => ({ params: { id: i.id }, props: { item: i } }));
+}
+
+const exercicio = Astro.props.item as ReturnType<typeof item>;
+if (!exercicio) throw new Error(`Item não encontrado: ${Astro.params.id}`);
+
+const vizinhos = vizinhosDe(exercicio.id);
+const titulo = `${exercicio.titulo} — DivergeGo`;
+const descricao = semHtml(exercicio.resumo);
+const itemParaIlha: ItemDaIlha = paraIlha(exercicio);
+---
+
+<Base titulo={titulo} descricao={descricao} menu="trilha">
+  <main class="tela-exercicio" style="max-width: 64rem; margin: 0 auto; padding: 2rem 1rem;">
+    <nav class="navegacao-exercicio" style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; font-size: 0.9rem; opacity: 0.8;">
+      {vizinhos.anterior ? (
+        <a href={url.item(vizinhos.anterior.id)}>← {vizinhos.anterior.titulo}</a>
+      ) : <span />}
+      <a href={url.trilha()}>🗺️ Trilha</a>
+      {vizinhos.proximo ? (
+        <a href={url.item(vizinhos.proximo.id)}>{vizinhos.proximo.titulo} →</a>
+      ) : <span />}
+    </nav>
+
+    <header class="cabecalho-exercicio" style="margin-bottom: 2rem;">
+      <h1>{exercicio.titulo}</h1>
+      <p style="opacity: 0.85; margin-top: 0.5rem;">
+        <span class="badge-dificuldade">{rotuloDificuldade(exercicio.dificuldade)}</span>
+        · {exercicio.xp} XP · {exercicio.tipo === 'licao' ? '📖 Lição' : '💻 Exercício'}
+      </p>
+    </header>
+
+    <section class="enunciado-exercicio" style="margin-bottom: 2rem; line-height: 1.7;">
+      <Fragment set:html={exercicio.resumo} />
+    </section>
+
+    <div class="ilha-exercicio" style="margin-top: 2rem;">
+      <ExercicioGo client:visible item={itemParaIlha} />
+    </div>
+
+    <nav class="navegacao-exercicio-rodape" style="display: flex; justify-content: space-between; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--cor-borda, #333); font-size: 0.9rem;">
+      {vizinhos.anterior ? (
+        <a href={url.item(vizinhos.anterior.id)}>← Anterior</a>
+      ) : <span />}
+      {vizinhos.proximo ? (
+        <a href={url.item(vizinhos.proximo.id)}>Próximo →</a>
+      ) : <span />}
+    </nav>
+  </main>
+</Base>
