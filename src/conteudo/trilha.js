@@ -2,13 +2,13 @@
 // próximos módulos aparecem na landing como "em breve" (PROXIMOS_MODULOS).
 import { moduloBasico } from './basico.js';
 import { moduloWeb } from './web.js';
+import { moduloConcorrencia } from './concorrencia.js';
 import { go } from './util.js';
 
-export const modulos = [moduloBasico, moduloWeb];
+export const modulos = [moduloBasico, moduloWeb, moduloConcorrencia];
 
 /** Módulos das próximas versões (só título e ícone, para a landing e a trilha). */
 export const PROXIMOS_MODULOS = [
-  { id: 'concorrencia', titulo: 'Concorrência', icone: '⚡' },
   { id: 'projetos', titulo: 'Projetos', icone: '🏗️' },
 ];
 
