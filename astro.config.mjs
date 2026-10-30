@@ -1,6 +1,9 @@
 // DivergeGo em Astro + React (ilhas).
 // O conteúdo, o simulador Go e as regras de progresso continuam em ./src (JS puro, sem DOM):
 // o Astro só troca a "casca" (páginas, rotas e UI).
+// Configuração do Astro para DivergeGo (ambiente Node.js)
+import process from 'node:process';
+import { Buffer } from 'node:buffer';
 import { defineConfig, fontProviders } from 'astro/config';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';

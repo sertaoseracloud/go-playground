@@ -14,7 +14,7 @@ import { registrarServicoGrpc } from './grpc-web-shim.js';
 import { registrarServiceWorker, serviceWorkerSuportado } from './service-worker-client.js';
 
 let _swRegistrado = false;
-let _servidoresAtivos = new Set();
+const _servidoresAtivos = new Set();
 
 /**
  * Inicializa a infraestrutura de rede simulada.
