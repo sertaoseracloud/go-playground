@@ -5,8 +5,8 @@
 // Respeita o flag "Reduzir animacoes" do modulo de acessibilidade.
 
 import { esc } from './util.js';
-import { compilarGo } from '../go/compiler.js';
-import { executarGo } from '../go/runtime.js';
+import { compilarGo } from '../go/compiler-browser.js';
+import { executarGo } from '../go/compiler-browser.js';
 import { parsearComando } from '../go/comandos.js';
 import { formatarSaida } from '../go/saida.js';
 
