@@ -14,7 +14,8 @@
         "errors-in-console": ["off"],
         "color-contrast": ["warn"],
         "target-size": ["off"],
-        "render-blocking-resources": ["off"]
+        "render-blocking-resources": ["off"],
+        "network-dependency-tree-insight": ["off"]
       }
     },
     "upload": {
