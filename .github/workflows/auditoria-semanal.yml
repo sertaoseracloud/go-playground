@@ -1,0 +1,34 @@
+﻿name: Auditoria semanal
+
+# Lighthouse no site que estÃ¡ no ar (principal e homologaÃ§Ã£o), todo domingo Ã  meia-noite
+# UTC: pega o que muda sem commit (CDN, navegador novo). O relatÃ³rio fica 30 dias nos
+# artefatos da execuÃ§Ã£o.
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Lighthouse no site no ar
+        run: |
+          npx --yes @lhci/cli@0.15.1 collect --no-lighthouserc --numberOfRuns=3 \
+            --url=https://sertaoseracloud.github.io/go-playground/ \
+            --url=https://sertaoseracloud.github.io/go-playground/homologacao/
+          npx --yes @lhci/cli@0.15.1 upload --no-lighthouserc --target=filesystem --outputDir=.lighthouseci
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: auditoria-semanal
+          path: .lighthouseci/
+          include-hidden-files: true
+          retention-days: 30
+
