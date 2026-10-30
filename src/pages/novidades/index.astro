@@ -1,0 +1,38 @@
+---
+// Página de novidades: changelog e atualizações do DivergeGo.
+import Base from '../../layouts/Base.astro';
+
+const titulo = 'Novidades — DivergeGo';
+const descricao = 'Histórico de atualizações e novas funcionalidades do DivergeGo.';
+---
+
+<Base titulo={titulo} descricao={descricao}>
+ <main class="tela-novidades" style="max-width: 48rem; margin: 0 auto; padding: 2rem 1rem;">
+ <h1>📰 Novidades</h1>
+ <p>{descricao}</p>
+
+ <div style="margin-top: 2rem; display: flex; flex-direction: column; gap: 1.5rem;">
+ <article style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+ <header style="margin-bottom: 0.75rem;">
+ <time datetime="2026-10-30" style="font-size: 0.85em; opacity: 0.7;">30 de outubro de 2026</time>
+ <h2 style="margin: 0.25rem 0 0;">Migração para Astro</h2>
+ </header>
+ <p>O DivergeGo migrou de SPA Vite para Astro + React (ilhas). O site agora gera HTML estático no build, melhorando SEO e tempo de primeira pintura.</p>
+ <ul style="margin-top: 0.75rem; padding-left: 1.5rem;">
+ <li>Páginas informativas renderizadas estaticamente</li>
+ <li>Redirecionamento de links antigos (#/...) preservado</li>
+ <li>Certificados Ed25519 gerados no build via integração Astro</li>
+ <li>Suporte a fontes Atkinson Hyperlegible e Fira Code via fontProviders</li>
+ </ul>
+ </article>
+
+ <article style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+ <header style="margin-bottom: 0.75rem;">
+ <time datetime="2026-10-11" style="font-size: 0.85em; opacity: 0.7;">11 de outubro de 2026</time>
+ <h2 style="margin: 0.25rem 0 0;">Lançamento inicial</h2>
+ </header>
+ <p>Primeira versão pública do DivergeGo com trilha básica de Go, playground livre e validador de certificados.</p>
+ </article>
+ </div>
+ </main>
+</Base>

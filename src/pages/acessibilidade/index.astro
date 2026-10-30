@@ -1,0 +1,36 @@
+---
+// Página de acessibilidade: documentação dos recursos e como usá-los.
+import Base from '../../layouts/Base.astro';
+
+const titulo = 'Acessibilidade — DivergeGo';
+const descricao = 'Recursos de acessibilidade do DivergeGo: tema escuro, escala de texto, régua de leitura e navegação por teclado.';
+---
+
+<Base titulo={titulo} descricao={descricao}>
+ <main class="tela-acessibilidade" style="max-width: 48rem; margin: 0 auto; padding: 2rem 1rem;">
+ <h1>♿ Acessibilidade</h1>
+ <p>{descricao}</p>
+
+ <div style="margin-top: 2rem; display: flex; flex-direction: column; gap: 1.5rem;">
+ <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+ <h2>🎨 Tema e contraste</h2>
+ <p>O DivergeGo usa o tema Dracula por padrão, com cores testadas para contraste WCAG AA. O tema é salvo no seu navegador e aplicado antes da primeira pintura.</p>
+ </section>
+
+ <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+ <h2>🔤 Escala de texto</h2>
+ <p>Use o painel de acessibilidade (botão ♿ no canto inferior direito) para ajustar o tamanho do texto de 80% a 150%. A preferência é salva localmente.</p>
+ </section>
+
+ <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+ <h2>📏 Régua de leitura</h2>
+ <p>A régua de leitura destaca a linha atual do código ou texto longo, ajudando a manter o foco. Ative-a pelo painel de acessibilidade.</p>
+ </section>
+
+ <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+ <h2>⌨️ Navegação por teclado</h2>
+ <p>Todos os controles são acessíveis via Tab/Shift+Tab. O editor CodeMirror suporta atalhos padrão e modo Vim/Emacs.</p>
+ </section>
+ </div>
+ </main>
+</Base>

@@ -6,8 +6,6 @@ import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import { createHash } from 'node:crypto';
 import { writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { chavePublicaDe } from './src/ed25519.js';
 import { versaoDoPacote } from './scripts/plugin-historico.mjs';
 import gopherjsPlugin from './scripts/gopherjs-plugin.mjs';

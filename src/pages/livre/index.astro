@@ -1,0 +1,34 @@
+---
+// Playground livre: editor Go sem exercício guiado, para experimentação livre.
+// A ilha React monta o EditorArquivos (vanilla JS + CodeMirror) via ref.
+import Base from '../../layouts/Base.astro';
+import EditorGo from '../../components/EditorGo';
+import TerminalGo from '../../components/TerminalGo';
+
+const titulo = 'Playground livre — DivergeGo';
+const descricao = 'Experimente Go no navegador sem compromisso: escreva, compile e rode código Go diretamente no seu navegador.';
+const codigoInicial = `package main
+
+import "fmt"
+
+func main() {
+\tfmt.Println("Olá, DivergeGo!")
+}
+`;
+---
+
+<Base titulo={titulo} descricao={descricao} menu="livre">
+ <main class="tela-livre" style="max-width: 64rem; margin: 0 auto; padding: 2rem 1rem;">
+ <h1>🧪 Playground livre</h1>
+ <p>{descricao}</p>
+
+ <div class="editor-ilha" style="margin-top: 2rem;">
+ <EditorGo client:visible inicial={codigoInicial} />
+ </div>
+
+ <div class="terminal-ilha" style="margin-top: 1.5rem;">
+ <h2 style="margin: 0 0 0.75rem; font-size: 1.1rem;">💻 Terminal</h2>
+ <TerminalGo client:visible />
+ </div>
+ </main>
+</Base>

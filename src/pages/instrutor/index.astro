@@ -1,0 +1,31 @@
+---
+// Página do instrutor: perfil, links de apoio e informações sobre o projeto.
+import Base from '../../layouts/Base.astro';
+
+const titulo = 'Instrutor — DivergeGo';
+const descricao = 'Conheça o instrutor por trás do DivergeGo e apoie o desenvolvimento de conteúdo gratuito de Go em português.';
+---
+
+<Base titulo={titulo} descricao={descricao} menu="instrutor">
+ <main class="tela-instrutor" style="max-width: 48rem; margin: 0 auto; padding: 2rem 1rem;">
+ <h1>👨‍🏫 Instrutor</h1>
+ <p>{descricao}</p>
+
+ <div id="instrutor-conteudo" style="margin-top: 2rem; display: flex; flex-direction: column; gap: 1.5rem;">
+ <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+ <h2>Sobre o projeto</h2>
+ <p>O DivergeGo é uma iniciativa open-source para ensinar Go em português, com exercícios interativos que rodam inteiramente no navegador.</p>
+ </section>
+
+ <section id="apoie" style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+ <h2>💛 Apoie o projeto</h2>
+ <p>Se o DivergeGo te ajudou, considere apoiar o desenvolvimento de mais conteúdo gratuito:</p>
+ <ul style="margin-top: 0.75rem; padding-left: 1.5rem;">
+ <li>Compartilhe com colegas que estão aprendendo Go</li>
+ <li>Abra issues ou PRs no repositório do GitHub</li>
+ <li>Entre em contato para parcerias ou patrocínio</li>
+ </ul>
+ </section>
+ </div>
+ </main>
+</Base>

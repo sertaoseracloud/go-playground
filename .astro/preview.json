@@ -1,0 +1,20 @@
+{
+	"pid": 16168,
+	"port": 4322,
+	"url": "http://localhost:4322",
+	"urls": {
+		"local": [
+			"http://localhost:4322/go-playground/"
+		],
+		"network": [
+			"http://172.30.48.1:4322/go-playground/",
+			"http://192.168.15.7:4322/go-playground/"
+		],
+		"networkInterfaceNames": [
+			"vEthernet (Default Switch)",
+			"Wi-Fi"
+		]
+	},
+	"background": false,
+	"startedAt": "2026-10-30T18:35:58.838Z"
+}

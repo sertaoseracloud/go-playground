@@ -1,0 +1,20 @@
+---
+// Validador de certificado: formulário para verificar certificados emitidos pelo DivergeGo.
+// A ilha React monta o renderValidador (vanilla JS) via ref.
+import Base from '../../layouts/Base.astro';
+import ValidadorCertificado from '../../components/ValidadorCertificado';
+
+const titulo = 'Validar certificado — DivergeGo';
+const descricao = 'Verifique a autenticidade de um certificado DivergeGo usando o código impresso no documento.';
+---
+
+<Base titulo={titulo} descricao={descricao} menu="validar">
+ <main class="tela-validar" style="max-width: 48rem; margin: 0 auto; padding: 2rem 1rem;">
+ <h1>🔎 Validar certificado</h1>
+ <p>{descricao}</p>
+
+ <div class="validador-ilha" style="margin-top: 2rem;">
+ <ValidadorCertificado client:visible />
+ </div>
+ </main>
+</Base>

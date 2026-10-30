@@ -1,0 +1,36 @@
+---
+// Política de privacidade: transparência sobre dados locais e cookies.
+import Base from '../../layouts/Base.astro';
+
+const titulo = 'Privacidade e cookies — DivergeGo';
+const descricao = 'O DivergeGo não coleta dados pessoais. Todo o progresso fica no seu navegador.';
+---
+
+<Base titulo={titulo} descricao={descricao}>
+ <main class="tela-privacidade" style="max-width: 48rem; margin: 0 auto; padding: 2rem 1rem;">
+ <h1>🔒 Privacidade e cookies</h1>
+ <p>{descricao}</p>
+
+ <div style="margin-top: 2rem; display: flex; flex-direction: column; gap: 1.5rem;">
+ <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+ <h2>Dados locais apenas</h2>
+ <p>O DivergeGo usa <code>localStorage</code> para salvar seu progresso, preferências de acessibilidade e tema. Nenhum dado é enviado para servidores externos.</p>
+ </section>
+
+ <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+ <h2>Cookies</h2>
+ <p>Não usamos cookies de rastreamento ou analytics. O único armazenamento é local e sob seu controle total.</p>
+ </section>
+
+ <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+ <h2>Certificados</h2>
+ <p>Os certificados são assinados criptograficamente no build e verificados localmente. Nenhuma informação pessoal é embutida neles.</p>
+ </section>
+
+ <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+ <h2>Contato</h2>
+ <p>Dúvidas sobre privacidade? Abra uma issue no repositório do GitHub ou entre em contato pelo canal do instrutor.</p>
+ </section>
+ </div>
+ </main>
+</Base>
