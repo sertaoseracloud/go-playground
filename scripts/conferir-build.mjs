@@ -25,13 +25,14 @@ if (!existsSync(indexPath)) {
   process.exit(2);
 }
 const html = readFileSync(indexPath, 'utf8');
-const assetsDir = join(dist, 'assets');
-const bundle = existsSync(assetsDir)
-  ? readdirSync(assetsDir)
-      .filter((a) => a.endsWith('.js'))
-      .map((a) => readFileSync(join(assetsDir, a), 'utf8'))
-      .join('\n')
-  : '';
+// Astro gera os bundles em _astro/; builds antigos (Vite) usavam assets/.
+// O script verifica ambos para manter compatibilidade.
+const dirsDeAssets = ['_astro', 'assets'].map((d) => join(dist, d)).filter((d) => existsSync(d));
+const bundle = dirsDeAssets.flatMap((dir) =>
+  readdirSync(dir)
+    .filter((a) => a.endsWith('.js'))
+    .map((a) => readFileSync(join(dir, a), 'utf8')),
+).join('\n');
 const sitemap = existsSync(join(dist, 'sitemap.xml'));
 const noindex = html.includes('<meta name="robots" content="noindex">');
 
