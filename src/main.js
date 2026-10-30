@@ -7,12 +7,10 @@ import { iniciarAcessibilidade } from './ui/acessibilidade.js';
 import { renderLanding } from './ui/landing.js';
 import { iniciarMenu, iniciarFlutuantes } from './ui/menu.js';
 import { iniciarRegua, iniciarPausa } from './ui/neuro.js';
-import { resumoProgresso } from './ui/inicio.js';
-import { criarTelaItem } from './ui/item.js';
 import { criarLayout } from './ui/layout.js';
 import { $ } from './ui/util.js';
 import { HOMOLOGACAO } from './ambiente.js';
-import { definirPagina, PRINCIPAL, NOME } from './seo.js';
+import { definirPagina, PRINCIPAL } from './seo.js';
 
 function init() {
   const acessibilidade = iniciarAcessibilidade();

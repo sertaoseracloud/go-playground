@@ -22,11 +22,6 @@ function reduzirAnimacoes() {
   return document.documentElement.classList.contains('a11y-sem-movimento');
 }
 
-/** Retorna o texto do prompt do shell. */
-function textoDoPrompt() {
-  return `${USUARIO}:~/${PASTA}$ `;
-}
-
 /** Retorna o HTML do prompt colorido. */
 function promptHtml() {
   return `<span class="p-usuario">${USUARIO}</span>:<span class="p-pasta">~/${PASTA}</span><span class="p-cifrao">$</span> `;
@@ -214,18 +209,6 @@ export function criarTerminal(container, opcoes = {}) {
     if (!texto.trim() || lista.at(-1) === texto) return;
     lista = [...lista, texto].slice(-LIMITE_HISTORICO);
     aoMudarHistorico(lista);
-  }
-
-  function ler() {
-    if (leitura) terminar(null);
-    if (rotulo) rotulo.innerHTML = promptHtml();
-    campo.value = '';
-    campo.disabled = animando;
-    posicao = lista.length;
-    if (tinhaFoco || document.activeElement === container) campo.focus();
-    return new Promise((resolve) => {
-      leitura = { resolve };
-    });
   }
 
   function tab() {

@@ -41,9 +41,7 @@ export function traduzirFrameGrpcWeb(buffer) {
     throw new Error('Frame gRPC-Web inválido: mínimo 5 bytes requeridos');
   }
 
-  // Byte 0: compression flag (0 = não comprimido, 1 = comprimido)
-  const compressionFlag = buffer[0];
-
+  // Byte 0: compression flag (0 = não comprimido, 1 = comprimido) — lido mas não usado neste shim.
   // Bytes 1-4: length em big-endian (4 bytes)
   const length = (buffer[1] << 24) | (buffer[2] << 16) | (buffer[3] << 8) | buffer[4];
 

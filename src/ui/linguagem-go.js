@@ -1,7 +1,6 @@
 // Stub mínimo da linguagem Go para o CodeMirror.
 // Usa a gramática Lezer genérica com destaque de palavras-chave do Go.
-import { LanguageSupport, StreamLanguage } from '@codemirror/language';
-import { tags as t } from '@lezer/highlight';
+import { StreamLanguage } from '@codemirror/language';
 
 const keywords = new Set([
   'break', 'case', 'chan', 'const', 'continue', 'default', 'defer', 'else',
@@ -20,7 +19,7 @@ const builtins = new Set([
   'new', 'panic', 'print', 'println', 'real', 'recover',
 ]);
 
-function tokenBase(stream, state) {
+function tokenBase(stream, _state) {
   // Comentários
   if (stream.match('//')) {
     stream.skipToEnd();

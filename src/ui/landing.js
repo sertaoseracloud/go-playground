@@ -20,7 +20,7 @@ export function renderLanding(el) {
       <section class="faixa" aria-labelledby="modulos-titulo">
         <h2 id="modulos-titulo">Módulos</h2>
         <ol class="modulos-landing">
-          ${modulos.map((m, i) => `
+          ${modulos.map((m) => `
             <li class="modulo-card" data-modulo="${m.id}">
               <span class="modulo-icone" aria-hidden="true">${m.icone}</span>
               <h3>${esc(m.titulo)}</h3>

@@ -1,7 +1,6 @@
 // Painel "♿ Acessibilidade": perfis rápidos, tema, tamanho do texto e opções de
 // leitura, foco e conforto. As mudanças valem na hora e ficam salvas.
 import { $ } from './util.js';
-import { anunciar } from './anuncios.js';
 
 export function iniciarAcessibilidade() {
   const dialogo = $('dialogo-a11y');

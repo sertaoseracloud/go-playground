@@ -2,8 +2,7 @@
 import { modulos } from '../conteudo/trilha.js';
 import { calcularJornada } from '../gamificacao.js';
 import { statusDe, dataDe } from '../progresso.js';
-import { linkItem } from '../compartilhar.js';
-import { esc, $ } from './util.js';
+import { esc } from './util.js';
 
 export function jornadaAtual() {
   return calcularJornada({ modulos, statusDe, dataDe });
