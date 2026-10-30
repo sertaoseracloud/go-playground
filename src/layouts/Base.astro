@@ -8,6 +8,7 @@ import '../landing.css';
 import '../cenarios.css';
 import { PREFIXO_ARMAZENAMENTO } from '../ambiente.js';
 import PainelAcessibilidade from '../components/PainelAcessibilidade';
+import TutorialInterativo from '../components/TutorialInterativo';
 import { url } from '../lib/rotas';
 
 interface Props { titulo: string; descricao: string; menu?: 'trilha' | 'livre' | 'validar' | 'instrutor' }
@@ -127,5 +128,7 @@ const atual = (nome: string) => (menu === nome ? { 'aria-current': 'page' as con
 
   <!-- Ilha de acessibilidade: conecta o botão ♿ ao diálogo de preferências -->
   <PainelAcessibilidade client:idle />
+  <!-- Ilha de tutorial: conecta o botão ❓ ao guia passo-a-passo interativo -->
+  <TutorialInterativo client:idle />
 </body>
 </html>
