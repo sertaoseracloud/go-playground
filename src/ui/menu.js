@@ -8,11 +8,13 @@ import { $ } from './util.js';
  */
 export function iniciarFlutuantes() {
   const grupo = $('flutuantes');
-  if (!grupo) return;
   const ultimo = new WeakMap();
   document.addEventListener('scroll', (e) => {
     const alvo = e.target === document ? document.scrollingElement : e.target;
     if (!(alvo instanceof Element) || grupo.contains(document.activeElement)) return;
+    // Só a rolagem da página conta: o terminal rola sozinho enquanto escreve, e o editor e os
+    // painéis rolam por dentro. Antes, o ❓ e o ♿ sumiam da tela do exercício sem a pessoa rolar nada.
+    if (alvo.closest('.painel, .terminal, .cm-editor, dialog')) return;
     const antes = ultimo.get(alvo) ?? 0;
     const agora = alvo.scrollTop;
     ultimo.set(alvo, agora);
@@ -30,24 +32,33 @@ export function iniciarFlutuantes() {
   let aberto = false;
   const abrir = (valor) => {
     aberto = valor;
-    if (botao) {
-      botao.setAttribute('aria-expanded', String(aberto));
-      const span = botao.querySelector('span');
-      if (span) span.textContent = aberto ? '✕' : '⚙️';
-    }
-    if (itens) itens.hidden = Boolean(celular?.matches) && !aberto;
+    botao.setAttribute('aria-expanded', String(aberto));
+    botao.querySelector('span').textContent = aberto ? '✕' : '⚙️';
+    itens.hidden = Boolean(celular?.matches) && !aberto;
   };
   abrir(false);
-  if (botao) botao.addEventListener('click', () => abrir(!aberto));
-  if (itens) itens.addEventListener('click', (e) => { if (e.target.closest('a, button')) abrir(false); });
+  botao.addEventListener('click', () => abrir(!aberto));
+  itens.addEventListener('click', (e) => { if (e.target.closest('a, button')) abrir(false); });
   document.addEventListener('click', (e) => { if (aberto && !grupo.contains(e.target)) abrir(false); });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && aberto) {
       abrir(false);
-      botao?.focus();
+      botao.focus();
     }
   });
   window.addEventListener('hashchange', () => abrir(false));
+  // No celular, o ❓ e o ♿ somem atrás do ⚙️ quando abrem a janela: ao fechar, o foco volta
+  // para o ⚙️ (o navegador tentaria devolvê-lo ao botão escondido e ele se perderia na página).
+  let abriuDaqui = false;
+  itens.addEventListener('click', (e) => { abriuDaqui = Boolean(e.target.closest('[aria-haspopup="dialog"]')); });
+  document.querySelectorAll('dialog').forEach((dialogo) => dialogo.addEventListener('close', () => {
+    if (!abriuDaqui) return;
+    abriuDaqui = false;
+    setTimeout(() => {
+      const perdido = !document.activeElement || document.activeElement === document.body || !document.activeElement.offsetParent;
+      if (perdido && itens.hidden) botao.focus();
+    });
+  }));
   // Cruzou a faixa do celular (girou, ou a janela mudou): refaz o que fica à mostra.
   celular?.addEventListener?.('change', () => abrir(aberto));
 }
@@ -65,21 +76,17 @@ export function iniciarMenu() {
   };
   const estaAberto = () => painel.classList.contains('aberto');
 
-  if (botao) {
-    botao.addEventListener('click', () => abrir(!estaAberto()));
-  }
-  if (painel) {
-    painel.addEventListener('click', (e) => {
-      if (e.target.closest('a, button')) abrir(false);
-    });
-  }
+  botao.addEventListener('click', () => abrir(!estaAberto()));
+  painel.addEventListener('click', (e) => {
+    if (e.target.closest('a, button')) abrir(false);
+  });
   document.addEventListener('click', (e) => {
-    if (painel && estaAberto() && !painel.contains(e.target) && (!botao || !botao.contains(e.target))) abrir(false);
+    if (estaAberto() && !painel.contains(e.target) && !botao.contains(e.target)) abrir(false);
   });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && estaAberto()) {
       abrir(false);
-      botao?.focus();
+      botao.focus();
     }
   });
   window.addEventListener('hashchange', () => abrir(false));
