@@ -1,0 +1,36 @@
+---
+// Termos de uso: regras básicas de utilização do DivergeGo.
+import Base from '../../layouts/Base.astro';
+
+const titulo = 'Termos de uso — DivergeGo';
+const descricao = 'Termos de uso do DivergeGo: plataforma gratuita e open-source para aprender Go.';
+---
+
+<Base titulo={titulo} descricao={descricao}>
+ <main class="tela-termos" style="max-width: 48rem; margin: 0 auto; padding: 2rem 1rem;">
+ <h1>📋 Termos de uso</h1>
+ <p>{descricao}</p>
+
+ <div style="margin-top: 2rem; display: flex; flex-direction: column; gap: 1.5rem;">
+ <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+ <h2>Uso gratuito</h2>
+ <p>O DivergeGo é uma plataforma gratuita e open-source. Você pode usá-la para fins pessoais, educacionais ou comerciais sem restrições.</p>
+ </section>
+
+ <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+ <h2>Certificados</h2>
+ <p>Os certificados emitidos pelo DivergeGo atestam a conclusão de exercícios na plataforma. Eles não constituem certificação profissional reconhecida por órgãos reguladores.</p>
+ </section>
+
+ <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+ <h2>Responsabilidade</h2>
+ <p>O DivergeGo é fornecido "como está", sem garantias de qualquer tipo. O conteúdo é educacional e não substitui consultoria profissional.</p>
+ </section>
+
+ <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+ <h2>Alterações</h2>
+ <p>Estes termos podem ser atualizados a qualquer momento. A versão mais recente estará sempre disponível nesta página.</p>
+ </section>
+ </div>
+ </main>
+</Base>

@@ -43,3 +43,10 @@ export function renderInicio(el) {
       </div>
     </div>`;
 }
+/**
+ * Stub de pedido de nome: retorna null até que a lógica de onboarding seja migrada.
+ * @returns {string | null} Nome do aluno ou null se não definido
+ */
+export function pedirNome() {
+  return null;
+}

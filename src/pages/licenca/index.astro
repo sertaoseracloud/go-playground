@@ -1,0 +1,37 @@
+---
+// Página de licença: termos de uso do conteúdo e código do DivergeGo.
+import Base from '../../layouts/Base.astro';
+
+const titulo = 'Licença — DivergeGo';
+const descricao = 'O DivergeGo é distribuído sob licença MIT. O conteúdo dos exercícios é CC BY-SA 4.0.';
+---
+
+<Base titulo={titulo} descricao={descricao}>
+ <main class="tela-licenca" style="max-width: 48rem; margin: 0 auto; padding: 2rem 1rem;">
+ <h1>📜 Licença</h1>
+ <p>{descricao}</p>
+
+ <div style="margin-top: 2rem; display: flex; flex-direction: column; gap: 1.5rem;">
+ <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+ <h2>Código-fonte</h2>
+ <p>O código do DivergeGo (simulador, interface, scripts de build) é distribuído sob a licença <strong>MIT</strong>. Você pode usar, modificar e redistribuir livremente.</p>
+ </section>
+
+ <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+ <h2>Conteúdo dos exercícios</h2>
+ <p>Os textos, enunciados e materiais didáticos são distribuídos sob <strong>Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)</strong>.</p>
+ <p style="margin-top: 0.75rem;">Você pode compartilhar e adaptar o conteúdo, desde que atribua o DivergeGo como fonte e distribua sob a mesma licença.</p>
+ </section>
+
+ <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+ <h2>Marcas e logotipos</h2>
+ <p>O nome "DivergeGo", o emoji 🏗️ e os logotipos do projeto não estão cobertos pela licença aberta. Use-os apenas para referenciar o projeto, não para endossar produtos derivados sem autorização.</p>
+ </section>
+
+ <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+ <h2>Bibliotecas de terceiros</h2>
+ <p>O DivergeGo usa bibliotecas open-source com suas próprias licenças (CodeMirror, Noble Ed25519, Fira Code, Atkinson Hyperlegible). Consulte os respectivos repositórios para detalhes.</p>
+ </section>
+ </div>
+ </main>
+</Base>

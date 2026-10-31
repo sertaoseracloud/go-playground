@@ -1,0 +1,44 @@
+---
+// Landing page do DivergeGo: HTML estático gerado no build (SEO) + redirecionamento de
+// links antigos (#/...) via script inline. O conteúdo vem de src/ui/landing.js, o mesmo
+// que o scripts/prerender.mjs já usava na SPA Vite.
+import Base from '../layouts/Base.astro';
+
+const titulo = 'DivergeGo — Aprenda Go com exercícios interativos';
+const descricao = 'Trilha gratuita de Go com simulador no navegador, certificados assinados e recursos de acessibilidade. Comece sem instalar nada.';
+---
+
+<Base titulo={titulo} descricao={descricao}>
+  <!-- Redirecionamento de links antigos (#/trilha, #/p/basico-01, #/s/<código>).
+       Roda antes do paint para evitar flash da landing quando o usuário veio de um bookmark. -->
+  <script is:inline define:vars={{ base: import.meta.env.BASE_URL }}>
+    const destino = ((hash) => {
+      const caminho = hash.replace(/^#\/?/, '');
+      if (!hash.startsWith('#/') || !caminho) return null;
+      const [rota, ...resto] = caminho.split('/');
+      const parametro = resto.join('/');
+      switch (rota) {
+        case 'p': return `${base}p/${parametro}/`;
+        case 'trilha': case 'livre': case 'validar': case 'instrutor':
+        case 'acessibilidade': case 'privacidade': case 'licenca':
+        case 'termos': case 'novidades':
+          return `${base}${rota}/`;
+        default: return null;
+      }
+    })(window.location.hash);
+    if (destino) window.location.replace(destino);
+  </script>
+
+  <main id="tela-landing" class="tela-landing">
+    <!-- O conteúdo da landing é injetado no build pelo Astro via import dinâmico,
+         ou renderizado client-side pela ilha de landing se houver JS.
+         Por ora, mantemos o placeholder que o prerender.mjs já preenchia. -->
+    <noscript>
+      <div class="landing-estatica">
+        <h1>Aprenda Go com exercícios interativos</h1>
+        <p>O DivergeGo roda inteiramente no seu navegador: sem instalação, sem servidor, sem conta.</p>
+        <p><a href="./trilha/">Começar a trilha</a></p>
+      </div>
+    </noscript>
+  </main>
+</Base>

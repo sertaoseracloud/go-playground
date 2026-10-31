@@ -1,0 +1,28 @@
+---
+// Playground livre: editor Go conectado ao terminal para execução no navegador.
+// A ilha PlaygroundLivre unifica EditorGo + TerminalGo com botão Executar.
+import Base from '../../layouts/Base.astro';
+import PlaygroundLivre from '../../components/PlaygroundLivre';
+
+const titulo = 'Playground livre — DivergeGo';
+const descricao = 'Experimente Go no navegador sem compromisso: escreva, compile e rode código Go diretamente no seu navegador.';
+const codigoInicial = `package main
+
+import "fmt"
+
+func main() {
+\tfmt.Println("Olá, DivergeGo!")
+}
+`;
+---
+
+<Base titulo={titulo} descricao={descricao} menu="livre">
+ <main class="tela-livre" style="max-width: 64rem; margin: 0 auto; padding: 2rem 1rem;">
+ <h1>🧪 Playground livre</h1>
+ <p>{descricao}</p>
+
+ <div class="playground-ilha" style="margin-top: 2rem;">
+ <PlaygroundLivre client:visible codigoInicial={codigoInicial} />
+ </div>
+ </main>
+</Base>

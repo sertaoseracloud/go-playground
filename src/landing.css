@@ -58,6 +58,11 @@
 .janela-barra b { margin-left: 8px; font-weight: 400; font-size: 0.8rem; color: var(--suave); font-family: var(--fonte-codigo); }
 .janela-codigo { margin: 0; padding: 16px 18px; font-family: var(--fonte-codigo); font-size: 0.86rem; line-height: 1.7; color: var(--texto); overflow-x: auto; white-space: pre; }
 .t-tag { color: var(--rosa); }
+
+/* ---------- módulos em breve ---------- */
+.modulo-card.modulo-em-breve { border-style: dashed; opacity: 0.7; }
+.modulo-card.modulo-em-breve h3 { color: var(--suave); }
+.badge-em-breve { font-size: 0.75rem; font-weight: 400; color: var(--suave); }
 .t-var { color: var(--texto); }
 .t-str { color: var(--amarelo); }
 .t-num { color: var(--roxo); }

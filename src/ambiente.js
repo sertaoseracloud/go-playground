@@ -10,6 +10,8 @@ const TESTE = { homologacao: true, prefixo: 'go-playground-homologacao:', site: 
 /** O ambiente de cada modo (função pura, para os testes). */
 export const configurarAmbiente = (homologacao) => ({ ...(homologacao ? TESTE : PRINCIPAL) });
 
-export const HOMOLOGACAO = typeof __HOMOLOGACAO__ !== 'undefined' && __HOMOLOGACAO__ === true;
+// __HOMOLOGACAO__ é injetado pelo Vite como string JSON ("true"/"false") ou booleano;
+// a comparação deve aceitar ambos para funcionar antes e depois do minificador.
+export const HOMOLOGACAO = typeof __HOMOLOGACAO__ !== 'undefined' && (__HOMOLOGACAO__ === true || __HOMOLOGACAO__ === 'true');
 export const PREFIXO_ARMAZENAMENTO = HOMOLOGACAO ? TESTE.prefixo : PRINCIPAL.prefixo;
 export const SITE_ATUAL = HOMOLOGACAO ? TESTE.site : PRINCIPAL.site;

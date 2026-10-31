@@ -15,11 +15,24 @@ if (!dist || !['principal', 'homologacao'].includes(modo)) {
 }
 
 const erros = [];
-const html = readFileSync(join(dist, 'index.html'), 'utf8');
-const bundle = readdirSync(join(dist, 'assets'))
-  .filter((a) => a.endsWith('.js'))
-  .map((a) => readFileSync(join(dist, 'assets', a), 'utf8'))
-  .join('\n');
+if (!dist || !existsSync(dist)) {
+  console.error(`conferir-build: diretório não encontrado: ${dist}`);
+  process.exit(2);
+}
+const indexPath = join(dist, 'index.html');
+if (!existsSync(indexPath)) {
+  console.error(`conferir-build: index.html não encontrado em ${dist}`);
+  process.exit(2);
+}
+const html = readFileSync(indexPath, 'utf8');
+// Astro gera os bundles em _astro/; builds antigos (Vite) usavam assets/.
+// O script verifica ambos para manter compatibilidade.
+const dirsDeAssets = ['_astro', 'assets'].map((d) => join(dist, d)).filter((d) => existsSync(d));
+const bundle = dirsDeAssets.flatMap((dir) =>
+  readdirSync(dir)
+    .filter((a) => a.endsWith('.js'))
+    .map((a) => readFileSync(join(dir, a), 'utf8')),
+).join('\n');
 const sitemap = existsSync(join(dist, 'sitemap.xml'));
 const noindex = html.includes('<meta name="robots" content="noindex">');
 

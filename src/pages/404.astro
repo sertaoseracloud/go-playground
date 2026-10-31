@@ -1,0 +1,16 @@
+---
+// Página 404: rota não encontrada. O Astro gera este HTML estático; links antigos
+// que não casam com destinoDeHashAntigo caem aqui.
+import Base from '../layouts/Base.astro';
+
+const titulo = 'Página não encontrada — DivergeGo';
+const descricao = 'A página que você procurou não existe ou foi movida. Volte à trilha ou ao playground livre.';
+---
+
+<Base titulo={titulo} descricao={descricao}>
+ <main class="tela-landing" style="text-align: center; padding: 4rem 1rem;">
+ <h1>404</h1>
+ <p>Página não encontrada.</p>
+ <p><a href={import.meta.env.BASE_URL}>Voltar ao início</a></p>
+ </main>
+</Base>
