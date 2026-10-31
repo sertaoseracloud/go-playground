@@ -6,13 +6,14 @@
 // a assinatura torna a verificação pública e independente do site, mas não impede quem
 // extrair a semente de assinar certificados falsos. Para isso, só assinando num servidor.
 import * as ed from '@noble/ed25519';
-import { sha512 } from '@noble/hashes/sha2.js';
+import { sha512 } from '@noble/hashes/sha2';
 
-// @noble/ed25519 v3.x: ed.hashes.sha512 é o ponto de injeção síncrono; etc é congelado.
-ed.hashes.sha512 = sha512;
+// @noble/ed25519 v2.x usa etc.sha512Sync; v3.x usa hashes.sha512.
+ed.etc.sha512Sync = (...m) => sha512(ed.etc.concatBytes(...m));
 
 const texto = (s) => new TextEncoder().encode(s);
-// A versão 3 só aceita bytes; as chaves e assinaturas continuam guardadas em hexadecimal.
+// getPublicKey e sign/verify da v2 aceitam hex ou bytes, mas a conversão explícita evita
+// ambiguidade quando a semente vem como string hexadecimal do build.
 const bytes = (hex) => ed.etc.hexToBytes(hex);
 
 // Injetadas no build e nos testes. Fora do Vite (scripts) não existem.
