@@ -1,7 +1,14 @@
+import '@fontsource/fira-code/latin-400.css';
+import '@fontsource/fira-code/latin-500.css';
+import '@fontsource/fira-code/latin-600.css';
+import '@fontsource/fira-code/latin-700.css';
+import '@fontsource/atkinson-hyperlegible/latin-400.css';
+import '@fontsource/atkinson-hyperlegible/latin-700.css';
 import './estilo.css';
 import './caminho.css';
 import './cenarios.css';
 import './landing.css';
+import './acessibilidade-ux.css';
 import { lerRota } from './compartilhar.js';
 import { iniciarAcessibilidade } from './ui/acessibilidade.js';
 import { renderLanding } from './ui/landing.js';
