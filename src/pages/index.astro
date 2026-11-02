@@ -1,18 +1,14 @@
 ---
 // Landing page do DivergeGo: HTML estático com mesmos estilos e estrutura das páginas institucionais.
-// O conteúdo vem de src/ui/landing.js para manter paridade com a SPA; os links usam rotas estáticas.
+// Usa markup Astro nativo (sem renderLanding) para garantir links corretos e consistência visual.
 import Base from '../layouts/Base.astro';
-import { renderLanding } from '../ui/landing.js';
 import { PRINCIPAL } from '../seo.js';
 import { url } from '../lib/rotas';
+import { modulos, PROXIMOS_MODULOS } from '../conteudo/trilha.js';
 
 const titulo = PRINCIPAL.titulo;
 const descricao = PRINCIPAL.descricao;
-
-// Renderiza a landing em HTML puro no build para SEO e noscript.
-const container = { innerHTML: '' };
-renderLanding(container);
-const landingHtml = container.innerHTML;
+const totalModulos = modulos.length + PROXIMOS_MODULOS.length;
 ---
 
 <Base titulo={titulo} descricao={descricao}>
@@ -36,72 +32,107 @@ const landingHtml = container.innerHTML;
     if (destino) window.location.replace(destino);
   </script>
 
-  <main class="tela-landing" style="max-width: 48rem; margin: 0 auto; padding: 2rem 1rem;">
-    <!-- Conteúdo da landing renderizado via JS (mesma função da SPA), com links corrigidos para rotas estáticas -->
-    <div id="landing-conteudo" set:html={landingHtml} />
+  <main class="pagina-texto">
+    <h1>Aprenda <span class="destaque">Go</span> do zero, com acessibilidade para todas as pessoas</h1>
+    <p class="hero-sub">Uma trilha gamificada: sintaxe, concorrência, APIs e projetos.
+      Você escreve o código, roda e vê os testes na hora. Sem instalar nada.</p>
 
-    <!-- Links rápidos no mesmo estilo dos cards das outras páginas institucionais -->
+    <div class="hero-acoes">
+      <a href={url.trilha()} class="btn btn-verde btn-grande">🚀 Começar a trilha</a>
+      <a href={url.livre()} class="btn btn-fantasma btn-grande">🧪 Playground livre</a>
+    </div>
+
+    <ul class="hero-numeros" aria-label="A trilha em números">
+      <li><b>{totalModulos}</b> módulos</li>
+    </ul>
+
     <div style="margin-top: 3rem; display: flex; flex-direction: column; gap: 1.5rem;">
-      <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
-        <h2>🚀 Começar agora</h2>
-        <p>A trilha é gratuita e roda inteiramente no navegador. Sem cadastro, sem instalação.</p>
-        <div style="margin-top: 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
-          <a href={url.trilha()} class="btn btn-verde" style="display: inline-block; padding: 0.75rem 1.5rem; background: var(--cor-verde, #50fa7b); color: #282a36; border-radius: 0.25rem; text-decoration: none; font-weight: 600;">🗺️ Ir para a trilha</a>
-          <a href={url.livre()} class="btn btn-fantasma" style="display: inline-block; padding: 0.75rem 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.25rem; text-decoration: none; color: inherit;">🧪 Playground livre</a>
-        </div>
+      <section class="card-institucional">
+        <h2>🗺️ Módulos da trilha</h2>
+        <ol class="modulos-lista">
+          {modulos.map((m) => (
+            <li class="modulo-item">
+              <span class="modulo-icone" aria-hidden="true">{m.icone}</span>
+              <div>
+                <h3>{m.titulo}</h3>
+                <p>{m.descricao}</p>
+              </div>
+            </li>
+          ))}
+          {PROXIMOS_MODULOS.map((m) => (
+            <li class="modulo-item modulo-em-breve">
+              <span class="modulo-icone" aria-hidden="true">{m.icone}</span>
+              <div>
+                <h3>{m.titulo} <span class="badge-em-breve">(em breve)</span></h3>
+                <p>Conteúdo planejado para as próximas versões.</p>
+              </div>
+            </li>
+          ))}
+        </ol>
       </section>
 
-      <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+      <section class="card-institucional">
         <h2>🎓 Certificados</h2>
         <p>Ao concluir cada módulo, você recebe um certificado assinado digitalmente. Valide certificados existentes ou gere novos baseados no seu progresso.</p>
-        <p style="margin-top: 0.75rem;"><a href={url.validar()} style="color: var(--cor-link, #8be9fd);">🔎 Validar ou gerar certificado →</a></p>
+        <p class="card-link"><a href={url.validar()}>🔎 Validar ou gerar certificado →</a></p>
       </section>
 
-      <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+      <section class="card-institucional">
         <h2>♿ Acessível para todas as pessoas</h2>
         <p>Temas, escala de texto, régua de leitura, navegação por teclado, perfis cognitivos e suporte a leitor de tela. Detalhes na página de acessibilidade.</p>
-        <p style="margin-top: 0.75rem;"><a href={url.acessibilidade()} style="color: var(--cor-link, #8be9fd);">♿ Ver recursos de acessibilidade →</a></p>
+        <p class="card-link"><a href={url.acessibilidade()}>♿ Ver recursos de acessibilidade →</a></p>
+      </section>
+
+      <section class="card-institucional">
+        <h2>📰 Novidades</h2>
+        <p>Acompanhe as atualizações e novas funcionalidades do DivergeGo.</p>
+        <p class="card-link"><a href={url.novidades()}>📰 Ver changelog →</a></p>
       </section>
     </div>
   </main>
 </Base>
 
 <style>
-  /* Corrige links da landing renderizada via JS para usar rotas estáticas em vez de hash routing */
-  :global(#landing-conteudo a[href^="#/trilha"]) { pointer-events: auto; }
-  :global(#landing-conteudo .hero-acoes .btn) {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.25rem;
-    text-decoration: none;
-    font-weight: 600;
+  .destaque { color: var(--roxo); }
+  .hero-sub { margin: 16px 0 22px; font-size: 1.08rem; color: var(--suave); max-width: 56ch; }
+  .hero-acoes { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0; }
+  .btn-grande { padding: 12px 20px; font-size: 1rem; text-decoration: none; }
+  .hero-numeros { display: flex; flex-wrap: wrap; gap: 8px 22px; list-style: none; margin: 0; padding: 0; color: var(--suave); }
+  .hero-numeros b { display: block; font-size: 1.6rem; color: var(--verde); line-height: 1.1; }
+
+  /* Cards no mesmo estilo das páginas institucionais */
+  .card-institucional {
+    padding: 1.5rem;
+    border: 1px solid var(--linha);
+    border-radius: 0.5rem;
+    background: var(--fundo-escuro);
   }
-  :global(#landing-conteudo .btn-verde) {
-    background: var(--cor-verde, #50fa7b);
-    color: #282a36;
-  }
-  :global(#landing-conteudo .btn-fantasma) {
-    border: 1px solid var(--cor-borda, #333);
-    color: inherit;
-  }
-  :global(#landing-conteudo .modulos-landing) {
+  .card-institucional h2 { margin: 0 0 0.75rem; color: var(--ciano); font-size: 1.1rem; }
+  .card-institucional p { margin: 0 0 0.75rem; }
+  .card-link { margin-top: 0.75rem; }
+  .card-link a { color: var(--roxo); }
+
+  /* Lista de módulos */
+  .modulos-lista {
     list-style: none;
     padding: 0;
-    margin: 1.5rem 0 0;
+    margin: 1rem 0 0;
     display: flex;
     flex-direction: column;
+    gap: 0.75rem;
+  }
+  .modulo-item {
+    display: flex;
     gap: 1rem;
-  }
-  :global(#landing-conteudo .modulo-card) {
-    padding: 1.5rem;
-    border: 1px solid var(--cor-borda, #333);
+    align-items: flex-start;
+    padding: 1rem;
+    border: 1px solid var(--linha);
     border-radius: 0.5rem;
+    background: var(--fundo);
   }
-  :global(#landing-conteudo .modulo-em-breve) {
-    opacity: 0.6;
-  }
-  :global(#landing-conteudo .badge-em-breve) {
-    font-size: 0.8em;
-    font-weight: normal;
-  }
+  .modulo-icone { font-size: 1.8rem; flex-shrink: 0; }
+  .modulo-item h3 { margin: 0 0 0.25rem; font-size: 1rem; color: var(--texto); }
+  .modulo-item p { margin: 0; font-size: 0.9rem; color: var(--suave); }
+  .modulo-em-breve { opacity: 0.6; border-style: dashed; }
+  .badge-em-breve { font-size: 0.75rem; font-weight: normal; color: var(--suave); }
 </style>
