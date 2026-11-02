@@ -3,7 +3,7 @@
 //
 // O formato é o mesmo do terraform-playground: { caminho, titulo, descricao }.
 // O `caminho` vira o sufixo da URL (/caminho/) e o parâmetro do `getStaticPaths()`.
-import { todosOsItens } from './lib/conteudo.js';
+import { todosOsItens } from './lib/conteudo.ts';
 import { PRINCIPAL, NOME } from './seo.js';
 
 const paginasInstitucionais = [
@@ -33,7 +33,7 @@ export function paginasDoSite() {
 }
 
 /** Busca uma página pelo caminho (para o prerender montar o SEO). */
-export function paginaDe({ tela, id, codigo }) {
+export function paginaDe({ tela, id }) {
   if (tela === 'landing' || !tela) return paginasInstitucionais[0];
   if (tela === 'inicio') return paginasInstitucionais.find((p) => p.caminho === 'trilha') ?? paginasInstitucionais[0];
   if (tela === 'item' && id) {
