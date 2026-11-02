@@ -3,7 +3,7 @@
 //
 // O formato é o mesmo do terraform-playground: { caminho, titulo, descricao }.
 // O `caminho` vira o sufixo da URL (/caminho/) e o parâmetro do `getStaticPaths()`.
-import { todosOsItens } from './lib/conteudo.ts';
+import { todosOsItens } from './lib/conteudo.js';
 import { PRINCIPAL, NOME } from './seo.js';
 
 const paginasInstitucionais = [
