@@ -1,8 +1,34 @@
 import { defineConfig } from 'vite';
+import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { chavePublicaDe } from './src/ed25519.js';
 import { pluginHistorico, versaoDoPacote } from './scripts/plugin-historico.mjs';
-import gopherjsPlugin from './scripts/gopherjs-plugin.mjs';
+
+const stub = fileURLToPath(new URL('./src/php-stub.js', import.meta.url));
+
+// A extensão intl (intl.so + dados ICU, ~43 MB) só é baixada com withIntl,
+// que o site não usa. Os imports dela viram um módulo vazio para não irem ao deploy.
+const SEM_INTL = /(\/intl\.so\?url|\/icu\.dat)$/;
+const VAZIO = 'virtual:sem-intl';
+const semIntl = {
+  name: 'sem-intl',
+  enforce: 'pre',
+  resolveId: (id) => (SEM_INTL.test(id) ? VAZIO : null),
+  load: (id) => (id === VAZIO ? 'export default "";' : null),
+};
+
+// Os pacotes @php-wasm importam .wasm/.dat/.so esperando receber a URL do arquivo.
+// O Vite 8 (Rolldown) trata .wasm como módulo WebAssembly; aqui eles voltam a ser URL.
+const ARQUIVOS_PHP = /\.(wasm|dat|so|la)$/;
+const ativosPhp = {
+  name: 'ativos-php-como-url',
+  enforce: 'pre',
+  async resolveId(id, importer) {
+    if (!ARQUIVOS_PHP.test(id) || !importer?.includes('@php-wasm')) return null;
+    const resolvido = await this.resolve(id, importer, { skipSelf: true });
+    return resolvido ? `${resolvido.id}?url` : null;
+  },
+};
 
 /**
  * Chaves dos certificados. A palavra secreta vem da variável de ambiente
@@ -10,20 +36,21 @@ import gopherjsPlugin from './scripts/gopherjs-plugin.mjs';
  * site: o bundle recebe só valores derivados dela (SHA-256 com rótulos diferentes):
  *   - a chave do selo (HMAC-SHA256);
  *   - a semente Ed25519 (assinatura) e a chave pública correspondente.
- * Sem a variável, o build de produção falha; o modo dev usa um valor próprio e os
- * testes têm as chaves deles em vitest.config.js.
+ * A homologação usa outra variável, sem compartilhar chaves com produção.
+ * Sem a variável correspondente, o build falha; o modo dev usa um valor próprio.
  */
 const HOMOLOGACAO = process.env.HOMOLOGACAO === '1';
 
-/** Na homologação (HOMOLOGACAO=1), o segredo é outro: certificado de teste não vale no site principal. */
 function segredo(command) {
-  const valor = HOMOLOGACAO ? process.env.CERTIFICADO_SEGREDO_HOMOLOGACAO : process.env.CERTIFICADO_SEGREDO;
+  const valor = HOMOLOGACAO
+    ? process.env.CERTIFICADO_SEGREDO_HOMOLOGACAO
+    : process.env.CERTIFICADO_SEGREDO;
   if (valor) return valor;
   if (command === 'serve') return HOMOLOGACAO ? 'segredo-de-homologacao' : 'segredo-de-desenvolvimento';
   if (HOMOLOGACAO) throw new Error('Defina CERTIFICADO_SEGREDO_HOMOLOGACAO para gerar o build de homologação.');
   throw new Error('Defina CERTIFICADO_SEGREDO para gerar o build (veja o README, seção Certificados).');
 }
-const derivar = (rotulo, valor) => createHash('sha256').update(`go-playground:${rotulo}:${valor}`, 'utf8').digest('hex');
+const derivar = (rotulo, valor) => createHash('sha256').update(`php-playground:${rotulo}:${valor}`, 'utf8').digest('hex');
 
 /** Publica a chave pública Ed25519 junto com o site, para quem verifica fora dele. */
 const publicarChave = (chavePublica) => ({
@@ -49,14 +76,21 @@ export default defineConfig(({ command }) => {
   const chavePublica = chavePublicaDe(semente);
   return {
     base: './',
-    plugins: [publicarChave(chavePublica), pluginHistorico(), gopherjsPlugin()],
+    plugins: [semIntl, ativosPhp, publicarChave(chavePublica), pluginHistorico()],
     define: {
+      __HOMOLOGACAO__: JSON.stringify(HOMOLOGACAO),
       __CHAVE_CERTIFICADO__: JSON.stringify(derivar('certificado', valor)),
       __SEMENTE_ED25519__: JSON.stringify(semente),
       __CHAVE_PUBLICA_ED25519__: JSON.stringify(chavePublica),
       __VERSAO__: JSON.stringify(versaoDoPacote()),
-      __HOMOLOGACAO__: JSON.stringify(HOMOLOGACAO),
     },
+    assetsInclude: [/\.dat$/, /\.wasm$/, /\.so$/, /\.la$/],
+    optimizeDeps: { exclude: ['@php-wasm/web'] },
+    resolve: {
+      // Só o PHP 8.4 entra no site; as outras versões ocupariam ~300 MB.
+      alias: [{ find: /^@php-wasm\/web-(5-2|7-4|8-0|8-1|8-2|8-3|8-5)$/, replacement: stub }],
+    },
+    worker: { format: 'es', plugins: () => [semIntl, ativosPhp] },
     build: { target: 'es2022', chunkSizeWarningLimit: 1500 },
   };
 });

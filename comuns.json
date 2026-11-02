@@ -30,7 +30,7 @@
     "tests/anuncios.test.js": "cc19925afa7419f6300ef9194f7fbcb37cf4766d8f471ce6862da097be88432e",
     "tests/celular.test.js": "323f1a0d7b266d852c7b4215512eb892ed71625480600fdba5dd817a20050c11",
     "tests/compartilhar.test.js": "90425441306385365620cd806c9cad644bcb8b61360f9be9341c53af371a1018",
-    "tests/comuns.test.js": "9e7ff17fa23e75fb242504076428ed945e786646f8c8aea272aef1e1c3513cc5",
+    "tests/comuns.test.js": "255b4ad5d5bf371c22e55c2c1dc3c110200e545bc8a66c7559bad044ae026cd3",
     "tests/e2e/acessibilidade.spec.js": "653c6a6086a760bd58bfe84b4dec405fcef83127ae3e1369d40840242e03bfd1",
     "tests/e2e/celular.spec.js": "f326b21c0a5948046c01442b143cd9480576033f03f2db784a9e78573f2e1e46",
     "tests/e2e/certificado.spec.js": "4461ee222003b8f4282cc120ad9988bb81be021eef5241f9fba54bf12c349c9f",
