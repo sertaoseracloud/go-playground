@@ -1,10 +1,10 @@
 ---
-// Landing page do DivergeGo: HTML estático gerado no build (SEO) + redirecionamento de
-// links antigos (#/...) via script inline. O conteúdo vem de src/ui/landing.js, o mesmo
-// que o scripts/prerender.mjs já usava na SPA Vite.
+// Landing page do DivergeGo: HTML estático com mesmos estilos e estrutura das páginas institucionais.
+// O conteúdo vem de src/ui/landing.js para manter paridade com a SPA; os links usam rotas estáticas.
 import Base from '../layouts/Base.astro';
 import { renderLanding } from '../ui/landing.js';
 import { PRINCIPAL } from '../seo.js';
+import { url } from '../lib/rotas';
 
 const titulo = PRINCIPAL.titulo;
 const descricao = PRINCIPAL.descricao;
@@ -17,7 +17,7 @@ const landingHtml = container.innerHTML;
 
 <Base titulo={titulo} descricao={descricao}>
   <!-- Redirecionamento de links antigos (#/trilha, #/p/basico-01, #/s/<código>).
-       Roda antes do paint para evitar flash da landing quando o usuário veio de um bookmark. -->
+       Roda antes do paint para evitar flash quando o usuário veio de um bookmark. -->
   <script is:inline define:vars={{ base: import.meta.env.BASE_URL }}>
     const destino = ((hash) => {
       const caminho = hash.replace(/^#\/?/, '');
@@ -36,16 +36,72 @@ const landingHtml = container.innerHTML;
     if (destino) window.location.replace(destino);
   </script>
 
-  <!-- Shell da SPA: o main.js assume após o load e evita re-render se já houver conteúdo. -->
-  <main id="tela-landing" class="tela-landing" set:html={landingHtml} />
-  <main id="tela-inicio" class="tela-inicio" hidden />
-  <main id="tela-certificado" class="tela-certificado" hidden />
-  <main id="tela-privacidade" class="tela-privacidade" hidden />
-  <main id="tela-validador" class="tela-privacidade" hidden />
-  <main id="tela-licenca" class="tela-privacidade" hidden />
-  <main id="tela-termos" class="tela-privacidade" hidden />
-  <main id="tela-novidades" class="tela-privacidade" hidden />
-  <main id="tela-instrutor" class="tela-privacidade" hidden />
-  <main id="tela-acessibilidade" class="tela-privacidade" hidden />
-  <main id="tela-item" class="tela-item" hidden />
+  <main class="tela-landing" style="max-width: 48rem; margin: 0 auto; padding: 2rem 1rem;">
+    <!-- Conteúdo da landing renderizado via JS (mesma função da SPA), com links corrigidos para rotas estáticas -->
+    <div id="landing-conteudo" set:html={landingHtml} />
+
+    <!-- Links rápidos no mesmo estilo dos cards das outras páginas institucionais -->
+    <div style="margin-top: 3rem; display: flex; flex-direction: column; gap: 1.5rem;">
+      <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+        <h2>🚀 Começar agora</h2>
+        <p>A trilha é gratuita e roda inteiramente no navegador. Sem cadastro, sem instalação.</p>
+        <div style="margin-top: 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <a href={url.trilha()} class="btn btn-verde" style="display: inline-block; padding: 0.75rem 1.5rem; background: var(--cor-verde, #50fa7b); color: #282a36; border-radius: 0.25rem; text-decoration: none; font-weight: 600;">🗺️ Ir para a trilha</a>
+          <a href={url.livre()} class="btn btn-fantasma" style="display: inline-block; padding: 0.75rem 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.25rem; text-decoration: none; color: inherit;">🧪 Playground livre</a>
+        </div>
+      </section>
+
+      <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+        <h2>🎓 Certificados</h2>
+        <p>Ao concluir cada módulo, você recebe um certificado assinado digitalmente. Valide certificados existentes ou gere novos baseados no seu progresso.</p>
+        <p style="margin-top: 0.75rem;"><a href={url.validar()} style="color: var(--cor-link, #8be9fd);">🔎 Validar ou gerar certificado →</a></p>
+      </section>
+
+      <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
+        <h2>♿ Acessível para todas as pessoas</h2>
+        <p>Temas, escala de texto, régua de leitura, navegação por teclado, perfis cognitivos e suporte a leitor de tela. Detalhes na página de acessibilidade.</p>
+        <p style="margin-top: 0.75rem;"><a href={url.acessibilidade()} style="color: var(--cor-link, #8be9fd);">♿ Ver recursos de acessibilidade →</a></p>
+      </section>
+    </div>
+  </main>
 </Base>
+
+<style>
+  /* Corrige links da landing renderizada via JS para usar rotas estáticas em vez de hash routing */
+  :global(#landing-conteudo a[href^="#/trilha"]) { pointer-events: auto; }
+  :global(#landing-conteudo .hero-acoes .btn) {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.25rem;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  :global(#landing-conteudo .btn-verde) {
+    background: var(--cor-verde, #50fa7b);
+    color: #282a36;
+  }
+  :global(#landing-conteudo .btn-fantasma) {
+    border: 1px solid var(--cor-borda, #333);
+    color: inherit;
+  }
+  :global(#landing-conteudo .modulos-landing) {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  :global(#landing-conteudo .modulo-card) {
+    padding: 1.5rem;
+    border: 1px solid var(--cor-borda, #333);
+    border-radius: 0.5rem;
+  }
+  :global(#landing-conteudo .modulo-em-breve) {
+    opacity: 0.6;
+  }
+  :global(#landing-conteudo .badge-em-breve) {
+    font-size: 0.8em;
+    font-weight: normal;
+  }
+</style>
