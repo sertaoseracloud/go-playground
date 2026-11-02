@@ -1,13 +1,12 @@
 ---
 // Landing page do DivergeGo: HTML estático com mesmos estilos e estrutura das páginas institucionais.
-// Usa markup Astro nativo (sem renderLanding) para garantir links corretos e consistência visual.
+// Usa markup Astro nativo e importa dados da trilha para listar módulos.
 import Base from '../layouts/Base.astro';
-import { PRINCIPAL } from '../seo.js';
 import { url } from '../lib/rotas';
 import { modulos, PROXIMOS_MODULOS } from '../conteudo/trilha.js';
 
-const titulo = PRINCIPAL.titulo;
-const descricao = PRINCIPAL.descricao;
+const titulo = 'DivergeGo — Aprenda Go com exercícios interativos';
+const descricao = 'Trilha gratuita de Go com simulador no navegador, certificados assinados e recursos de acessibilidade. Comece sem instalar nada.';
 const totalModulos = modulos.length + PROXIMOS_MODULOS.length;
 ---
 
@@ -32,107 +31,66 @@ const totalModulos = modulos.length + PROXIMOS_MODULOS.length;
     if (destino) window.location.replace(destino);
   </script>
 
-  <main class="pagina-texto">
-    <h1>Aprenda <span class="destaque">Go</span> do zero, com acessibilidade para todas as pessoas</h1>
-    <p class="hero-sub">Uma trilha gamificada: sintaxe, concorrência, APIs e projetos.
-      Você escreve o código, roda e vê os testes na hora. Sem instalar nada.</p>
+  <main class="tela-landing" style="max-width: 48rem; margin: 0 auto; padding: 2rem 1rem;">
+    <h1>Aprenda <span style="color: var(--roxo);">Go</span> do zero, com acessibilidade para todas as pessoas</h1>
+    <p style="margin: 16px 0 22px; font-size: 1.08rem; color: var(--suave); max-width: 56ch;">
+      Uma trilha gamificada: sintaxe, concorrência, APIs e projetos.
+      Você escreve o código, roda e vê os testes na hora. Sem instalar nada.
+    </p>
 
-    <div class="hero-acoes">
-      <a href={url.trilha()} class="btn btn-verde btn-grande">🚀 Começar a trilha</a>
-      <a href={url.livre()} class="btn btn-fantasma btn-grande">🧪 Playground livre</a>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0;">
+      <a href={url.trilha()} class="btn btn-verde" style="padding: 12px 20px; font-size: 1rem; text-decoration: none;">🚀 Começar a trilha</a>
+      <a href={url.livre()} class="btn btn-fantasma" style="padding: 12px 20px; font-size: 1rem; text-decoration: none;">🧪 Playground livre</a>
     </div>
 
-    <ul class="hero-numeros" aria-label="A trilha em números">
-      <li><b>{totalModulos}</b> módulos</li>
+    <ul style="display: flex; flex-wrap: wrap; gap: 8px 22px; list-style: none; margin: 0; padding: 0; color: var(--suave);" aria-label="A trilha em números">
+      <li><b style="display: block; font-size: 1.6rem; color: var(--verde); line-height: 1.1;">{totalModulos}</b> módulos</li>
     </ul>
 
     <div style="margin-top: 3rem; display: flex; flex-direction: column; gap: 1.5rem;">
-      <section class="card-institucional">
+      <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
         <h2>🗺️ Módulos da trilha</h2>
-        <ol class="modulos-lista">
+        <ol style="list-style: none; padding: 0; margin: 1rem 0 0; display: flex; flex-direction: column; gap: 0.75rem;">
           {modulos.map((m) => (
-            <li class="modulo-item">
-              <span class="modulo-icone" aria-hidden="true">{m.icone}</span>
+            <li style="display: flex; gap: 1rem; align-items: flex-start; padding: 1rem; border: 1px solid var(--linha); border-radius: 0.5rem; background: var(--fundo);">
+              <span style="font-size: 1.8rem; flex-shrink: 0;" aria-hidden="true">{m.icone}</span>
               <div>
-                <h3>{m.titulo}</h3>
-                <p>{m.descricao}</p>
+                <h3 style="margin: 0 0 0.25rem; font-size: 1rem; color: var(--texto);">{m.titulo}</h3>
+                <p style="margin: 0; font-size: 0.9rem; color: var(--suave);">{m.descricao}</p>
               </div>
             </li>
           ))}
           {PROXIMOS_MODULOS.map((m) => (
-            <li class="modulo-item modulo-em-breve">
-              <span class="modulo-icone" aria-hidden="true">{m.icone}</span>
+            <li style="display: flex; gap: 1rem; align-items: flex-start; padding: 1rem; border: 1px dashed var(--linha); border-radius: 0.5rem; background: var(--fundo); opacity: 0.6;">
+              <span style="font-size: 1.8rem; flex-shrink: 0;" aria-hidden="true">{m.icone}</span>
               <div>
-                <h3>{m.titulo} <span class="badge-em-breve">(em breve)</span></h3>
-                <p>Conteúdo planejado para as próximas versões.</p>
+                <h3 style="margin: 0 0 0.25rem; font-size: 1rem; color: var(--texto);">
+                  {m.titulo} <span style="font-size: 0.75rem; font-weight: normal; color: var(--suave);">(em breve)</span>
+                </h3>
+                <p style="margin: 0; font-size: 0.9rem; color: var(--suave);">Conteúdo planejado para as próximas versões.</p>
               </div>
             </li>
           ))}
         </ol>
       </section>
 
-      <section class="card-institucional">
+      <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
         <h2>🎓 Certificados</h2>
         <p>Ao concluir cada módulo, você recebe um certificado assinado digitalmente. Valide certificados existentes ou gere novos baseados no seu progresso.</p>
-        <p class="card-link"><a href={url.validar()}>🔎 Validar ou gerar certificado →</a></p>
+        <p style="margin-top: 0.75rem;"><a href={url.validar()} style="color: var(--roxo);">🔎 Validar ou gerar certificado →</a></p>
       </section>
 
-      <section class="card-institucional">
+      <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
         <h2>♿ Acessível para todas as pessoas</h2>
         <p>Temas, escala de texto, régua de leitura, navegação por teclado, perfis cognitivos e suporte a leitor de tela. Detalhes na página de acessibilidade.</p>
-        <p class="card-link"><a href={url.acessibilidade()}>♿ Ver recursos de acessibilidade →</a></p>
+        <p style="margin-top: 0.75rem;"><a href={url.acessibilidade()} style="color: var(--roxo);">♿ Ver recursos de acessibilidade →</a></p>
       </section>
 
-      <section class="card-institucional">
+      <section style="padding: 1.5rem; border: 1px solid var(--cor-borda, #333); border-radius: 0.5rem;">
         <h2>📰 Novidades</h2>
         <p>Acompanhe as atualizações e novas funcionalidades do DivergeGo.</p>
-        <p class="card-link"><a href={url.novidades()}>📰 Ver changelog →</a></p>
+        <p style="margin-top: 0.75rem;"><a href={url.novidades()} style="color: var(--roxo);">📰 Ver changelog →</a></p>
       </section>
     </div>
   </main>
 </Base>
-
-<style>
-  .destaque { color: var(--roxo); }
-  .hero-sub { margin: 16px 0 22px; font-size: 1.08rem; color: var(--suave); max-width: 56ch; }
-  .hero-acoes { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0; }
-  .btn-grande { padding: 12px 20px; font-size: 1rem; text-decoration: none; }
-  .hero-numeros { display: flex; flex-wrap: wrap; gap: 8px 22px; list-style: none; margin: 0; padding: 0; color: var(--suave); }
-  .hero-numeros b { display: block; font-size: 1.6rem; color: var(--verde); line-height: 1.1; }
-
-  /* Cards no mesmo estilo das páginas institucionais */
-  .card-institucional {
-    padding: 1.5rem;
-    border: 1px solid var(--linha);
-    border-radius: 0.5rem;
-    background: var(--fundo-escuro);
-  }
-  .card-institucional h2 { margin: 0 0 0.75rem; color: var(--ciano); font-size: 1.1rem; }
-  .card-institucional p { margin: 0 0 0.75rem; }
-  .card-link { margin-top: 0.75rem; }
-  .card-link a { color: var(--roxo); }
-
-  /* Lista de módulos */
-  .modulos-lista {
-    list-style: none;
-    padding: 0;
-    margin: 1rem 0 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  .modulo-item {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
-    padding: 1rem;
-    border: 1px solid var(--linha);
-    border-radius: 0.5rem;
-    background: var(--fundo);
-  }
-  .modulo-icone { font-size: 1.8rem; flex-shrink: 0; }
-  .modulo-item h3 { margin: 0 0 0.25rem; font-size: 1rem; color: var(--texto); }
-  .modulo-item p { margin: 0; font-size: 0.9rem; color: var(--suave); }
-  .modulo-em-breve { opacity: 0.6; border-style: dashed; }
-  .badge-em-breve { font-size: 0.75rem; font-weight: normal; color: var(--suave); }
-</style>
