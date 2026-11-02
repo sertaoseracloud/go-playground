@@ -25,6 +25,7 @@ function init() {
   const telaInicio = $('tela-inicio');
   const telaItem = $('tela-item');
   const telaLanding = $('tela-landing');
+
   function mostrarTela(tela) {
     if (!tela) return;
     if (telaInicio && tela !== telaInicio) telaInicio.hidden = true;
@@ -32,12 +33,18 @@ function init() {
     if (telaLanding && tela !== telaLanding) telaLanding.hidden = true;
     tela.hidden = false;
   }
+
   const layout = criarLayout();
+
   function navegar() {
     document.documentElement.classList.remove('rota-interna');
     const rota = lerRota(location.hash);
     if (rota.tela === 'landing') {
-      if (telaLanding) renderLanding(telaLanding);
+      // Só renderiza a landing se ela ainda não tiver conteúdo (build do Astro já injeta o HTML).
+      // Isso evita piscar o conteúdo e preserva os event listeners que o main.js adiciona depois.
+      if (telaLanding && !telaLanding.innerHTML.trim()) {
+        renderLanding(telaLanding);
+      }
       mostrarTela(telaLanding || telaInicio);
       definirPagina(PRINCIPAL);
       return;
@@ -45,6 +52,7 @@ function init() {
     mostrarTela(telaInicio);
     definirPagina(PRINCIPAL);
   }
+
   window.addEventListener('hashchange', () => {
     navegar();
   });
