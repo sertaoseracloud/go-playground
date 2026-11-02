@@ -1,0 +1,62 @@
+---
+// Catch-all estático: gera uma página HTML por rota listada em src/paginas.js.
+// O <head> vem do layout Base (SEO); o corpo é o shell da SPA com a landing já injetada
+// quando caminho === '', para que buscadores e redes sociais vejam o conteúdo sem JS.
+import Base from '../layouts/Base.astro';
+import { paginasDoSite } from '../paginas.js';
+import { renderLanding } from '../ui/landing.js';
+
+export function getStaticPaths() {
+  return paginasDoSite().map((p) => ({
+    params: { caminho: p.caminho || undefined },
+    props: p,
+  }));
+}
+
+const { titulo, descricao, caminho } = Astro.props;
+const ehLanding = !caminho;
+
+// Renderiza a landing em HTML puro (mesma função usada pelo scripts/prerender.mjs).
+let landingHtml = '';
+if (ehLanding) {
+  const container = { innerHTML: '' };
+  renderLanding(container);
+  landingHtml = container.innerHTML;
+}
+---
+
+<Base titulo={titulo} descricao={descricao}>
+  <!-- Redirecionamento de links antigos (#/trilha, #/p/basico-01, #/s/<código>).
+       Roda antes do paint para evitar flash da landing quando o usuário veio de um bookmark. -->
+  <script is:inline define:vars={{ base: import.meta.env.BASE_URL }}>
+    const destino = ((hash) => {
+      const caminho = hash.replace(/^#\/?/, '');
+      if (!hash.startsWith('#/') || !caminho) return null;
+      const [rota, ...resto] = caminho.split('/');
+      const parametro = resto.join('/');
+      switch (rota) {
+        case 'p': return `${base}p/${parametro}/`;
+        case 'trilha': case 'livre': case 'validar': case 'instrutor':
+        case 'acessibilidade': case 'privacidade': case 'licenca':
+        case 'termos': case 'novidades':
+          return `${base}${rota}/`;
+        default: return null;
+      }
+    })(window.location.hash);
+    if (destino) window.location.replace(destino);
+  </script>
+
+  <!-- Shell da SPA: os mains ficam hidden até o main.js assumir.
+       Na landing, o conteúdo já está em HTML para SEO e noscript. -->
+  <main id="tela-landing" class="tela-landing" set:html={ehLanding ? landingHtml : undefined} />
+  <main id="tela-inicio" class="tela-inicio" hidden />
+  <main id="tela-certificado" class="tela-certificado" hidden />
+  <main id="tela-privacidade" class="tela-privacidade" hidden />
+  <main id="tela-validador" class="tela-privacidade" hidden />
+  <main id="tela-licenca" class="tela-privacidade" hidden />
+  <main id="tela-termos" class="tela-privacidade" hidden />
+  <main id="tela-novidades" class="tela-privacidade" hidden />
+  <main id="tela-instrutor" class="tela-privacidade" hidden />
+  <main id="tela-acessibilidade" class="tela-privacidade" hidden />
+  <main id="tela-item" class="tela-item" hidden />
+</Base>
