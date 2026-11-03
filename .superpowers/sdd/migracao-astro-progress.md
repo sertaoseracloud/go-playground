@@ -14,3 +14,4 @@ Fase 5: complete (src/islands/EditorGo.tsx wrapping EditorArquivos as React isla
 Fase 6: complete (src/islands/TerminalGo.tsx wrapping criarTerminal as React island; wired into src/pages/p/[id].astro with client:visible; all 8 routes verified HTTP 200).
 Fase 7: complete (src/islands/TestRunnerGo.tsx extracting rodarTestes/renderTestes logic as React island; wired into src/pages/p/[id].astro with client:visible; all 8 routes verified HTTP 200).
 Fase 8: complete (src/islands/ExercicioGo.tsx orchestrating EditorGo+TerminalGo+TestRunnerGo with shared execution state; wired into src/pages/p/[id].astro replacing individual islands; all 8 routes verified HTTP 200).
+Fase 9: complete (MenuMobile, TutorialGo, NeuroA11y, MaisAcoes, AtalhosTeclado, CelebracaoConclusao islands created and wired into Base.astro + p/[id].astro; all 8 routes verified HTTP 200).
