@@ -1,0 +1,12 @@
+---
+// Página de declaração de acessibilidade: WCAG 2.2 AA e recursos disponíveis.
+import Base from '../../layouts/Base.astro';
+import AcessibilidadeGo from '../../islands/AcessibilidadeGo';
+
+const titulo = 'Acessibilidade — DivergeGo';
+const descricao = 'Declaração de acessibilidade do DivergeGo: conformidade WCAG 2.2 AA, perfis neurodivergentes e recursos disponíveis.';
+---
+
+<Base titulo={titulo} descricao={descricao}>
+ <AcessibilidadeGo client:visible />
+</Base>

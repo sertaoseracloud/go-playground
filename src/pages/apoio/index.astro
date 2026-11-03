@@ -1,0 +1,12 @@
+---
+// Página de apoio: como contribuir, reportar bugs e apoiar o projeto.
+import Base from '../../layouts/Base.astro';
+import ApoioGo from '../../islands/ApoioGo';
+
+const titulo = 'Apoie o DivergeGo';
+const descricao = 'Como contribuir com o DivergeGo: código, issues, sugestões, divulgação e tradução.';
+---
+
+<Base titulo={titulo} descricao={descricao}>
+ <ApoioGo client:visible />
+</Base>

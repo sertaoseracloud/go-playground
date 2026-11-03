@@ -1,0 +1,12 @@
+---
+// Página de privacidade: política de dados, LGPD e controle do usuário.
+import Base from '../../layouts/Base.astro';
+import PrivacidadeGo from '../../islands/PrivacidadeGo';
+
+const titulo = 'Privacidade — DivergeGo';
+const descricao = 'Política de privacidade do DivergeGo: sem cookies, sem rastreamento, dados apenas no seu navegador.';
+---
+
+<Base titulo={titulo} descricao={descricao}>
+ <PrivacidadeGo client:visible />
+</Base>

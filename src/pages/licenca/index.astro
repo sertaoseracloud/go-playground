@@ -1,0 +1,12 @@
+---
+// Página de licenças: AGPL-3.0 para código e CC BY-SA 4.0 para conteúdo didático.
+import Base from '../../layouts/Base.astro';
+import LicencaGo from '../../islands/LicencaGo';
+
+const titulo = 'Licenças — DivergeGo';
+const descricao = 'Licenças do DivergeGo: código sob AGPL-3.0 e conteúdo didático sob CC BY-SA 4.0.';
+---
+
+<Base titulo={titulo} descricao={descricao}>
+ <LicencaGo client:visible />
+</Base>

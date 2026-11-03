@@ -1,0 +1,12 @@
+---
+// Página de termos de uso: condições de uso do DivergeGo.
+import Base from '../../layouts/Base.astro';
+import TermosGo from '../../islands/TermosGo';
+
+const titulo = 'Termos de uso — DivergeGo';
+const descricao = 'Termos de uso do DivergeGo: condições simples e transparentes para usar o playground educacional.';
+---
+
+<Base titulo={titulo} descricao={descricao}>
+ <TermosGo client:visible />
+</Base>
