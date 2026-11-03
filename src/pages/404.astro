@@ -1,0 +1,12 @@
+---
+// Página 404: conteúdo não encontrado com navegação de retorno.
+import Base from '../layouts/Base.astro';
+import NaoEncontradaGo from '../islands/NaoEncontradaGo';
+
+const titulo = 'Página não encontrada — DivergeGo';
+const descricao = 'A página que você procura não existe ou foi movida.';
+---
+
+<Base titulo={titulo} descricao={descricao}>
+ <NaoEncontradaGo client:visible />
+</Base>
