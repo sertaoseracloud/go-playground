@@ -4,6 +4,7 @@
 import Base from '../../layouts/Base.astro';
 import EditorGo from '../../islands/EditorGo';
 import TerminalGo from '../../islands/TerminalGo';
+import TestRunnerGo from '../../islands/TestRunnerGo';
 import { todosOsItens, vizinhosDe, semHtml } from '../../lib/conteudo';
 import { url } from '../../lib/rotas';
 
@@ -34,6 +35,7 @@ const descricao = semHtml(item.resumo || item.enunciado) || `Exercício ${item.t
 
  <EditorGo client:visible itemId={item.id} arquivos={item.arquivos ?? {}} />
 <TerminalGo client:visible itemId={item.id} />
+<TestRunnerGo client:visible item={item} saidaExecucao="" />
 
  <nav class="vizinhos" aria-label="Navegação entre exercícios">
  {anterior ? (
