@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import EditorGo from './EditorGo';
 import TerminalGo from './TerminalGo';
-import { compilarEGo } from '../go/compiler-browser.js';
+import { compilarGo } from '../go/compiler-browser.js';
 
 const CODIGO_PADRAO = `package main
 
@@ -22,7 +22,7 @@ export default function LivreGo() {
  setExecutando(true);
  setSaida('');
  try {
- const resultado = await compilarEGo(codigo);
+ const resultado = await compilarGo(codigo, []);
  setSaida(resultado.saida || resultado.erro || '(sem saída)');
  } catch (e: any) {
  setSaida(`Erro: ${e?.message ?? 'falha desconhecida'}`);
