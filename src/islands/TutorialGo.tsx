@@ -1,80 +1,98 @@
-// Tutorial passo a passo em <dialog>, com destaque no elemento explicado.
-// Abre sozinho na primeira visita à trilha e pelo botão "❓ Tutorial".
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { PASSOS, PROBLEMA_DO_TUTORIAL } from '../ui/tutorial-passos.js';
-import { lerPreferencia, gravarPreferencia } from '../progresso.js';
+// Página de tutorial: guia passo a passo para começar a usar o DivergeGo.
+// Substitui o markup estático com navegação reativa entre etapas.
+import { useState } from 'react';
 
-interface Props {
- base: string;
- telaAtual?: () => string;
-}
+const ETAPAS = [
+  {
+    id: 'inicio',
+    titulo: '🚀 Começando',
+    conteudo: 'O DivergeGo é um playground de Go que roda inteiramente no seu navegador. Não precisa instalar nada — basta abrir esta página e começar a codar.',
+  },
+  {
+    id: 'editor',
+    titulo: '✏️ O editor',
+    conteudo: 'O editor aceita código Go com realce de sintaxe, autocompletar e atalhos de teclado (Ctrl+Enter para executar). Você pode redimensionar o painel arrastando a borda.',
+  },
+  {
+    id: 'terminal',
+    titulo: '💻 O terminal',
+    conteudo: 'A saída do seu programa aparece no terminal abaixo do editor. Erros de compilação são destacados em vermelho com o número da linha.',
+  },
+  {
+    id: 'trilha',
+    titulo: '🗺️ A trilha',
+    conteudo: 'Na página Trilha você encontra exercícios organizados por módulo. Cada exercício tem um enunciado, testes automatizados e dicas progressivas.',
+  },
+  {
+    id: 'certificado',
+    titulo: '🎓 Certificados',
+    conteudo: 'Ao completar todos os exercícios de um módulo, você recebe um certificado verificável. Ele pode ser impresso, baixado em SVG ou compartilhado pelo link.',
+  },
+  {
+    id: 'acessibilidade',
+    titulo: '♿ Acessibilidade',
+    conteudo: 'Use o botão ♿ no canto superior direito para escolher tema, tamanho de texto e perfil neurodivergente. Todas as preferências ficam salvas no seu navegador.',
+  },
+];
 
-export default function TutorialGo({ base, telaAtual }: Props) {
- const [aberto, setAberto] = useState(false);
- const [indice, setIndice] = useState(0);
- const dialogoRef = useRef<HTMLDialogElement>(null);
+export default function TutorialGo() {
+  const [etapaAtual, setEtapaAtual] = useState(0);
 
- const passos = PASSOS;
+  const anterior = () => setEtapaAtual((prev) => Math.max(0, prev - 1));
+  const proxima = () => setEtapaAtual((prev) => Math.min(ETAPAS.length - 1, prev + 1));
 
- const abrir = useCallback(() => {
- setIndice(0);
- setAberto(true);
- setTimeout(() => dialogoRef.current?.showModal(), 0);
- }, []);
+  return (
+    <section className="tutorial">
+      <header className="tutorial-header">
+        <h1>📘 Tutorial</h1>
+        <p className="subtitulo">
+          Guia rápido para começar a usar o DivergeGo.
+        </p>
+      </header>
 
- const fechar = useCallback(() => {
- setAberto(false);
- dialogoRef.current?.close();
- gravarPreferencia('tutorial-visto', true);
- }, []);
+      <div className="tutorial-navegacao">
+        <button
+          type="button"
+          className="btn btn-fantasma"
+          onClick={anterior}
+          disabled={etapaAtual === 0}
+        >
+          ← Anterior
+        </button>
+        <span className="tutorial-progresso">
+          {etapaAtual + 1} / {ETAPAS.length}
+        </span>
+        <button
+          type="button"
+          className="btn btn-fantasma"
+          onClick={proxima}
+          disabled={etapaAtual === ETAPAS.length - 1}
+        >
+          Próxima →
+        </button>
+      </div>
 
- const avancar = useCallback(() => {
- if (indice >= passos.length - 1) {
- fechar();
- return;
- }
- setIndice((i) => i + 1);
- }, [indice, passos.length, fechar]);
+      <article className="tutorial-etapa">
+        <h2>{ETAPAS[etapaAtual].titulo}</h2>
+        <p>{ETAPAS[etapaAtual].conteudo}</p>
+      </article>
 
- const voltar = useCallback(() => {
- setIndice((i) => Math.max(0, i - 1));
- }, []);
-
- // Auto-abrir na primeira visita à trilha
- useEffect(() => {
- if (lerPreferencia('tutorial-visto')) return;
- const hash = typeof location !== 'undefined' ? location.hash : '';
- if (/^#\/trilha/.test(hash) || window.location.pathname.endsWith('/trilha/')) {
- abrir();
- }
- }, [abrir]);
-
- const passo = passos[indice];
- if (!passo) return null;
-
- return (
- <>
- <button
- type="button"
- className="flutuante"
- aria-label="Tutorial"
- data-rotulo="Tutorial"
- onClick={abrir}
- >
- <span aria-hidden="true">❓</span>
- </button>
- <dialog ref={dialogoRef} className="dialogo tutorial-dialogo" aria-labelledby="tutorial-titulo">
- <h2 id="tutorial-titulo">{passo.titulo}</h2>
- <p className="tutorial-passo">Passo {indice + 1} de {passos.length}</p>
- <div className="tutorial-texto" dangerouslySetInnerHTML={{ __html: passo.texto }} />
- <div className="tutorial-botoes">
- <button type="button" className="btn btn-fantasma" disabled={indice === 0} onClick={voltar}>← Voltar</button>
- <button type="button" className="btn btn-roxo" onClick={avancar}>
- {indice === passos.length - 1 ? 'Começar ✓' : 'Próximo ›'}
- </button>
- <button type="button" className="btn btn-fantasma" onClick={fechar}>Pular</button>
- </div>
- </dialog>
- </>
- );
+      <nav className="tutorial-indice">
+        <h3>Todas as etapas</h3>
+        <ol>
+          {ETAPAS.map((etapa, idx) => (
+            <li key={etapa.id} className={idx === etapaAtual ? 'ativa' : ''}>
+              <button
+                type="button"
+                className="btn-link"
+                onClick={() => setEtapaAtual(idx)}
+              >
+                {etapa.titulo}
+              </button>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    </section>
+  );
 }

@@ -1,0 +1,12 @@
+---
+// Página de solução: visualizador de soluções de exercícios com código e explicações.
+import Base from '../../layouts/Base.astro';
+import SolucaoGo from '../../islands/SolucaoGo';
+
+const titulo = 'Soluções — DivergeGo';
+const descricao = 'Consulte soluções comentadas para os exercícios da trilha do DivergeGo.';
+---
+
+<Base titulo={titulo} descricao={descricao}>
+ <SolucaoGo client:visible />
+</Base>
