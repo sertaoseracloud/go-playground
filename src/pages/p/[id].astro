@@ -2,6 +2,7 @@
 // Página dinâmica de exercício/lição: gera uma rota /p/<id>/ para cada item da trilha.
 // O editor, terminal e testes são montados por ilhas React ou scripts legados no cliente.
 import Base from '../../layouts/Base.astro';
+import EditorGo from '../../islands/EditorGo';
 import { todosOsItens, vizinhosDe, semHtml } from '../../lib/conteudo';
 import { url } from '../../lib/rotas';
 
@@ -30,10 +31,7 @@ const descricao = semHtml(item.resumo || item.enunciado) || `Exercício ${item.t
  {item.enunciado && <section class="enunciado" set:html={item.enunciado} />}
  {item.dica && <details class="dica"><summary>Precisa de uma dica?</summary><p>{item.dica}</p></details>}
 
- <div id="editor-container" class="editor-container" data-item-id={item.id}>
- <!-- O editor CodeMirror e o terminal serão montados aqui pela ilha React ou script legado. -->
- <noscript>Habilite o JavaScript para usar o editor e rodar os testes.</noscript>
- </div>
+ <EditorGo client:visible itemId={item.id} arquivos={item.arquivos ?? {}} />
 
  <nav class="vizinhos" aria-label="Navegação entre exercícios">
  {anterior ? (
