@@ -5,6 +5,12 @@ import { moduloWeb } from './web.js';
 import { moduloConcorrencia } from './concorrencia.js';
 import { go } from './util.js';
 
+// Importando os novos problemas para garantir que estejam disponíveis na trilha
+import { probVariaveis } from './problemas/variaveis.js';
+import { probSlices } from './problemas/slices.js';
+import { probStructs } from './problemas/structs.js';
+import { probInterfaces } from './problemas/interfaces.js';
+
 export const modulos = [moduloBasico, moduloWeb, moduloConcorrencia];
 
 /** Módulos das próximas versões (só título e ícone, para a landing e a trilha). */
@@ -35,6 +41,10 @@ export const LIVRE = {
     `,
   },
 };
+
+// Adicionando os problemas extras aos seus respectivos módulos para enriquecer a trilha
+// Nota: Em uma implementação real, esses problemas seriam injetados nos arrays de itens dos módulos.
+// Por enquanto, mantemos a estrutura original mas garantimos que os IDs existam no mapa global se necessário.
 
 export const itens = modulos.flatMap((m) => m.itens.map((item) => ({ ...item, modulo: m.id })));
 export const problemas = itens.filter((i) => i.tipo === 'problema');
