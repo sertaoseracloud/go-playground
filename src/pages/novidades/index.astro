@@ -1,0 +1,12 @@
+---
+// Página de novidades: histórico de versões e changelog do DivergeGo.
+import Base from '../../layouts/Base.astro';
+import NovidadesGo from '../../islands/NovidadesGo';
+
+const titulo = 'Novidades — DivergeGo';
+const descricao = 'Histórico de atualizações, melhorias e correções do DivergeGo.';
+---
+
+<Base titulo={titulo} descricao={descricao}>
+ <NovidadesGo client:visible />
+</Base>
