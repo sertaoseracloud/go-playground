@@ -1,0 +1,12 @@
+---
+// Página de anúncios: comunicados importantes e avisos da equipe.
+import Base from '../../layouts/Base.astro';
+import AnunciosGo from '../../islands/AnunciosGo';
+
+const titulo = 'Anúncios — DivergeGo';
+const descricao = 'Comunicados importantes, novidades e avisos da equipe do DivergeGo.';
+---
+
+<Base titulo={titulo} descricao={descricao}>
+ <AnunciosGo client:visible />
+</Base>

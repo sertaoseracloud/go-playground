@@ -1,0 +1,12 @@
+---
+// Mural de apoio: mensagens da comunidade e agradecimentos.
+import Base from '../../layouts/Base.astro';
+import MuralApoioGo from '../../islands/MuralApoioGo';
+
+const titulo = 'Mural de Apoio — DivergeGo';
+const descricao = 'Mensagens de quem usa, contribui e acredita no DivergeGo.';
+---
+
+<Base titulo={titulo} descricao={descricao}>
+ <MuralApoioGo client:visible />
+</Base>
