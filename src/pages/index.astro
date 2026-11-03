@@ -2,6 +2,7 @@
 // Landing page do DivergeGo: renderiza o mesmo conteúdo do prerender Vite atual.
 // Redireciona hashes legados (#/trilha, #/p/basico-01) para as rotas novas do Astro.
 import Base from '../layouts/Base.astro';
+import LandingGo from '../islands/LandingGo';
 import { destinoDeHashAntigo } from '../lib/rotas';
 import { PRINCIPAL } from '../seo.js';
 
@@ -9,14 +10,7 @@ const { titulo, descricao } = PRINCIPAL;
 ---
 
 <Base titulo={titulo} descricao={descricao}>
-  <section class="landing">
-    <h1>DivergeGo</h1>
-    <p class="subtitulo">Aprenda Go resolvendo problemas reais, com feedback imediato no navegador.</p>
-    <div class="acoes">
-      <a href={`${import.meta.env.BASE_URL}trilha/`} class="botao primario">Começar a trilha</a>
-      <a href={`${import.meta.env.BASE_URL}livre/`} class="botao secundario">Playground livre</a>
-    </div>
-  </section>
+  <LandingGo client:visible />
 
   <!-- Redirecionamento de hash legado: roda só no cliente, antes da primeira pintura. -->
   <script is:inline>
