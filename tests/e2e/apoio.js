@@ -14,7 +14,7 @@ export async function abrir(page, hash, { tutorial = false, privacidade = true, 
   await page.goto('/');
   await page.evaluate(({ tutorial, privacidade, extras, muralApoio }) => {
     localStorage.clear();
-    const gravar = (chave, valor) => localStorage.setItem(`php-playground:${chave}`, JSON.stringify(valor));
+    const gravar = (chave, valor) => localStorage.setItem(`go-playground:${chave}`, JSON.stringify(valor));
     if (privacidade) gravar('pref:privacidade-vista', true);
     if (!tutorial) gravar('pref:tutorial-visto', true);
     if (!muralApoio) gravar('pref:mural-apoio-visto-em', new Date().toLocaleDateString('sv'));

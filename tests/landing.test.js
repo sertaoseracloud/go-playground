@@ -24,7 +24,7 @@ describe('landing page', () => {
   });
 
   it('quem já começou vê "Continuar"', () => {
-    localStorage.setItem('php-playground:progresso', JSON.stringify({ [problemas[0].id]: 'resolvido' }));
+    localStorage.setItem('go-playground:progresso', JSON.stringify({ [problemas[0].id]: 'resolvido' }));
     const el = document.createElement('main');
     renderLanding(el);
     expect(el.querySelector('.hero-acoes a').textContent).toContain('Continuar');
@@ -40,7 +40,7 @@ describe('contagem do progresso', () => {
     const licao = itens.find((i) => i.tipo === 'licao');
     const exercicios = itens.filter((i) => i.tipo === 'problema').slice(0, 2);
     const prog = Object.fromEntries([licao, ...exercicios].map((i) => [i.id, 'resolvido']));
-    localStorage.setItem('php-playground:progresso', JSON.stringify(prog));
+    localStorage.setItem('go-playground:progresso', JSON.stringify(prog));
     expect(resumoProgresso()).toMatchObject({ resolvidos: 2, licoesLidas: 1 });
   });
 });
@@ -54,7 +54,7 @@ describe('certificados na trilha (regra da cadeia)', () => {
     // W3.CSS completo, HTML não: o certificado de W3.CSS espera o de HTML.
     const w3 = modulos.find((m) => m.id === 'w3css');
     const prog = Object.fromEntries(w3.itens.filter((i) => i.tipo === 'problema').map((i) => [i.id, 'resolvido']));
-    localStorage.setItem('php-playground:progresso', JSON.stringify(prog));
+    localStorage.setItem('go-playground:progresso', JSON.stringify(prog));
     const certs = certificadosDaJornada();
     const cw3 = certs.find((c) => c.id === 'w3css');
     expect(cw3).toMatchObject({ concluido: true, liberado: false, falta: 'html' });
@@ -66,7 +66,7 @@ describe('certificados na trilha (regra da cadeia)', () => {
     const { modulos } = await import('../src/conteudo/trilha.js');
     const ids = modulos.filter((m) => ['html', 'w3css'].includes(m.id))
       .flatMap((m) => m.itens.filter((i) => i.tipo === 'problema').map((i) => i.id));
-    localStorage.setItem('php-playground:progresso', JSON.stringify(Object.fromEntries(ids.map((id) => [id, 'resolvido']))));
+    localStorage.setItem('go-playground:progresso', JSON.stringify(Object.fromEntries(ids.map((id) => [id, 'resolvido']))));
     const certs = certificadosDaJornada();
     const [html, w3] = certs;
     expect(html.liberado && w3.liberado).toBe(true);

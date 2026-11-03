@@ -39,7 +39,7 @@ describe('mural de apoio', () => {
     expect(qr.querySelector('path').getAttribute('d')).toBe(esperado.match(/<path d="([^"]+)"/)[1]);
     expect(document.querySelector('#mural-apoio-mensagem').textContent).toContain('sem anúncios e sem cadastro');
     expect(document.querySelector('#mural-codigo-pix').value).toBe(codigoPix());
-    expect(document.querySelector('#mural-apoio-conteudo a[href="https://github.com/sertaoseracloud/php-playground"].btn-estrela-github').textContent).toContain('estrela');
+    expect(document.querySelector('#mural-apoio-conteudo a[href="https://github.com/sertaoseracloud/go-playground"].btn-estrela-github').textContent).toContain('estrela');
   });
 
   it('fecha ao continuar e não reaparece ao navegar entre telas', () => {
@@ -87,7 +87,7 @@ describe('mural de apoio', () => {
     iniciarMuralApoio();
 
     expect(document.getElementById('mural-apoio-mensagem').textContent).toContain('Em breve');
-    expect(document.querySelector('#mural-apoio-conteudo a[href="https://github.com/sertaoseracloud/php-playground"]')).not.toBeNull();
+    expect(document.querySelector('#mural-apoio-conteudo a[href="https://github.com/sertaoseracloud/go-playground"]')).not.toBeNull();
   });
 });
 

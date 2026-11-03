@@ -127,7 +127,7 @@ describe('cadeia de certificados (como num blockchain)', () => {
 
 describe('compartilhar', () => {
   it('links do LinkedIn: adicionar ao perfil e publicar', () => {
-    const url = 'https://sertaoseracloud.github.io/php-playground/#/certificado/abc';
+    const url = 'https://sertaoseracloud.github.io/go-playground/#/certificado/abc';
     const perfil = new URL(linkLinkedInPerfil(CERT, url));
     expect(perfil.origin + perfil.pathname).toBe('https://www.linkedin.com/profile/add');
     expect(Object.fromEntries(perfil.searchParams)).toEqual({

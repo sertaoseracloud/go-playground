@@ -22,13 +22,13 @@ test('o mural aparece uma vez por dia na landing e pode ser fechado sem reaparec
   await expect(mural.locator('#mural-codigo-pix')).toHaveValue(/br\.gov\.bcb\.pix/);
   await expect(mural.getByRole('link', { name: '⭐ Dê uma estrela no GitHub' })).toHaveAttribute(
     'href',
-    'https://github.com/sertaoseracloud/php-playground',
+    'https://github.com/sertaoseracloud/go-playground',
   );
 
   const popupPromise = page.waitForEvent('popup');
   await mural.getByRole('link', { name: '⭐ Dê uma estrela no GitHub' }).click();
   const popup = await popupPromise;
-  await expect(popup).toHaveURL('https://github.com/sertaoseracloud/php-playground');
+  await expect(popup).toHaveURL('https://github.com/sertaoseracloud/go-playground');
   await expect(page).toHaveURL(/localhost/);
   await popup.close();
 
@@ -43,7 +43,7 @@ test('o mural aparece uma vez por dia na landing e pode ser fechado sem reaparec
   await page.reload();
   await expect(page.locator('#tela-landing h1')).toBeVisible();
   await expect(mural).toBeHidden();
-  await page.evaluate(() => localStorage.setItem('php-playground:pref:mural-apoio-visto-em', JSON.stringify('2000-01-01')));
+  await page.evaluate(() => localStorage.setItem('go-playground:pref:mural-apoio-visto-em', JSON.stringify('2000-01-01')));
   await page.reload();
   await expect(mural).toBeVisible();
 });

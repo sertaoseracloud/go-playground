@@ -5,19 +5,19 @@ describe('ambientes', () => {
   it('mantém produção e homologação com armazenamento e URL separados', () => {
     expect(configurarAmbiente(false)).toEqual({
       homologacao: false,
-      prefixo: 'php-playground:',
-      site: 'https://sertaoseracloud.github.io/php-playground/',
+      prefixo: 'go-playground:',
+      site: 'https://sertaoseracloud.github.io/go-playground/',
     });
     expect(configurarAmbiente(true)).toEqual({
       homologacao: true,
-      prefixo: 'php-playground-homologacao:',
-      site: 'https://sertaoseracloud.github.io/php-playground/homologacao/',
+      prefixo: 'go-playground-homologacao:',
+      site: 'https://sertaoseracloud.github.io/go-playground/homologacao/',
     });
   });
 
   it('os testes usam o ambiente principal', () => {
     expect(HOMOLOGACAO).toBe(false);
-    expect(PREFIXO_ARMAZENAMENTO).toBe('php-playground:');
-    expect(SITE_ATUAL).toBe('https://sertaoseracloud.github.io/php-playground/');
+    expect(PREFIXO_ARMAZENAMENTO).toBe('go-playground:');
+    expect(SITE_ATUAL).toBe('https://sertaoseracloud.github.io/go-playground/');
   });
 });
