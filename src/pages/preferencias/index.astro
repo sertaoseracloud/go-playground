@@ -1,0 +1,12 @@
+---
+// Página de preferências: tema, tamanho de texto e perfil neurodivergente.
+import Base from '../../layouts/Base.astro';
+import PreferenciasGo from '../../islands/PreferenciasGo';
+
+const titulo = 'Preferências — DivergeGo';
+const descricao = 'Personalize a aparência e o comportamento do DivergeGo: tema, tamanho de texto e perfil de acessibilidade.';
+---
+
+<Base titulo={titulo} descricao={descricao}>
+ <PreferenciasGo client:visible />
+</Base>

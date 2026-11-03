@@ -1,0 +1,12 @@
+---
+// Página de certificado: exibe o certificado obtido após concluir um módulo.
+import Base from '../../layouts/Base.astro';
+import CertificadoGo from '../../islands/CertificadoGo';
+
+const titulo = 'Certificado — DivergeGo';
+const descricao = 'Visualize, imprima ou baixe seu certificado de conclusão do DivergeGo.';
+---
+
+<Base titulo={titulo} descricao={descricao}>
+ <CertificadoGo client:visible />
+</Base>
