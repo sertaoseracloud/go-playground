@@ -1,0 +1,51 @@
+---
+// Landing page do DivergeGo: renderiza o mesmo conteúdo do prerender Vite atual.
+// Redireciona hashes legados (#/trilha, #/p/basico-01) para as rotas novas do Astro.
+import Base from '../layouts/Base.astro';
+import { destinoDeHashAntigo } from '../lib/rotas';
+import { PRINCIPAL } from '../seo.js';
+
+const { titulo, descricao } = PRINCIPAL;
+---
+
+<Base titulo={titulo} descricao={descricao}>
+  <section class="landing">
+    <h1>DivergeGo</h1>
+    <p class="subtitulo">Aprenda Go resolvendo problemas reais, com feedback imediato no navegador.</p>
+    <div class="acoes">
+      <a href={`${import.meta.env.BASE_URL}trilha/`} class="botao primario">Começar a trilha</a>
+      <a href={`${import.meta.env.BASE_URL}livre/`} class="botao secundario">Playground livre</a>
+    </div>
+  </section>
+
+  <!-- Redirecionamento de hash legado: roda só no cliente, antes da primeira pintura. -->
+  <script is:inline>
+    (function() {
+      var hash = location.hash;
+      if (!hash || !hash.startsWith('#')) return;
+      // Mapeamento inline para evitar dependência de módulo no script inline.
+      var base = document.querySelector('base')?.href || '/go-playground/';
+      var caminho = hash.slice(1);
+      var destino = null;
+      if (caminho === '/' || caminho === '') destino = base;
+      else if (/^\/?trilha$/.test(caminho)) destino = base + 'trilha/';
+      else if (/^\/?livre$/.test(caminho)) destino = base + 'livre/';
+      else if (/^\/?validar$/.test(caminho)) destino = base + 'validar/';
+      else if (/^\/?instrutor$/.test(caminho)) destino = base + 'instrutor/';
+      else if (/^\/?acessibilidade$/.test(caminho)) destino = base + 'acessibilidade/';
+      else if (/^\/?privacidade$/.test(caminho)) destino = base + 'privacidade/';
+      else if (/^\/?licenca$/.test(caminho)) destino = base + 'licenca/';
+      else if (/^\/?termos$/.test(caminho)) destino = base + 'termos/';
+      else if (/^\/?novidades$/.test(caminho)) destino = base + 'novidades/';
+      else if (/^\/?certificado$/.test(caminho)) destino = base + 'certificado/';
+      else {
+        var m = caminho.match(/^\/?p\/(.+)$/);
+        if (m) destino = base + 'p/' + m[1] + '/';
+      }
+      if (destino) {
+        history.replaceState(null, '', destino);
+        location.reload();
+      }
+    })();
+  </script>
+</Base>
