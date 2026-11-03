@@ -360,7 +360,7 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
             // Verificação no código fonte
             return item.arquivos['main.go']?.includes(r.valor);
           }
-          if (r_saida) {
+          if (r.saida) {
             // Verificação na saída
             return saida?.includes(r.valor);
           }
