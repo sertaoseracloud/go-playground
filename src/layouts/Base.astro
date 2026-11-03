@@ -9,6 +9,9 @@ import '../landing.css';
 import '../acessibilidade-ux.css';
 import ProgressoTopo from '../islands/ProgressoTopo';
 import PainelAcessibilidade from '../islands/PainelAcessibilidade';
+import MenuMobile from '../islands/MenuMobile';
+import TutorialGo from '../islands/TutorialGo';
+import NeuroA11y from '../islands/NeuroA11y';
 import { todosOsItens } from '../lib/conteudo';
 import { PREFIXO_ARMAZENAMENTO } from '../ambiente.js';
 
@@ -59,12 +62,15 @@ const atual = (nome: string) => (menu === nome ? { 'aria-current': 'page' as con
       <a href={`${import.meta.env.BASE_URL}instrutor/`} {...atual('instrutor')}>👨‍🏫 Instrutor</a>
     </nav>
     <ProgressoTopo client:idle exercicios={exercicios} />
+    <MenuMobile client:visible base={import.meta.env.BASE_URL} atual={menu} />
   </header>
   <div id="conteudo" class="conteudo" tabindex="-1">
     <slot />
   </div>
   <aside class="flutuantes" aria-label="Ajuda e preferências">
     <PainelAcessibilidade client:idle />
+    <TutorialGo client:visible base={import.meta.env.BASE_URL} />
+    <NeuroA11y client:visible />
     <slot name="flutuantes" />
   </aside>
 </body>

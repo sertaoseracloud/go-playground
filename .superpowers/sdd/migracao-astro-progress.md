@@ -13,3 +13,4 @@ Fase 4: complete (src/pages/p/[id].astro dynamic exercise page with getStaticPat
 Fase 5: complete (src/islands/EditorGo.tsx wrapping EditorArquivos as React island; wired into src/pages/p/[id].astro and src/pages/livre/index.astro with client:visible; all 8 routes verified HTTP 200).
 Fase 6: complete (src/islands/TerminalGo.tsx wrapping criarTerminal as React island; wired into src/pages/p/[id].astro with client:visible; all 8 routes verified HTTP 200).
 Fase 7: complete (src/islands/TestRunnerGo.tsx extracting rodarTestes/renderTestes logic as React island; wired into src/pages/p/[id].astro with client:visible; all 8 routes verified HTTP 200).
+Fase 8: complete (src/islands/ExercicioGo.tsx orchestrating EditorGo+TerminalGo+TestRunnerGo with shared execution state; wired into src/pages/p/[id].astro replacing individual islands; all 8 routes verified HTTP 200).

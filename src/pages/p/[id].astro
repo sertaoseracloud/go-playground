@@ -3,6 +3,7 @@
 // O editor, terminal e testes são montados por ilhas React ou scripts legados no cliente.
 import Base from '../../layouts/Base.astro';
 import ExercicioGo from '../../islands/ExercicioGo';
+import MaisAcoes from '../../islands/MaisAcoes';
 import { todosOsItens, vizinhosDe, semHtml } from '../../lib/conteudo';
 import { url } from '../../lib/rotas';
 
@@ -32,6 +33,7 @@ const descricao = semHtml(item.resumo || item.enunciado) || `Exercício ${item.t
  {item.dica && <details class="dica"><summary>Precisa de uma dica?</summary><p>{item.dica}</p></details>}
 
  <ExercicioGo client:visible item={item} />
+ <MaisAcoes client:visible acoes={[]} />
 
  <nav class="vizinhos" aria-label="Navegação entre exercícios">
  {anterior ? (
