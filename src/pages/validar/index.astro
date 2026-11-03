@@ -1,12 +1,12 @@
 ---
-// Página de validação de certificados: verifica a assinatura Ed25519 do XML.
+// Página de validação de certificado: verificação pública sem cadastro.
 import Base from '../../layouts/Base.astro';
-import ValidarGo from '../../islands/ValidarGo';
+import ValidarCertificadoGo from '../../islands/ValidarCertificadoGo';
 
 const titulo = 'Validar certificado — DivergeGo';
-const descricao = 'Verifique a autenticidade do seu certificado DivergeGo inserindo o código de verificação.';
+const descricao = 'Verifique a autenticidade de um certificado DivergeGo usando o código de verificação.';
 ---
 
 <Base titulo={titulo} descricao={descricao} menu="validar">
- <ValidarGo client:visible />
+  <ValidarCertificadoGo client:visible />
 </Base>
