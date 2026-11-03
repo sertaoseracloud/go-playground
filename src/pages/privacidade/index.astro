@@ -1,12 +1,12 @@
 ---
-// Página de privacidade: política de dados, LGPD e controle do usuário.
+// Página de privacidade: política de dados e controle do usuário.
 import Base from '../../layouts/Base.astro';
 import PrivacidadeGo from '../../islands/PrivacidadeGo';
 
 const titulo = 'Privacidade — DivergeGo';
-const descricao = 'Política de privacidade do DivergeGo: sem cookies, sem rastreamento, dados apenas no seu navegador.';
+const descricao = 'Política de privacidade e gestão de dados locais do DivergeGo.';
 ---
 
-<Base titulo={titulo} descricao={descricao}>
+<Base titulo={titulo} descricao={descricao} menu="privacidade">
  <PrivacidadeGo client:visible />
 </Base>
