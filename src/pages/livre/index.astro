@@ -1,17 +1,12 @@
 ---
 // Playground livre: editor Go sem exercício definido, com código salvo no navegador.
 import Base from '../../layouts/Base.astro';
-import EditorGo from '../../islands/EditorGo';
-import { playgroundLivre, semHtml } from '../../lib/conteudo';
+import LivreGo from '../../islands/LivreGo';
 
 const titulo = 'Playground livre — DivergeGo';
-const descricao = semHtml(playgroundLivre.resumo) || 'Escreva e rode Go livremente no navegador.';
+const descricao = 'Escreva e rode Go livremente no navegador, sem exercício definido.';
 ---
 
 <Base titulo={titulo} descricao={descricao} menu="livre">
- <section class="playground-livre">
- <h1>🧪 Playground livre</h1>
- <div class="descricao" set:html={playgroundLivre.resumo} />
- <EditorGo client:visible itemId="livre" arquivos={playgroundLivre.arquivos ?? {}} />
- </section>
+ <LivreGo client:visible />
 </Base>
