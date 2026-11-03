@@ -13,6 +13,8 @@ import MenuMobile from '../islands/MenuMobile';
 import TutorialGo from '../islands/TutorialGo';
 import NeuroA11y from '../islands/NeuroA11y';
 import AtalhosTeclado from '../islands/AtalhosTeclado';
+import AvisoArmazenamentoGo from '../islands/AvisoArmazenamentoGo';
+import LibrasGo from '../islands/LibrasGo';
 import { todosOsItens } from '../lib/conteudo';
 import { PREFIXO_ARMAZENAMENTO } from '../ambiente.js';
 
@@ -53,6 +55,8 @@ const atual = (nome: string) => (menu === nome ? { 'aria-current': 'page' as con
 <body>
   <a class="pular" href="#conteudo">Pular para o conteúdo</a>
   {HOMOLOGACAO && <aside class="faixa-homologacao" aria-label="Aviso de homologação">🧪 Homologação: versão em teste do develop.</aside>}
+  <AvisoArmazenamentoGo client:visible />
+  <LibrasGo client:idle />
   <div id="anuncio" class="sr" role="status" aria-live="polite"></div>
   <header class="topo">
     <a href={`${import.meta.env.BASE_URL}`} class="marca"><span aria-hidden="true">🏗️</span> DivergeGo</a>
