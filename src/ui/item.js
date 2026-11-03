@@ -32,6 +32,7 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
     status: $('item-status'),
     executar: $('btn-executar'),
     enviar: $('btn-enviar'),
+    restaurar: $('btn-restaurar'),
     compartilhar: $('btn-compartilhar'),
     abaSolucao: $('aba-solucao'),
     abaTestes: $('aba-testes'),
@@ -139,7 +140,7 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
               <button class="btn btn-fantasma btn-pequeno" id="btn-referencia">Usar o código de referência</button></p>`
           : item.etapaAnterior ? '<p>O código inicial é a solução de referência da etapa anterior.</p>' : ''}
       </div>` : '';
-    const ocultos = item.testes.filter((t) => t.oculto).length;
+    const ocultos = (item.testes || []).filter((t) => t.oculto).length;
     el.enunciado.innerHTML = `
       ${avisoBloqueio}
       ${etapa}
@@ -166,8 +167,9 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
 
   /** "Como saber que deu certo": as regras dos casos visíveis, em linguagem simples. */
   function comoConferir(testes) {
+    if (!testes?.length) return '';
     const blocos = testes.filter((t) => !t.oculto).map((t) => {
-      const regras = t.regras.map((r) => r.mensagem || 'Verificação').filter(Boolean);
+      const regras = (t.regras || []).map((r) => r.mensagem || 'Verificação').filter(Boolean);
       if (!regras.length) return '';
       return `<p class="caso-exemplo"><span class="rotulo">Ao executar:</span></p>
         <ul>${regras.map((r) => `<li>${esc(r)}</li>`).join('')}</ul>`;
@@ -379,8 +381,8 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
     const icone = { ok: '✅', falha: '❌', pendente: '⏳' }[situacao];
     const descricao = oculto ? (resultado ? 'caso oculto' : 'rode ⬆ Enviar') : teste.descricao ?? 'verificação';
     const verificacoes = resultado
-      ? resultado.resultados.map((r) => ({ ...r, situacao: r.ok ? 'ok' : 'falha' }))
-      : teste.regras.map((r) => ({ mensagem: r.mensagem || 'Verificação', situacao: 'pendente' }));
+      ? (resultado.resultados || []).map((r) => ({ ...r, situacao: r.ok ? 'ok' : 'falha' }))
+      : (teste.regras || []).map((r) => ({ mensagem: r.mensagem || 'Verificação', situacao: 'pendente' }));
     const visiveis = oculto ? verificacoes.filter((r) => r.situacao === 'falha') : verificacoes;
     const passaram = verificacoes.filter((r) => r.situacao === 'ok').length;
     const placar = resultado
@@ -410,6 +412,7 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
   }
 
   function nomesDosCasos(testes) {
+    if (!testes?.length) return [];
     let visivel = 0;
     let oculto = 0;
     return testes.map((t) => (t.oculto ? `🔒 Oculto ${++oculto}` : `Caso ${++visivel}`));
@@ -426,7 +429,7 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
 
   /** Antes de executar: lista todos os casos como pendentes. */
   function renderTestesPendentes() {
-    const testes = estado.item.testes;
+    const testes = estado.item.testes || [];
     const nomes = nomesDosCasos(testes);
     el.testes.innerHTML = `
       <p class="veredito-sub"><b>▶ Executar</b> roda os casos visíveis. <b>⬆ Enviar</b> roda todos, inclusive os ocultos, e marca a questão como resolvida.</p>
@@ -435,7 +438,7 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
   }
 
   function renderTestes({ aprovado, relatorio }, envio) {
-    const testes = estado.item.testes;
+    const testes = estado.item.testes || [];
     const nomes = nomesDosCasos(testes);
     const porTeste = new Map(relatorio.map((r, i) => [envio ? testes[i] : testes.filter((t) => !t.oculto)[i], r]));
     const cards = testes.map((t, i) => cardCaso({ nome: nomes[i], teste: t, resultado: porTeste.get(t) })).join('');
@@ -464,7 +467,7 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
 
   /** O que o leitor de tela fala sobre os testes (com os nomes da aba Testes). */
   function falarTestes(resultado, envio, extras = {}) {
-    const testes = estado.item.testes;
+    const testes = estado.item.testes || [];
     const nomes = nomesDosCasos(testes);
     const rodados = envio ? testes : testes.filter((t) => !t.oculto);
     return falaDosTestes(resultado, {
@@ -528,6 +531,14 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
   // ---------- eventos ----------
   el.executar.onclick = () => executarPeloAluno();
   el.enviar.onclick = () => enviar();
+
+  el.restaurar.onclick = () => {
+    if (!confirm('Voltar ao código original? Suas alterações serão perdidas.')) return;
+    rascunhos.cancelar(estado.item.id);
+    apagarRascunho(estado.item.id);
+    editor.carregar(estado.item.arquivos);
+    executar({ url: `/${editor.principal}` });
+  };
 
   el.compartilhar.onclick = async () => {
     const link = `${location.origin}${location.pathname}${linkCompartilhado({ item: estado.item.id, arquivos: editor.arquivos })}`;

@@ -141,6 +141,11 @@
               <div class="linha-prompt"><span id="prompt-terminal" class="prompt-terminal"></span><input id="campo-terminal" class="campo-terminal" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Comando do terminal"></div>
             </div>
           </div>
+          <div id="saida-resultado" class="saida resultado" hidden>
+            <iframe id="resultado" class="resultado" title="Resultado da execução Go" sandbox="allow-scripts allow-forms allow-modals allow-popups"></iframe>
+          </div>
+          <pre id="saida-fonte" class="saida fonte" hidden tabindex="0" aria-label="Saída do Go"></pre>
+          <pre id="erros" class="erros" hidden role="alert"></pre>
           <div id="saida-grafo" class="saida grafo" hidden tabindex="0"></div>
           <div id="saida-estado" class="saida estado" hidden tabindex="0"></div>
           <div id="saida-saidas" class="saida saidas" hidden tabindex="0"></div>
