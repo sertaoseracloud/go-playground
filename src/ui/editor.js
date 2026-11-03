@@ -2,10 +2,11 @@
 import { EditorView, basicSetup } from 'codemirror';
 import { EditorState, Prec } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
-import { linguagemGo } from './linguagem-go.js';
+import { javascript } from '@codemirror/lang-javascript';
 import { temaEditor } from './tema-editor.js';
+import { anunciar } from './anuncios.js';
 
-const NOME_VALIDO = /^([\w-]+\/){0,3}[\w.-]+\.(go|mod|sum|txt|md)$/;
+const NOME_VALIDO = /^[\w-]+\.(go|mod|sum|txt|md)$/;
 
 export class EditorArquivos {
   constructor({ abas, editor, aoMudar = () => {}, aoExecutar = () => {}, aoEnviar = () => {} }) {
@@ -16,7 +17,6 @@ export class EditorArquivos {
     this.estados = new Map();
     this.extensoes = [
       basicSetup,
-      linguagemGo(),
       temaEditor,
       EditorView.lineWrapping,
       EditorState.tabSize.of(2),
@@ -24,7 +24,6 @@ export class EditorArquivos {
         { key: 'Mod-Enter', run: () => { aoExecutar(); return true; } },
         { key: 'Mod-Shift-Enter', run: () => { aoEnviar(); return true; } },
       ])),
-      EditorView.contentAttributes.of({ 'aria-label': 'Editor de código Go', tabindex: '0' }),
       EditorView.updateListener.of((u) => {
         if (u.docChanged) {
           this.arquivos[this.atual] = u.state.doc.toString();
@@ -35,6 +34,7 @@ export class EditorArquivos {
     this.view = new EditorView({ parent: editor });
   }
 
+  /** Arquivo que o navegador abre primeiro (main.go). */
   get principal() {
     return Object.keys(this.arquivos)[0];
   }
@@ -56,7 +56,20 @@ export class EditorArquivos {
   }
 
   #estadoDe(nome) {
-    return EditorState.create({ doc: this.arquivos[nome] ?? '', extensions: this.extensoes });
+    // Usa JavaScript mode como fallback para Go (syntax highlighting básico)
+    const [rotulo, linguagem] = ['Go', javascript];
+    return EditorState.create({
+      doc: this.arquivos[nome] ?? '',
+      extensions: [
+        ...this.extensoes,
+        linguagem(),
+        EditorView.contentAttributes.of({
+          tabindex: '0',
+          'aria-label': `Editor de ${rotulo}: ${nome}`,
+          'aria-describedby': 'ajuda-editor',
+        }),
+      ],
+    });
   }
 
   #renderAbas() {
@@ -68,10 +81,10 @@ export class EditorArquivos {
       aba.type = 'button';
       aba.className = 'aba' + (nome === this.atual ? ' ativa' : '');
       aba.textContent = nome;
-      aba.title = nome;
       if (nome === this.atual) aba.setAttribute('aria-current', 'true');
       aba.onclick = () => this.abrir(nome);
       grupo.append(aba);
+      // Excluir é um botão próprio (antes era um <span> dentro da aba, inacessível pelo teclado).
       if (nome !== this.principal) {
         const excluir = document.createElement('button');
         excluir.type = 'button';
@@ -104,20 +117,22 @@ export class EditorArquivos {
       this.view.setState(this.estados.get(this.atual) ?? this.#estadoDe(this.atual));
     }
     this.#renderAbas();
+    this.view.focus();
+    anunciar(`Arquivo ${nome} excluído. Editor de ${this.atual} ativo.`);
   }
 
   #novo() {
     const nome = prompt('Nome do novo arquivo (ex.: main.go, go.mod):', 'main.go')?.trim();
     if (!nome) return;
     if (!NOME_VALIDO.test(nome)) {
-      alert('Use letras, números, - e _ (pastas com /), com extensão .go, .mod, .sum...');
+      alert('Use só letras, números, - e _, com extensão .go, .mod, .sum, .txt ou .md.');
       return;
     }
     if (nome in this.arquivos) {
       alert('Já existe um arquivo com esse nome.');
       return;
     }
-    this.arquivos[nome] = '';
+    this.arquivos[nome] = nome.endsWith('.go') ? 'package main\n\nfunc main() {\n\n}\n' : '';
     this.aoMudar(this.arquivos);
     this.abrir(nome);
   }

@@ -35,24 +35,24 @@ export function falaDosTestes({ aprovado, relatorio }, { envio = false, nomes = 
   const total = relatorio.length;
   const passaram = relatorio.filter((c) => c.ok).length;
   const casos = (n) => `${n} ${n === 1 ? 'caso' : 'casos'}`;
-  if (aprovado && envio) return `Aceito! Você acertou a questão: ${total === 1 ? 'o caso passou' : \`os \${casos(total)} passaram\`}, inclusive os ocultos.`;
-  if (aprovado) return `Testes: ${total === 1 ? 'o caso visível passou' : \`os \${casos(total)} visíveis passaram\`}. Agora envie, com Control Shift Enter, para rodar também os casos ocultos.`;
+  if (aprovado && envio) return `Aceito! Você acertou a questão: ${total === 1 ? 'o caso passou' : 'os ' + casos(total) + ' passaram'}, inclusive os ocultos.`;
+  if (aprovado) return `Testes: ${total === 1 ? 'o caso visível passou' : 'os ' + casos(total) + ' visíveis passaram'}. Agora envie, com Control Shift Enter, para rodar também os casos ocultos.`;
 
-  const partes = [\`${gentil ? 'Ainda não passou' : 'Resposta errada'}: \${passaram} de \${casos(total)} \${total === 1 ? 'passou' : 'passaram'}.\`];
-  if (codigoComErro) return \`\${partes[0]} Corrija primeiro o erro do código e rode de novo. Os detalhes estão na aba Testes.\`;
-  const falhas = relatorio.map((c, i) => ({ ...c, nome: (nomes[i] ?? \`Caso \${i + 1}\`).replace(/^🔒\s*/, '') })).filter((c) => !c.ok);
+  const partes = [`${gentil ? 'Ainda não passou' : 'Resposta errada'}: ${passaram} de ${casos(total)} ${total === 1 ? 'passou' : 'passaram'}.`];
+  if (codigoComErro) return `${partes[0]} Corrija primeiro o erro do código e rode de novo. Os detalhes estão na aba Testes.`;
+  const falhas = relatorio.map((c, i) => ({ ...c, nome: (nomes[i] ?? `Caso ${i + 1}`).replace(/^🔒\s*/, '') })).filter((c) => !c.ok);
   for (const caso of detalhado ? falhas : falhas.slice(0, 1)) {
     const erradas = caso.resultados.filter((r) => !r.ok);
     const itens = (detalhado ? erradas : erradas.slice(0, 1)).map((r) => [
       frase(r.mensagem),
-      r.detalhe ? frase(\`Motivo: \${r.detalhe}\`) : '',
-      r.dica ? frase(\`Dica: \${r.dica}\`) : '',
+      r.detalhe ? frase(`Motivo: ${r.detalhe}`) : '',
+      r.dica ? frase(`Dica: ${r.dica}`) : '',
     ].filter(Boolean).join(' '));
-    partes.push(\`\${caso.nome} falhou.\`);
-    if (caso.erroExecucao) partes.push(frase(\`Erro na execução: \${caso.erroExecucao}\`));
+    partes.push(`${caso.nome} falhou.`);
+    if (caso.erroExecucao) partes.push(frase(`Erro na execução: ${caso.erroExecucao}`));
     partes.push(...itens);
   }
-  if (!detalhado && falhas.length > 1) partes.push(\`Mais \${casos(falhas.length - 1)} com falha.\`);
+  if (!detalhado && falhas.length > 1) partes.push(`Mais ${casos(falhas.length - 1)} com falha.`);
   partes.push('Os detalhes estão na aba Testes.');
   return partes.join(' ');
 }
