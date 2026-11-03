@@ -15,6 +15,7 @@ import NeuroA11y from '../islands/NeuroA11y';
 import AtalhosTeclado from '../islands/AtalhosTeclado';
 import AvisoArmazenamentoGo from '../islands/AvisoArmazenamentoGo';
 import LibrasGo from '../islands/LibrasGo';
+import MaisAcoesGo from '../islands/MaisAcoesGo';
 import { todosOsItens } from '../lib/conteudo';
 import { PREFIXO_ARMAZENAMENTO } from '../ambiente.js';
 
@@ -77,6 +78,7 @@ const atual = (nome: string) => (menu === nome ? { 'aria-current': 'page' as con
     <TutorialGo client:visible base={import.meta.env.BASE_URL} />
     <NeuroA11y client:visible />
     <AtalhosTeclado client:idle />
+    <MaisAcoesGo client:visible />
     <slot name="flutuantes" />
   </aside>
 </body>
