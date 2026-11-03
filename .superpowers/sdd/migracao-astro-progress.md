@@ -12,3 +12,4 @@ Fase 3: complete (src/stores/progresso.ts + src/stores/preferencias.ts nanostore
 Fase 4: complete (src/pages/p/[id].astro dynamic exercise page with getStaticPaths from content bridge; routes /p/licao-ola-mundo/, /p/prob-soma/, /p/licao-variaveis/ verified HTTP 200 on dev server port 4322).
 Fase 5: complete (src/islands/EditorGo.tsx wrapping EditorArquivos as React island; wired into src/pages/p/[id].astro and src/pages/livre/index.astro with client:visible; all 8 routes verified HTTP 200).
 Fase 6: complete (src/islands/TerminalGo.tsx wrapping criarTerminal as React island; wired into src/pages/p/[id].astro with client:visible; all 8 routes verified HTTP 200).
+Fase 7: complete (src/islands/TestRunnerGo.tsx extracting rodarTestes/renderTestes logic as React island; wired into src/pages/p/[id].astro with client:visible; all 8 routes verified HTTP 200).
