@@ -210,9 +210,10 @@ function ligarRestauracao(el, aoRestaurar) {
       return;
     }
     if (!e.target.closest('[data-restaurar]')) return;
-    if (situacaoDoNome(cert, lerNome()) !== 'pode') { redesenhar(); return; } // o nome mudou noutra aba
+    if (situacaoDoNome(cert, lerNome()) !== 'igual') { redesenhar(); return; } // o nome mudou noutra aba
     const plano = planoDeRestauracao(cert, modulos);
-    const ok = restaurarItens(itensDoPlano(plano));
+    const itensComData = plano.flatMap((b) => b.ids.map((id) => ({ id, data: b.data })));
+    const ok = restaurarItens(itensComData);
     const texto = ok
       ? `Pronto: ${contar(plano.length, 'módulo voltou', 'módulos voltaram')} para este navegador, com as datas do certificado.`
       : 'Este navegador não deixou o site guardar o progresso (aba anônima ou dados bloqueados). Tente numa janela normal.';
