@@ -1,118 +1,154 @@
-// Página de preferências: tema, tamanho de texto, perfil neurodivergente e idioma.
-// Substitui o markup estático com controles reativos que persistem no localStorage.
-import { useState, useEffect, useCallback } from 'react';
+// Página de preferências do usuário: tema, idioma e configurações pessoais.
+// Substitui o markup estático com controles reativos e persistência local.
+import { useState, useEffect } from 'react';
 
-const TEMAS = [
-  { id: 'dracula', label: '🌙 Dracula (escuro)' },
-  { id: 'claro', label: '☀️ Claro' },
-  { id: 'alto-contraste', label: '⚫ Alto contraste' },
-  { id: 'suavo', label: '🎨 Suavo (tons pastéis)' },
-];
+type Tema = 'claro' | 'escuro' | 'auto';
+type Idioma = 'pt-BR' | 'en' | 'es';
 
-const PERFIS = [
-  { id: 'padrao', label: 'Padrão', descricao: 'Sem ajustes especiais.' },
-  { id: 'foco', label: '🎯 Foco (TDAH)', descricao: 'Reduz distrações visuais, aumenta espaçamento entre blocos.' },
-  { id: 'leitura', label: '📖 Leitura facilitada (dislexia)', descricao: 'Fonte OpenDyslexic, maior espaçamento entre letras e linhas.' },
-  { id: 'calmo', label: '🧘 Calmo (autismo)', descricao: 'Cores suaves, sem animações, linguagem direta.' },
-  { id: 'sem-pressao', label: '💆 Sem pressão (ansiedade)', descricao: 'Remove timers, contadores e indicadores de desempenho.' },
-];
+interface PreferenciasUsuario {
+  tema: Tema;
+  idioma: Idioma;
+  editorFontSize: number;
+  autoSave: boolean;
+  mostrarDicas: boolean;
+  somNotificacoes: boolean;
+}
 
-const TAMANHOS = [100, 110, 120, 130, 140, 150, 160, 175];
+const PADRAO: PreferenciasUsuario = {
+  tema: 'auto',
+  idioma: 'pt-BR',
+  editorFontSize: 14,
+  autoSave: true,
+  mostrarDicas: true,
+  somNotificacoes: false,
+};
 
 export default function PreferenciasGo() {
-  const [tema, setTema] = useState('dracula');
-  const [tamanho, setTamanho] = useState(100);
-  const [perfil, setPerfil] = useState('padrao');
+  const [prefs, setPrefs] = useState<PreferenciasUsuario>(PADRAO);
   const [salvo, setSalvo] = useState(false);
 
   useEffect(() => {
     try {
-      const prefs = JSON.parse(localStorage.getItem('preferencias') || '{}');
-      if (prefs.tema) setTema(prefs.tema);
-      if (prefs.tamanho) setTamanho(prefs.tamanho);
-      if (prefs.perfil) setPerfil(prefs.perfil);
+      const stored = localStorage.getItem('divergego:preferencias');
+      if (stored) setPrefs(JSON.parse(stored));
     } catch {}
   }, []);
 
-  const salvar = useCallback(() => {
-    const prefs = { tema, tamanho, perfil };
-    localStorage.setItem('preferencias', JSON.stringify(prefs));
-    document.documentElement.setAttribute('data-tema', tema);
-    document.documentElement.style.setProperty('--font-size-base', `${(tamanho / 100) * 16}px`);
-    document.documentElement.setAttribute('data-perfil', perfil);
-    setSalvo(true);
-    setTimeout(() => setSalvo(false), 2000);
-  }, [tema, tamanho, perfil]);
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', prefs.tema);
+    document.documentElement.setAttribute('lang', prefs.idioma);
+  }, [prefs.tema, prefs.idioma]);
+
+  const atualizar = <K extends keyof PreferenciasUsuario>(chave: K, valor: PreferenciasUsuario[K]) => {
+    setPrefs((prev) => ({ ...prev, [chave]: valor }));
+    setSalvo(false);
+  };
+
+  const salvar = () => {
+    try {
+      localStorage.setItem('divergego:preferencias', JSON.stringify(prefs));
+      setSalvo(true);
+      setTimeout(() => setSalvo(false), 2000);
+    } catch {}
+  };
+
+  const resetar = () => {
+    setPrefs(PADRAO);
+    setSalvo(false);
+    try {
+      localStorage.removeItem('divergego:preferencias');
+    } catch {}
+  };
 
   return (
     <section className="preferencias">
-      <h1>⚙️ Preferências</h1>
-      <p className="subtitulo">
-        Personalize a aparência e o comportamento do DivergeGo. Suas escolhas ficam salvas neste navegador.
-      </p>
+      <header className="preferencias-header">
+        <h1>⚙️ Preferências</h1>
+        <p className="subtitulo">
+          Personalize sua experiência no DivergeGo. Todas as configurações ficam salvas no seu navegador.
+        </p>
+      </header>
 
-      <fieldset className="grupo-preferencia">
-        <legend>Tema</legend>
-        <div className="opcoes-tema">
-          {TEMAS.map((t) => (
-            <label key={t.id} className={`opcao-tema ${tema === t.id ? 'ativa' : ''}`}>
-              <input
-                type="radio"
-                name="tema"
-                value={t.id}
-                checked={tema === t.id}
-                onChange={() => setTema(t.id)}
-              />
-              <span>{t.label}</span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
+      <form className="preferencias-formulario" onSubmit={(e) => { e.preventDefault(); salvar(); }}>
+        <fieldset>
+          <legend>Aparência</legend>
+          <label htmlFor="pref-tema">Tema</label>
+          <select
+            id="pref-tema"
+            value={prefs.tema}
+            onChange={(e) => atualizar('tema', e.target.value as Tema)}
+          >
+            <option value="auto">🌗 Automático (segue o sistema)</option>
+            <option value="claro">☀️ Claro</option>
+            <option value="escuro">🌙 Escuro</option>
+          </select>
 
-      <fieldset className="grupo-preferencia">
-        <legend>Tamanho do texto</legend>
-        <div className="controle-tamanho">
-          <input
-            type="range"
-            min={100}
-            max={175}
-            step={5}
-            value={tamanho}
-            onChange={(e) => setTamanho(Number(e.target.value))}
-            aria-label={`Tamanho do texto: ${tamanho}%`}
-          />
-          <output>{tamanho}%</output>
-        </div>
-        <div className="amostra-texto" style={{ fontSize: `${(tamanho / 100) * 16}px` }}>
-          Exemplo de texto no tamanho selecionado.
-        </div>
-      </fieldset>
+          <label htmlFor="pref-fonte">Tamanho da fonte do editor</label>
+          <div className="range-grupo">
+            <input
+              id="pref-fonte"
+              type="range"
+              min={10}
+              max={24}
+              step={1}
+              value={prefs.editorFontSize}
+              onChange={(e) => atualizar('editorFontSize', Number(e.target.value))}
+            />
+            <span className="range-valor">{prefs.editorFontSize}px</span>
+          </div>
+        </fieldset>
 
-      <fieldset className="grupo-preferencia">
-        <legend>Perfil de acessibilidade</legend>
-        <div className="opcoes-perfil">
-          {PERFIS.map((p) => (
-            <label key={p.id} className={`opcao-perfil ${perfil === p.id ? 'ativa' : ''}`}>
-              <input
-                type="radio"
-                name="perfil"
-                value={p.id}
-                checked={perfil === p.id}
-                onChange={() => setPerfil(p.id)}
-              />
-              <span className="perfil-label">{p.label}</span>
-              <span className="perfil-descricao">{p.descricao}</span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
+        <fieldset>
+          <legend>Idioma e região</legend>
+          <label htmlFor="pref-idioma">Idioma da interface</label>
+          <select
+            id="pref-idioma"
+            value={prefs.idioma}
+            onChange={(e) => atualizar('idioma', e.target.value as Idioma)}
+          >
+            <option value="pt-BR">🇧🇷 Português (Brasil)</option>
+            <option value="en">🇺🇸 English</option>
+            <option value="es">🇪🇸 Español</option>
+          </select>
+        </fieldset>
 
-      <div className="acoes-preferencias">
-        <button type="button" className="btn btn-verde btn-grande" onClick={salvar}>
-          💾 Salvar preferências
-        </button>
-        {salvo && <span className="mensagem-salvo" role="status">✅ Preferências salvas!</span>}
-      </div>
+        <fieldset>
+          <legend>Editor e aprendizado</legend>
+          <label className="toggle-item">
+            <input
+              type="checkbox"
+              checked={prefs.autoSave}
+              onChange={(e) => atualizar('autoSave', e.target.checked)}
+            />
+            <span className="toggle-label">Salvar rascunhos automaticamente</span>
+            <span className="toggle-desc">Seu código no playground livre é salvo a cada 30 segundos.</span>
+          </label>
+          <label className="toggle-item">
+            <input
+              type="checkbox"
+              checked={prefs.mostrarDicas}
+              onChange={(e) => atualizar('mostrarDicas', e.target.checked)}
+            />
+            <span className="toggle-label">Mostrar dicas nos exercícios</span>
+            <span className="toggle-desc">Exibe sugestões progressivas quando você trava em um exercício.</span>
+          </label>
+          <label className="toggle-item">
+            <input
+              type="checkbox"
+              checked={prefs.somNotificacoes}
+              onChange={(e) => atualizar('somNotificacoes', e.target.checked)}
+            />
+            <span className="toggle-label">Som nas notificações</span>
+            <span className="toggle-desc">Toca um som curto quando um exercício é concluído ou um certificado é emitido.</span>
+          </label>
+        </fieldset>
+
+        <div className="preferencias-acoes">
+          <button type="submit" className="btn btn-verde">💾 Salvar preferências</button>
+          <button type="button" className="btn btn-fantasma" onClick={resetar}>Restaurar padrão</button>
+          {salvo && <span className="feedback-sucesso" role="status">✅ Preferências salvas!</span>}
+        </div>
+      </form>
     </section>
   );
 }

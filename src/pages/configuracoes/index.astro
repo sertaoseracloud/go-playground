@@ -1,0 +1,12 @@
+---
+// Página de configurações do aplicativo: desempenho, armazenamento e dados locais.
+import Base from '../../layouts/Base.astro';
+import ConfiguracoesGo from '../../islands/ConfiguracoesGo';
+
+const titulo = 'Configurações — DivergeGo';
+const descricao = 'Gerencie desempenho, armazenamento e dados locais do DivergeGo.';
+---
+
+<Base titulo={titulo} descricao={descricao} menu="configuracoes">
+  <ConfiguracoesGo client:visible />
+</Base>
