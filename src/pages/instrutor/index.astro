@@ -1,0 +1,34 @@
+---
+// Página do instrutor: guia para professores e mentores que usam o DivergeGo em sala de aula.
+import Base from '../../layouts/Base.astro';
+
+const titulo = 'Guia do Instrutor — DivergeGo';
+const descricao = 'Como usar o DivergeGo em sala de aula: configure exercícios, acompanhe progresso e valide certificados dos alunos.';
+---
+
+<Base titulo={titulo} descricao={descricao} menu="instrutor">
+ <section class="instrutor">
+ <h1>👨‍🏫 Guia do Instrutor</h1>
+ <p class="subtitulo">Tudo o que você precisa para usar o DivergeGo com sua turma.</p>
+
+ <article class="topico">
+ <h2>Como funciona</h2>
+ <p>O DivergeGo roda inteiramente no navegador dos alunos — sem servidor, sem cadastro, sem instalação. Cada pessoa tem seu próprio progresso salvo no localStorage.</p>
+ </article>
+
+ <article class="topico">
+ <h2>Acompanhando o progresso</h2>
+ <p>Os alunos podem exportar seu progresso como JSON pela tela de acessibilidade. Você pode importar esses arquivos para acompanhar quem completou cada exercício.</p>
+ </article>
+
+ <article class="topico">
+ <h2>Certificados</h2>
+ <p>Cada módulo concluído gera um certificado XML assinado digitalmente. A validação é independente do site: qualquer pessoa pode verificar a autenticidade pela página <a href={`${import.meta.env.BASE_URL}validar/`}>Validar certificado</a>.</p>
+ </article>
+
+ <article class="topico">
+ <h2>Acessibilidade em sala</h2>
+ <p>O DivergeGo foi feito para pessoas cegas, surdas e neurodivergentes. Leitor de tela, Libras (VLibras), temas de alto contraste, texto até 175% e perfis para TDAH, dislexia e autismo funcionam desde o primeiro acesso.</p>
+ </article>
+ </section>
+</Base>

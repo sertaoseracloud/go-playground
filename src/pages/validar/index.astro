@@ -1,0 +1,18 @@
+---
+// Página de validação de certificados: verifica a assinatura Ed25519 do XML.
+import Base from '../../layouts/Base.astro';
+
+const titulo = 'Validar certificado — DivergeGo';
+const descricao = 'Verifique a autenticidade do seu certificado DivergeGo colando o conteúdo do XML ou arrastando o arquivo.';
+---
+
+<Base titulo={titulo} descricao={descricao} menu="validar">
+ <section class="validador">
+ <h1>🔎 Validar certificado</h1>
+ <p class="subtitulo">Cole o conteúdo do XML abaixo para verificar a assinatura digital.</p>
+ <div id="validador-container" class="validador-container">
+ <!-- O validador será montado aqui pela ilha React ou pelo script legado. -->
+ <noscript>Habilite o JavaScript para validar certificados.</noscript>
+ </div>
+ </section>
+</Base>

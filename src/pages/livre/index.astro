@@ -1,0 +1,19 @@
+---
+// Playground livre: editor Go sem exercício definido, com código salvo no navegador.
+import Base from '../../layouts/Base.astro';
+import { playgroundLivre, semHtml } from '../../lib/conteudo';
+
+const titulo = 'Playground livre — DivergeGo';
+const descricao = semHtml(playgroundLivre.resumo) || 'Escreva e rode Go livremente no navegador.';
+---
+
+<Base titulo={titulo} descricao={descricao} menu="livre">
+ <section class="playground-livre">
+ <h1>🧪 Playground livre</h1>
+ <div class="descricao" set:html={playgroundLivre.resumo} />
+ <div id="editor-livre" class="editor-container" data-item-id="livre">
+ <!-- O editor CodeMirror será montado aqui pela ilha React ou pelo script legado. -->
+ <noscript>Habilite o JavaScript para usar o playground.</noscript>
+ </div>
+ </section>
+</Base>
