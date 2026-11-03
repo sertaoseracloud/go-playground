@@ -9,6 +9,10 @@ import { svgBadge } from '../badges.js';
 import { textoHoras } from '../cargaHoraria.js';
 import { statusDe, dataDe, diasAtivos, hoje, lerNome, gravarNome, lerPreferencia, gravarPreferencia } from '../progresso.js';
 import { esc, $ } from './util.js';
+import { CENARIO_DO_MODULO } from '../conteudo/cenarios.js';
+import { htmlDoCenario } from './cenarios/index.js';
+import { ligarCenarios } from './cenarios/palco.js';
+import { htmlConhecerVila } from './cenarios/conhecer.js';
 
 // No celular, a lista de certificados começa fechada para o caminho aparecer logo.
 const MOSTRAR_CERTIFICADOS = () => !window.matchMedia?.('(max-width: 760px)').matches;
@@ -171,9 +175,11 @@ function unidade(m, anterior, atual, cert) {
   } else {
     nos = m.itens.map(no).join('');
   }
+  const feitos = m.resolvidos;
+  const cenario = htmlDoCenario(CENARIO_DO_MODULO[m.id], m.id, feitos);
   return `
-    <section class="bloco-unidade ${m.desbloqueado ? '' : 'bloqueada'} ${atual ? 'unidade-atual' : ''}" id="unidade-${m.id}" aria-labelledby="titulo-${m.id}">
-      ${cabecalho.replace('<h2>', `<h2 id="titulo-${m.id}">`)}
+    <section class="bloco-unidade ${cenario ? 'com-cenario' : ''} ${m.desbloqueado ? '' : 'bloqueada'} ${atual ? 'unidade-atual' : ''}" id="unidade-${m.id}" aria-labelledby="titulo-${m.id}">${cenario}
+      ${cabecalho.replace('<h2>', `<h2 id="titulo-${m.id}">`)}${cenario ? htmlConhecerVila(CENARIO_DO_MODULO[m.id], m.id, feitos) : ''}
       <ol class="trilha" id="trilha-${m.id}">${nos}${trofeu(m, cert)}</ol>
     </section>`;
 }
@@ -245,8 +251,11 @@ function diploma(j) {
 
 // ---------- render ----------
 
+let desligarCenarios = null;
+
 export function desligarCenariosDaTrilha() {
-  // No go-playground não há cenários animados como no php-playground.
+  desligarCenarios?.();
+  desligarCenarios = null;
 }
 
 export function renderInicio(el) {
@@ -295,7 +304,36 @@ export function renderInicio(el) {
     await pedirNome();
     renderInicio(el);
   });
+  ligarControlesDaVila(el);
   mostrarPassoAtual(el);
+  desligarCenarios?.();
+  // Os cenários ficam acessíveis no elemento da tela (os testes E2E acham os moradores por aqui).
+  el.cenarios = ligarCenarios(el);
+  desligarCenarios = el.cenarios.desligar;
+}
+
+/**
+ * "Conhecer a vila" abre e fecha a lista de cada módulo; "Pausar animação do cenário" para os
+ * personagens (WCAG 2.2.2) e fica lembrado neste navegador.
+ */
+function ligarControlesDaVila(el) {
+  el.querySelectorAll('.btn-vila').forEach((b) => {
+    b.addEventListener('click', () => {
+      const lista = document.getElementById(b.getAttribute('aria-controls'));
+      const aberta = b.getAttribute('aria-expanded') !== 'true';
+      b.setAttribute('aria-expanded', String(aberta));
+      lista.hidden = !aberta;
+    });
+  });
+  el.querySelectorAll('.btn-pausar-cenario').forEach((b) => {
+    b.addEventListener('click', () => {
+      const pausado = b.getAttribute('aria-pressed') !== 'true';
+      b.setAttribute('aria-pressed', String(pausado));
+      b.textContent = pausado ? '▶ Retomar animação' : '⏸ Pausar animação';
+      gravarPreferencia('cenarios-pausados', pausado);
+      el.cenarios?.pausar?.(pausado);
+    });
+  });
 }
 
 /**

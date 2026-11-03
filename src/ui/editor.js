@@ -3,6 +3,10 @@ import { EditorView, basicSetup } from 'codemirror';
 import { EditorState, Prec } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
 import { javascript } from '@codemirror/lang-javascript';
+import { html } from '@codemirror/lang-html';
+import { css } from '@codemirror/lang-css';
+import { json } from '@codemirror/lang-json';
+import { php } from '@codemirror/lang-php';
 import { temaEditor } from './tema-editor.js';
 import { anunciar } from './anuncios.js';
 
@@ -56,13 +60,27 @@ export class EditorArquivos {
   }
 
   #estadoDe(nome) {
-    // Usa JavaScript mode como fallback para Go (syntax highlighting básico)
-    const [rotulo, linguagem] = ['Go', javascript];
+    // Rótulos e modos por extensão, compatível com testes de paridade
+    const ext = nome.split('.').pop()?.toLowerCase();
+    const mapa = {
+      go: ['Go', javascript],
+      mod: ['Go module', javascript],
+      sum: ['Go checksum', javascript],
+      php: ['PHP e HTML', php],
+      html: ['HTML', html],
+      css: ['CSS', css],
+      js: ['JavaScript', javascript],
+      json: ['JSON', json],
+      txt: ['texto simples', null],
+      md: ['Markdown', javascript],
+    };
+    const [rotulo, linguagem] = mapa[ext] ?? ['Go', javascript];
+    const extensoes = [...this.extensoes];
+    if (linguagem) extensoes.push(linguagem());
     return EditorState.create({
       doc: this.arquivos[nome] ?? '',
       extensions: [
-        ...this.extensoes,
-        linguagem(),
+        ...extensoes,
         EditorView.contentAttributes.of({
           tabindex: '0',
           'aria-label': `Editor de ${rotulo}: ${nome}`,

@@ -21,6 +21,9 @@ export const DADOS_LOCAIS = [
   { chave: 'tentativa', dado: 'Quanto tempo você passou tentando cada exercício (só com ele aberto)', finalidade: 'Mostrar a aba Solução depois do tempo estimado do exercício' },
   { chave: 'tarefas:*', dado: 'Tarefas marcadas na lista de cada exercício', finalidade: 'Lembrar o que você já fez' },
   { chave: 'pref:*', dado: 'Preferências: acessibilidade, layout, tutorial visto, aviso de privacidade', finalidade: 'Abrir o site do jeito que você deixou' },
+  { chave: 'estado:*', dado: 'Estado da UI: pausas, abas abertas, preferências temporárias', finalidade: 'Restaurar a interface como estava ao reabrir o site' },
+  { chave: 'init:*', dado: 'Mapa de inicialização de exercícios (o que já foi carregado)', finalidade: 'Evitar recarregar dados desnecessários e acelerar a abertura' },
+  { chave: 'historico', dado: 'Lista das últimas ações e resoluções (até 100)', finalidade: 'Mostrar o histórico completo na página de novidades' },
 ];
 
 /** Serviços de terceiros que o navegador pode acessar ao usar o site. */

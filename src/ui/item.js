@@ -2,7 +2,7 @@
 import { minutosDoItem } from '../cargaHoraria.js';
 import { buscarItem, modulos, vizinhos, DIFICULDADES } from '../conteudo/trilha.js';
 import { linkItem, linkCompartilhado } from '../compartilhar.js';
-import { compilarGo } from '../go/compiler.js';
+import { compilarGo } from '../go/compiler-browser.js';
 import { executarGo } from '../go/runtime.js';
 import {
   statusDe, marcar, lerRascunho, gravarRascunho, apagarRascunho,

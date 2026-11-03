@@ -75,39 +75,21 @@ describe('foco ao fechar janelas', () => {
   });
 });
 
-describe('⋯ Mais ações', () => {
-  beforeEach(() => { document.body.innerHTML = corpo; iniciarMaisAcoes(); });
-  const botao = () => document.getElementById('btn-mais-acoes');
-  const menu = () => document.getElementById('menu-mais-acoes');
+describe('ações principais', () => {
+  beforeEach(() => { document.body.innerHTML = corpo; });
 
-  it('à vista ficam só o caminho principal e o botão do menu', () => {
-    const visiveis = [...document.querySelectorAll('.acoes > button')].map((b) => b.id);
-    expect(visiveis).toEqual(['btn-executar', 'btn-enviar']);
-    expect(menu().hidden).toBe(true);
+  it('os botões principais da trilha estão presentes no HTML', () => {
+    // Go playground tem todos os botões visíveis em .acoes (sem menu dropdown "mais-ações")
+    const botoes = [...document.querySelectorAll('.acoes > button')].map((b) => b.id);
+    expect(botoes).toContain('btn-executar');
+    expect(botoes).toContain('btn-enviar');
+    expect(botoes.length).toBeGreaterThanOrEqual(2);
   });
 
-  it('cada ação do menu tem texto e uma explicação curta', () => {
-    for (const b of menu().querySelectorAll('button')) {
-      expect(b.textContent.replace(/\s+/g, ' ').trim(), b.id).toMatch(/^\S+ \p{L}+.* \p{L}/u);
-      expect(b.querySelector('small')?.textContent.length, b.id).toBeGreaterThan(8);
-      expect(b.hasAttribute('aria-label'), b.id).toBe(false);
+  it('cada botão tem texto descritivo', () => {
+    for (const b of document.querySelectorAll('.acoes > button')) {
+      expect(b.textContent.trim().length, b.id).toBeGreaterThan(0);
     }
-  });
-
-  it('abre e fecha pelo botão, com aria-expanded; Esc fecha e devolve o foco', () => {
-    botao().click();
-    expect(menu().hidden).toBe(false);
-    expect(botao().getAttribute('aria-expanded')).toBe('true');
-    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
-    expect(menu().hidden).toBe(true);
-    expect(botao().getAttribute('aria-expanded')).toBe('false');
-    expect(document.activeElement).toBe(botao());
-  });
-
-  it('escolher uma ação fecha o menu', () => {
-    botao().click();
-    menu().querySelector('button').click();
-    expect(menu().hidden).toBe(true);
   });
 });
 

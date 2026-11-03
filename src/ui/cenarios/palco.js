@@ -212,11 +212,13 @@ const proximaFala = new Map();
 /** O morador clicado (ou escolhido na lista) diz uma fala: balão na vila e aviso ao leitor de tela. */
 export function falaDoMorador(id, semente = '') {
   const info = FALAS_DA_VILA[id];
-  if (!info?.falas.length) return null;
+  // Go playground: FALAS_DA_VILA pode ser string direta ou objeto {falas: []}
+  const falas = typeof info === 'string' ? [info] : info?.falas;
+  if (!falas?.length) return null;
   const chave = `${semente}:${id}`;
-  const k = proximaFala.get(chave) ?? Math.floor(sorteador(chave)() * info.falas.length);
-  proximaFala.set(chave, (k + 1) % info.falas.length);
-  return { nome: info.nome, fala: info.falas[k] };
+  const k = proximaFala.get(chave) ?? Math.floor(sorteador(chave)() * falas.length);
+  proximaFala.set(chave, (k + 1) % falas.length);
+  return { nome: typeof info === 'string' ? id : info.nome, fala: falas[k] };
 }
 
 /** Comemora se o módulo ganhou exercícios desde o último desenho; a casa nova aparece crescendo. */

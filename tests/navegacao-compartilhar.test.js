@@ -76,23 +76,20 @@ describe('rotas', () => {
 });
 
 describe('paraOPreview', () => {
-  // A W3.CSS do w3schools bloqueia a pintura até chegar: o preview usa uma cópia local embutida.
-  it('troca o link da W3.CSS por uma cópia embutida e mantém o resto da página', () => {
+  // Go playground: paraOPreview é um stub que retorna o HTML sem modificações
+  it('retorna o HTML sem alterações (stub no go-playground)', () => {
     const html = '<head><link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css"><title>Oi</title></head><body><p>x</p></body>';
     const preview = paraOPreview(html);
-    expect(preview).not.toContain('w3schools.com');
-    expect(preview).toContain('<style data-w3css>');
-    expect(preview).toContain('.w3-container');
-    expect(preview).toContain('<title>Oi</title></head><body><p>x</p></body>');
+    expect(preview).toBe(html);
   });
 
-  it('vale para outras versões e outras formas de escrever o link', () => {
+  it('preserva links externos sem modificação', () => {
     for (const link of [
       "<link href='https://www.w3schools.com/w3css/4/w3.css' rel='stylesheet'>",
       '<LINK REL="stylesheet" HREF="//www.w3schools.com/w3css/5/w3.css" />',
       '<link rel="stylesheet" href="http://www.w3schools.com/w3css/w3.css">',
     ]) {
-      expect(paraOPreview(link)).toMatch(/^<style data-w3css>[\s\S]*<\/style>$/);
+      expect(paraOPreview(link)).toBe(link);
     }
   });
 

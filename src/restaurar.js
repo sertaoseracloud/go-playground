@@ -50,5 +50,5 @@ export function situacaoDoNome(cert, nomeSalvo) {
  */
 export function itensDoPlano(plano) {
   if (!Array.isArray(plano)) return [];
-  return plano.flatMap((bloco) => bloco.ids || []);
+  return plano.flatMap((bloco) => (bloco.ids || []).map((id) => ({ id, data: bloco.data })));
 }

@@ -26,6 +26,7 @@ export const CONTEUDO = {
 
 /** Componentes de terceiros que vão junto com o site, com a licença de cada um. */
 export const TERCEIROS = [
+  { nome: 'PHP no navegador (@php-wasm/web)', pacotes: ['@php-wasm/web'], licenca: 'GPL-2.0-or-later' },
   { nome: 'Compilador Go no navegador (GopherJS)', pacotes: ['gopherjs'], licenca: 'BSD-3-Clause' },
   { nome: 'Editor de código (CodeMirror)', pacotes: ['codemirror', '@codemirror/lang-javascript', '@codemirror/language', '@codemirror/state', '@codemirror/view', '@lezer/highlight'], licenca: 'MIT' },
   { nome: 'Assinatura digital (@noble/ed25519, @noble/hashes)', pacotes: ['@noble/ed25519', '@noble/hashes'], licenca: 'MIT' },

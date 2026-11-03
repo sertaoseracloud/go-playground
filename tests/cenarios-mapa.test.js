@@ -21,7 +21,8 @@ describe('pixel art', () => {
   });
 
   it('o 2º quadro da caminhada é diferente do 1º e continua 16×16', () => {
-    const s = CENARIOS.tipografia.personagens[0].quadros[0];
+    // Usa ID válido do go-playground (oficina) em vez de 'tipografia' do php-playground
+    const s = CENARIOS.oficina.personagens[0].quadros[0];
     const b = passo(s, 'andar');
     expect(b.linhas).toHaveLength(LADO);
     expect(b.linhas.every((l) => l.length === LADO)).toBe(true);
@@ -38,8 +39,9 @@ describe('mapa', () => {
   });
 
   it('a mesma semente gera o mesmo mapa', () => {
-    expect(mapaDe('tipografia')).toEqual(mapaDe('tipografia'));
-    expect(mapaDe('tipografia', 40, 25, 'outro')).not.toEqual(mapaDe('tipografia'));
+    // Usa ID válido do go-playground (oficina) em vez de 'tipografia' do php-playground
+    expect(mapaDe('oficina')).toEqual(mapaDe('oficina'));
+    expect(mapaDe('oficina', 40, 25, 'outro')).not.toEqual(mapaDe('oficina'));
   });
 
   it('a estrada cobre a faixa dos nós (±112px do centro)', () => {
@@ -105,7 +107,8 @@ describe('mapa', () => {
 
   it('com caminho, a estrada do mapa segue a faixa de cada linha, e manchas e objetos ficam a 2 tiles dela', () => {
     const caminho = [{ c: 14.5, l: 3.5 }, { c: 24.5, l: 12.5 }, { c: 15.5, l: 21.5 }];
-    const m = gerarMapa({ colunas: 40, linhas: 25, cenario: CENARIOS.forja, semente: 'php', caminho });
+    // Usa ID válido do go-playground (porto) em vez de 'forja' do php-playground
+    const m = gerarMapa({ colunas: 40, linhas: 25, cenario: CENARIOS.porto, semente: 'go', caminho });
     for (let l = 0; l < 25; l++) {
       const [de, ate] = m.estrada[l];
       for (let c = 0; c < 40; c++) {

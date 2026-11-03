@@ -28,14 +28,22 @@ export async function corrigir(problema, arquivos, executar, { incluirOcultos = 
     const cenario = [];
     let erroExecucao;
     for (const [i, passo] of passos.entries()) {
+      const req = { url: passo.url, metodo: passo.metodo, corpo: passo.corpo, stdin: passo.stdin };
+      // O executor PHP espera { seed } ou null; strings são convertidas para esse formato.
+      const bancoArg = typeof problema.banco === 'string' ? { seed: problema.banco } : (problema.banco ?? null);
       const resposta = await executar(
         arquivos,
-        { stdin: passo.stdin },
-        { novaSessao: i === 0, contexto: 'testes' },
+        req,
+        bancoArg,
+        { novaSessao: i === 0, manterBanco: i > 0, contexto: 'testes' },
       );
-      const pagina = { stdout: resposta.stdout, stderr: resposta.stderr, exitCode: resposta.exitCode, codigo };
-      cenario.push({ stdin: passo.stdin ?? '' });
-      erroExecucao ??= primeiraLinhaDoErro(resposta.stderr) || undefined;
+      // Normaliza resposta: aceita {html, erros} (PHP) ou {stdout, stderr, exitCode} (Go).
+      const html = resposta.html ?? resposta.stdout ?? '';
+      const stderr = resposta.erros ?? resposta.stderr ?? '';
+      const exitCode = resposta.exitCode ?? (stderr ? 1 : 0);
+      const pagina = { stdout: html, stderr, exitCode, codigo };
+      cenario.push({ stdin: passo.stdin ?? '', url: passo.url, metodo: passo.metodo });
+      erroExecucao ??= primeiraLinhaDoErro(stderr) || undefined;
       resultados.push(...(passo.regras ?? []).map((regra) => detalharRegra(regra, pagina)));
     }
     relatorio.push({

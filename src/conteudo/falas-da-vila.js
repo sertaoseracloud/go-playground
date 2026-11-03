@@ -8,6 +8,17 @@ export const FALAS = {
   'livre': 'Playground livre: escreva qualquer Go. O código fica salvo no navegador.',
 };
 
+/** Emojis das conversas, por cenário (o balão de quem conversa). */
+export const EMOJIS_DA_CONVERSA = {
+  oficina: ['🔧', '💻', '📦'],
+  porto: ['🚢', '📡', '🌊'],
+  ceu: ['☁️', '🪂', '⚡'],
+  cidade: ['🏗️', '🗄️', '🌙'],
+};
+
+/** Alias usado por módulos que esperam o nome legado do PHP. */
+export const FALAS_DA_VILA = FALAS;
+
 /** Retorna a fala para um dado ID, ou undefined se não houver. */
 export function falar(id) {
   return FALAS[id];

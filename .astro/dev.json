@@ -1,14 +1,22 @@
 {
-	"pid": 21984,
-	"port": 4322,
-	"url": "http://localhost:4322",
+	"pid": 14160,
+	"port": 5178,
+	"url": "http://localhost:5178",
 	"urls": {
 		"local": [
-			"http://localhost:4322/"
+			"http://localhost:5178/"
 		],
-		"network": [],
-		"networkInterfaceNames": []
+		"network": [
+			"http://192.168.15.7:5178/",
+			"http://172.30.48.1:5178/",
+			"http://172.24.128.1:5178/"
+		],
+		"networkInterfaceNames": [
+			"Wi-Fi",
+			"vEthernet (Default Switch)",
+			"vEthernet (WSL (Hyper-V firewall))"
+		]
 	},
 	"background": false,
-	"startedAt": "2026-11-03T10:39:23.188Z"
+	"startedAt": "2026-11-03T16:10:56.685Z"
 }

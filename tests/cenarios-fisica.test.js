@@ -36,7 +36,8 @@ describe('física', () => {
   });
 
   it('quem anda nunca entra na tinta derramada; voadores podem; a letra que salta nunca sai dela', () => {
-    const { mapa } = simular('tipografia', 1);
+    // Usa ID válido do go-playground (oficina) em vez de 'tipografia' do php-playground
+    const { mapa } = simular('oficina', 1);
     const tinta = mapa.tiles.findIndex((t) => t.tipo === 'bloqueio');
     const [c, l] = [tinta % mapa.colunas, Math.floor(tinta / mapa.colunas)];
     expect(podePisar(mapa, 'andar', c, l)).toBe(false);
@@ -47,7 +48,8 @@ describe('física', () => {
   });
 
   it('os personagens se mexem (não ficam parados para sempre) e viram para onde andam', () => {
-    const { historico } = simular('tipografia', 200);
+    // Usa ID válido do go-playground (oficina) em vez de 'tipografia' do php-playground
+    const { historico } = simular('oficina', 200);
     const tipografa = historico[0];
     const andou = new Set(tipografa.map((p) => `${p.c},${p.l}`)).size;
     expect(andou).toBeGreaterThan(10);

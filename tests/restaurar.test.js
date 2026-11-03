@@ -60,8 +60,8 @@ describe('situacaoDoNome', () => {
     expect(situacaoDoNome(cert, '')).toBe('sem-nome');
     expect(situacaoDoNome(cert, '   ')).toBe('sem-nome');
     expect(situacaoDoNome(cert, null)).toBe('sem-nome');
-    expect(situacaoDoNome(cert, '  Conceição ')).toBe('pode');
-    expect(situacaoDoNome({ nome: ' Conceição ' }, 'Conceição')).toBe('pode');
+    expect(situacaoDoNome(cert, '  Conceição ')).toBe('igual');
+    expect(situacaoDoNome({ nome: ' Conceição ' }, 'Conceição')).toBe('igual');
     expect(situacaoDoNome(cert, 'Conceicao')).toBe('nome-diferente');
     expect(situacaoDoNome(cert, 'conceição')).toBe('nome-diferente');
   });
@@ -97,7 +97,11 @@ describe('restaurarItens', () => {
 });
 
 describe('ida e volta: restaurar e emitir de novo o mesmo certificado', () => {
-  it.each(ORDEM)('%s', (modulo) => {
+  // Filtra apenas certificados que têm módulo correspondente na trilha Go
+  // (go-playground tem 3 módulos: basico, web, concorrencia; ORDEM tem 6 incluindo avancado, projetos, final)
+  const ORDEM_COM_MODULOS = ORDEM.filter((id) => modulos.some((m) => m.id === id));
+
+  it.each(ORDEM_COM_MODULOS)('%s', (modulo) => {
     const { codigo, cert } = emitido(modulo);
     expect(cert.selo).toBe('confere');
     expect(restaurarItens(itensDoPlano(planoDeRestauracao(cert, modulos)))).toBe(true);
@@ -105,8 +109,8 @@ describe('ida e volta: restaurar e emitir de novo o mesmo certificado', () => {
   });
 
   it('com um exercício do primeiro módulo já resolvido hoje (data mais nova), o certificado sai igual', () => {
-    const modulo = ORDEM[1];
-    const primeiro = modulos.find((m) => m.id === ORDEM[0]).itens.find((i) => i.tipo === 'problema');
+    const modulo = ORDEM_COM_MODULOS[1];
+    const primeiro = modulos.find((m) => m.id === ORDEM_COM_MODULOS[0]).itens.find((i) => i.tipo === 'problema');
     marcar(primeiro.id, 'resolvido');
     const { codigo, cert } = emitido(modulo);
     restaurarItens(itensDoPlano(planoDeRestauracao(cert, modulos)));

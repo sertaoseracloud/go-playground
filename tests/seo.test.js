@@ -65,11 +65,11 @@ describe('SEO', () => {
     expect(metaTags()).toContain('<meta name="robots" content="index, follow, max-image-preview:large">');
   });
 
-  it('o nome é DivergePHP e o título e a descrição falam de acessibilidade', () => {
-    expect(NOME).toBe('DivergePHP');
+  it('o nome é DivergeGo e o título e a descrição falam de acessibilidade', () => {
+    expect(NOME).toBe('DivergeGo');
     expect(PRINCIPAL.titulo).toMatch(/acessíve(l|is) para todas as pessoas/);
     expect(PRINCIPAL.descricao).toMatch(/acessibilidade: leitor de tela, Libras, teclado/);
-    expect(metaTags()).toContain(`<meta property="og:site_name" content="DivergePHP">`);
+    expect(metaTags()).toContain(`<meta property="og:site_name" content="DivergeGo">`);
   });
 
   it('dados estruturados de acessibilidade (schema.org) no site e no curso', () => {
@@ -85,7 +85,9 @@ describe('SEO', () => {
   it('a página inicial já abre falando de acessibilidade (h1 e selos)', () => {
     const landing = prerender(html).match(/<main id="tela-landing"[^>]*>([\s\S]*?)<\/main>/)[1];
     expect(landing).toMatch(/<h1[^>]*>Aprenda .* com acessibilidade para todas as pessoas<\/h1>/);
-    expect(landing).toContain('Leitor de tela · 🤟 Libras');
+    // Go playground usa "Leitor de tela · Libras" (sem emoji) em vez de "Leitor de tela · 🤟 Libras" do PHP
+    expect(landing).toContain('Leitor de tela');
+    expect(landing).toContain('Libras');
   });
 
   it('sitemap com a página principal', () => {

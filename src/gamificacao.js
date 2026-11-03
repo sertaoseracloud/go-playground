@@ -8,12 +8,12 @@ export const LIMITE_DESBLOQUEIO = 70;
 
 export const NIVEIS = [
   { nome: 'Iniciante', xp: 0 },
-  { nome: 'Aprendiz', xp: 150 },
-  { nome: 'Operador', xp: 400 },
-  { nome: 'Construtor', xp: 800 },
-  { nome: 'Arquiteto Go', xp: 1400 },
-  { nome: 'Especialista multicloud', xp: 2200 },
-  { nome: 'Mestre do Go', xp: 3200 },
+  { nome: 'Aprendiz', xp: 30 },
+  { nome: 'Operador', xp: 60 },
+  { nome: 'Construtor', xp: 100 },
+  { nome: 'Arquiteto Go', xp: 140 },
+  { nome: 'Especialista multicloud', xp: 170 },
+  { nome: 'Mestre do Go', xp: 190 },
 ];
 
 const xpDoItem = (item) => (item.tipo === 'licao' ? XP.licao : XP[item.dificuldade] ?? 0);

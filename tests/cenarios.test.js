@@ -5,9 +5,9 @@ import { describe, it, expect } from 'vitest';
 import { CENARIOS, htmlDoCenario } from '../src/ui/cenarios/index.js';
 import { LADO } from '../src/ui/cenarios/pixel.js';
 
-const IDS = ['tipografia', 'feira', 'forja', 'arquivo', 'cidade'];
-const COM_BLOQUEIO = ['tipografia', 'feira', 'forja', 'arquivo'];
-const PESSOAS = ['tipografa', 'aprendiz', 'costureira', 'vendedor', 'ferreira', 'ajudante', 'arquivista', 'mensageiro', 'operaria'];
+const IDS = ['oficina', 'porto', 'ceu', 'cidade'];
+const COM_BLOQUEIO = ['oficina', 'porto', 'ceu', 'cidade'];
+const PESSOAS = ['aprendiz-basico', 'arquiteta', 'capitao-http', 'controladora', 'dev-senior', 'estivador', 'mestre-go', 'piloto-goroutine'];
 const camada = (id, semente) => {
   const div = document.createElement('div');
   div.innerHTML = htmlDoCenario(id, semente);
@@ -25,7 +25,7 @@ describe('cenários', () => {
     const c = CENARIOS[id];
     expect(c.chao.cores).toHaveLength(3);
     expect(c.chao.pesos).toHaveLength(3);
-    expect(['terra', 'tabuas', 'pedras', 'liso']).toContain(c.estrada.padrao);
+    expect(['terra', 'tabuas', 'pedras', 'liso', 'concreto']).toContain(c.estrada.padrao);
     expect(Boolean(c.bloqueio)).toBe(COM_BLOQUEIO.includes(id));
     expect(c.objetos.length).toBeGreaterThanOrEqual(2);
     expect(c.objetos.every(spriteValido)).toBe(true);

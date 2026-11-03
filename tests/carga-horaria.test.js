@@ -9,7 +9,9 @@ import { resultadoDoLink } from '../src/ui/validador.js';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-const MODULOS = ORDEM.filter((id) => id !== 'final');
+// Filtra apenas certificados que têm módulo correspondente na trilha Go
+// (go-playground tem 3 módulos: basico, web, concorrencia; ORDEM tem 6 incluindo avancado, projetos, final)
+const MODULOS_COM_TRILHA = ORDEM.filter((id) => id !== 'final' && modulos.some((m) => m.id === id));
 const datas = (id) => anteriores(id).map((_, i) => `2026-10-0${i + 1}`);
 const cert = (id) => ({ nome: 'Maria da Conceição', modulo: id, data: '2026-10-12', cadeia: datas(id) });
 
@@ -28,14 +30,14 @@ describe('carga horária', () => {
     for (const id of ORDEM) expect(CERTIFICADOS[id].cargaHoraria).toBeGreaterThanOrEqual(1);
   });
 
-  it.each(MODULOS)('%s: a carga do certificado bate com as atividades do módulo', (id) => {
+  it.each(MODULOS_COM_TRILHA)('%s: a carga do certificado bate com as atividades do módulo', (id) => {
     const modulo = modulos.find((m) => m.id === id);
     // Se o conteúdo mudou, revise a cargaHoraria em src/certificados.js.
     expect(CERTIFICADOS[id].cargaHoraria).toBe(horasDosItens(modulo.itens));
   });
 
-  it('o certificado final soma todos os módulos', () => {
-    expect(CERTIFICADOS.final.cargaHoraria).toBe(MODULOS.reduce((s, id) => s + CERTIFICADOS[id].cargaHoraria, 0));
+  it('o certificado final soma todos os módulos com trilha', () => {
+    expect(CERTIFICADOS.final.cargaHoraria).toBe(MODULOS_COM_TRILHA.reduce((s, id) => s + CERTIFICADOS[id].cargaHoraria, 0));
   });
 
   it('texto em horas', () => {
@@ -45,7 +47,7 @@ describe('carga horária', () => {
 });
 
 describe('carga horária onde o certificado aparece', () => {
-  const id = MODULOS[1];
+  const id = MODULOS_COM_TRILHA[1];
   const horas = textoHoras(CERTIFICADOS[id].cargaHoraria);
 
   it('página do certificado: cartão do badge e documento impresso', async () => {

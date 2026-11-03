@@ -1,54 +1,124 @@
 /* Cenários da trilha (src/ui/cenarios): o mapa de tiles em pixel art atrás do caminho de cada
-módulo, com os personagens andando de tile em tile. Nunca recebe clique nem foco, e o caminho,
-os nós e os rótulos mantêm as cores de sempre. */
+   módulo, com os personagens andando de tile em tile. Nunca recebe clique nem foco, e o caminho,
+   os nós e os rótulos mantêm as cores de sempre. */
 .com-cenario { position: relative; isolation: isolate; padding-bottom: 18px; }
 .cenario {
-position: absolute;
-top: 0;
-bottom: 0;
-left: var(--cenario-desvio, 0px);
-width: var(--cenario-largura, 100%);
-z-index: -1;
-overflow: clip;
-pointer-events: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  /* 100vw: o palco mede a área da trilha e põe a camada de uma borda à outra (palco.js, alargar). */
+  left: var(--cenario-desvio, 0px);
+  width: var(--cenario-largura, 100%);
+  z-index: -1;
+  overflow: clip;
+  pointer-events: none;
 }
+/* A camada passa da coluna dos módulos: a área da trilha não ganha rolagem horizontal, e a coluna
+   da esquerda (perfil, Continuar, certificados) fica acima do mapa, com o fundo do tema. */
 .tela-inicio { overflow-x: hidden; }
 .painel-jogador { z-index: 1; }
+/* O palco (mapa + personagens) cobre o módulo inteiro, que tem várias telas de altura, e rola
+   junto com o conteúdo: o mapa sobe quando a página sobe. No módulo seguinte, entra o próximo cenário. */
 .cenario-palco { position: absolute; inset: 0; overflow: clip; }
 .cenario-mundo { position: absolute; top: 0; }
 .cenario-mapa { position: absolute; left: 0; top: 0; opacity: .45; image-rendering: pixelated; }
+/* Véu atrás do texto: o cabeçalho do módulo e a legenda de cada nó ficam legíveis sobre o mapa. */
 .com-cenario .unidade { background: color-mix(in srgb, var(--cor) 10%, var(--fundo)); }
 .com-cenario .legenda { background: color-mix(in srgb, var(--fundo) 88%, transparent); border-radius: 6px; padding: 0 6px; }
+
 /* Personagens: cada um ocupa um tile e anda um tile por passo (0,4 s), como no Tibia. */
 .personagem {
-position: absolute;
-left: 0;
-top: 0;
-width: 32px;
-height: 32px;
-transition: transform .4s linear;
-will-change: transform;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 32px;
+  height: 32px;
+  transition: transform .4s linear;
+  will-change: transform;
 }
 .personagem canvas { display: block; width: 32px; height: 32px; image-rendering: pixelated; }
+/* Quem voa fica um pouco acima do chão, com a sombra no tile. */
 .mov-voar::after {
-content: "";
-position: absolute;
-left: 8px;
-top: 34px;
-width: 16px;
-height: 5px;
-border-radius: 50%;
-background: rgb(0 0 0 / 25%);
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 34px;
+  width: 16px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 25%);
 }
 .saltando canvas { animation: cen-salto .4s ease-out; }
 @keyframes cen-salto { 50% { transform: translateY(-12px) rotate(-20deg); } }
+
 /* Módulo bloqueado: mapa desbotado; os personagens não andam (palco.js). */
 .bloqueada .cenario { filter: grayscale(1); opacity: .2; }
+
 /* Menos movimento: sem deslize entre os tiles (o palco também não cria o temporizador). */
 @media (prefers-reduced-motion: reduce) {
-.personagem, .saltando canvas { transition: none; animation: none; }
+  .personagem, .saltando canvas { transition: none; animation: none; }
 }
+
 /* Temas: no suave, cores calmas; no alto contraste, o palco desenha só contornos. */
 [data-tema="suave"] .cenario { filter: saturate(.5) brightness(.9); }
 [data-tema="alto-contraste"] .cenario-mapa { opacity: 1; }
 [data-tema="alto-contraste"] .personagem { transition: none; }
+
+/* .cenario também é o nome do quadro de casos de teste (estilo.css), com fundo, borda e respiro:
+   nada disso vale para a camada do cenário (o fundo cobriria o canvas do PixiJS e mudaria de
+   tamanho na carga). */
+.cenario[data-cenario] { background: none; padding: 0; border-radius: 0; }
+
+/* PixiJS (palco-pixi.js): um canvas só, fixo atrás da trilha, do tamanho da caixa que rola. */
+.com-pixi { isolation: isolate; }
+.cenario-pixi { position: fixed; z-index: -1; pointer-events: none; image-rendering: pixelated; }
+[data-tema="suave"] .cenario-pixi { filter: saturate(.5) brightness(.9); }
+
+/* Balões da vila: 👋 de quem se cruza, o emoji da conversa e a fala de quem foi clicado. Ficam
+   na camada do cenário (rolam com o módulo e não recebem clique) e nunca piscam: aparecem e somem. */
+.cenario-baloes { position: absolute; top: 0; }
+.balao-vila {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 1px 6px;
+  border: 1px solid var(--linha);
+  border-radius: 10px;
+  background: var(--fundo);
+  color: var(--texto);
+  font-size: 15px;
+  line-height: 1.4;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 20%);
+}
+.balao-vila.fala { width: max-content; max-width: min(240px, 70vw); white-space: normal; font-size: .82rem; }
+/* A fala fica por cima do caminho (é resposta a um clique), sem receber clique. */
+.fala-vila { z-index: 2; pointer-events: none; }
+
+/* "Conhecer a vila" (a alternativa em texto do cenário) e "Pausar animação do cenário". Alvos de
+   pelo menos 24×24 px, foco visível do tema e nada que passe da largura da trilha. */
+.cenario-controle { margin: 0 0 10px; }
+.vila-acoes { display: flex; justify-content: flex-end; margin: 6px 0 0; }
+.btn-vila, .btn-pausar-cenario {
+  min-height: 32px;
+  padding: 4px 12px;
+  border: 1px solid var(--linha);
+  border-radius: 999px;
+  background: var(--fundo);
+  color: var(--texto);
+  font: inherit;
+  font-size: .85rem;
+  cursor: pointer;
+}
+.btn-pausar-cenario[aria-pressed="true"] { border-width: 2px; font-weight: 700; }
+.vila-lista {
+  margin: 8px 0;
+  padding: 10px 14px;
+  border: 1px solid var(--linha);
+  border-radius: 8px;
+  background: var(--fundo);
+  font-size: .9rem;
+  overflow-wrap: anywhere;
+}
+.vila-lista p { margin: 0; }
+.vila-lista ul { margin: 6px 0; padding-left: 20px; }

@@ -58,11 +58,6 @@
 .janela-barra b { margin-left: 8px; font-weight: 400; font-size: 0.8rem; color: var(--suave); font-family: var(--fonte-codigo); }
 .janela-codigo { margin: 0; padding: 16px 18px; font-family: var(--fonte-codigo); font-size: 0.86rem; line-height: 1.7; color: var(--texto); overflow-x: auto; white-space: pre; }
 .t-tag { color: var(--rosa); }
-
-/* ---------- módulos em breve ---------- */
-.modulo-card.modulo-em-breve { border-style: dashed; opacity: 0.7; }
-.modulo-card.modulo-em-breve h3 { color: var(--suave); }
-.badge-em-breve { font-size: 0.75rem; font-weight: 400; color: var(--suave); }
 .t-var { color: var(--texto); }
 .t-str { color: var(--amarelo); }
 .t-num { color: var(--roxo); }
@@ -93,16 +88,11 @@
   background: color-mix(in srgb, var(--cor) 12%, var(--fundo));
   border: 2px solid color-mix(in srgb, var(--cor) 60%, transparent);
 }
-.modulo-card[data-modulo="fundamentos"] { --cor: var(--roxo); }
-.modulo-card[data-modulo="controle"] { --cor: var(--laranja); }
-.modulo-card[data-modulo="estruturas"] { --cor: var(--ciano); }
-.modulo-card[data-modulo="tipos"] { --cor: var(--verde); }
-.modulo-card[data-modulo="erros"] { --cor: var(--vermelho); }
-.modulo-card[data-modulo="concorrencia"] { --cor: var(--rosa); }
-.modulo-card[data-modulo="http"] { --cor: var(--amarelo); }
-.modulo-card[data-modulo="testes"] { --cor: var(--roxo); }
-.modulo-card[data-modulo="grpc"] { --cor: var(--ciano); }
-.modulo-card[data-modulo="arquitetura"] { --cor: var(--verde); }
+.modulo-card[data-modulo="html"] { --cor: var(--laranja); }
+.modulo-card[data-modulo="w3css"] { --cor: var(--ciano); }
+.modulo-card[data-modulo="php"] { --cor: var(--roxo); }
+.modulo-card[data-modulo="pdo"] { --cor: var(--verde); }
+.modulo-card[data-modulo="projetos"] { --cor: var(--rosa); }
 .modulo-numero { position: absolute; top: 10px; right: 12px; font-size: 0.75rem; font-weight: 700; color: var(--cor); text-transform: uppercase; }
 .modulo-icone { font-size: 1.8rem; }
 .modulo-card h3 { margin-top: 6px; color: var(--cor); }
@@ -154,17 +144,4 @@
   .janela-resultado { width: 92%; }
   .janela-codigo { font-size: 0.78rem; }
   .btn-grande { width: 100%; justify-content: center; text-align: center; }
-}
-
-/* demo do plano na landing */
-.terminal-demo {
-  margin: 0;
-  padding: 12px 14px;
-  font-family: var(--fonte-codigo);
-  font-size: 0.82rem;
-  line-height: 1.5;
-  white-space: pre;
-  overflow-x: auto;
-  color: var(--texto);
-  background: var(--fundo-mais-escuro);
 }

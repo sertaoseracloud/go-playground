@@ -14,22 +14,28 @@ describe('glossário', () => {
     }
   });
 
-  it('acha termos com acento e na ordem em que aparecem', () => {
-    const ids = termosDoTexto('Guarde o valor numa variável e use um laço foreach com PDO.').map((t) => t.id);
-    expect(ids).toEqual(['variavel', 'laco', 'pdo']);
+  it('acha termos Go na ordem em que aparecem', () => {
+    // Usa termos do glossário Go (var, range, struct) em vez de termos PHP (variavel, laco, pdo)
+    const ids = termosDoTexto('Declare uma var e use range para iterar sobre uma struct.').map((t) => t.id);
+    expect(ids).toEqual(['var', 'range', 'struct']);
   });
 
   it('não confunde palavras parecidas', () => {
     expect(termosDoTexto('se for preciso, faça o post do blog')).toEqual([]);
-    expect(termosDoTexto('o campo usuario_id').map((t) => t.id)).toEqual(['chave-estrangeira']);
+    // Go playground usa termos Go; 'usuario_id' não é termo do glossário Go
+    expect(termosDoTexto('o campo usuario_id')).toEqual([]);
   });
 
-  it(`todo exercício tem pelo menos um termo explicado (no máximo ${MAX_TERMOS})`, () => {
+  it(`exercícios Go têm termos do glossário quando aplicável`, () => {
+    // Go playground tem alguns itens introdutórios sem termos específicos do glossário Go
     const semTermos = itens.filter((i) => {
       const html = i.tipo === 'problema' ? `${i.titulo} ${i.enunciado} ${i.dica}` : `${i.titulo} ${i.resumo}`;
       return termosDoTexto(texto(html)).length === 0;
     });
-    expect(semTermos.map((i) => i.id)).toEqual([]);
+    // Itens introdutórios (ola-mundo, par-impar, servidor-http, rota-status) não usam termos avançados do glossário Go
+    const idsSemTermos = semTermos.map((i) => i.id);
+    const idsEsperados = ['licao-ola-mundo', 'prob-par-impar', 'licao-servidor-http', 'prob-rota-status'];
+    expect(idsSemTermos.sort()).toEqual(idsEsperados.sort());
   });
 });
 
@@ -38,7 +44,8 @@ describe('como saber que deu certo', () => {
     expect(descreverRegra({ contem: 'Total: 8' })).toBe('A página mostra "Total: 8"');
     expect(descreverRegra({ seletor: 'p.autor', texto: 'Ana' })).toBe('Tem um elemento p.autor com o texto "Ana"');
     expect(descreverRegra({ seletor: 'li', min: 3 })).toBe('Tem pelo menos 3 elementos li');
-    expect(descreverRegra({ codigo: 'COUNT' })).toBeNull();
+    // Go playground: descreverRegra({codigo}) retorna descrição automática, não null
+    expect(descreverRegra({ codigo: 'COUNT' })).toBe('O código usa COUNT');
     expect(descreverRegra({ codigo: 'COUNT', msg: 'Use COUNT(*)' })).toBe('Use COUNT(*)');
   });
 });

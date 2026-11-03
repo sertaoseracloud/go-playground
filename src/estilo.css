@@ -1,7 +1,7 @@
 /* =========================================================
-Temas. Dracula é o padrão (https://draculatheme.com).
-Alto contraste e Claro vêm do painel ♿ Acessibilidade.
-========================================================= */
+   Temas. Dracula é o padrão (https://draculatheme.com).
+   Alto contraste e Claro vêm do painel ♿ Acessibilidade.
+   ========================================================= */
 :root,
 :root[data-tema="dracula"] {
   --fundo: #282a36;
@@ -246,7 +246,6 @@ kbd {
 }
 .pular:focus { top: 8px; }
 
-/* Faixa do build de homologação (develop): avisa que não é o site principal. */
 .faixa-homologacao {
   padding: 6px 16px;
   background: var(--amarelo);
@@ -543,22 +542,16 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }
 .termo .analogia { margin: 8px 10px; }
 .termo .exemplo-termo { margin: 0 10px 10px; }
 
-/* aba Docs: argumentos de cada tipo de recurso */
-.doc-tipo { border: 1px solid var(--linha); border-radius: 8px; margin: 8px 0; background: var(--fundo-escuro); }
-.doc-tipo summary { cursor: pointer; padding: 8px 10px; display: flex; gap: 10px; align-items: center; }
-.doc-tipo summary code { color: var(--verde); font-weight: 700; }
-.doc-link { margin: 0 0 6px; font-size: 0.86rem; }
-.doc-link a { display: inline-block; padding: 4px 0; }
-.doc-tipo > :not(summary) { margin-left: 12px; margin-right: 12px; }
-.doc-tipo h2 { margin: 10px 12px 4px; font-size: 0.85rem; color: var(--ciano); }
-.doc-args { margin: 0 12px 6px; padding-left: 18px; font-size: 0.86rem; }
-.doc-args li { padding: 2px 0; }
-.doc-args code { color: var(--texto); }
-.tipo-arg { color: var(--roxo); font-size: 0.8rem; }
-.padrao-arg { color: var(--suave); font-size: 0.8rem; }
-.chip-recria { background: color-mix(in srgb, var(--laranja) 20%, transparent); color: var(--laranja); }
-.doc-calc { margin: 0 12px 10px; line-height: 1.9; }
-.doc-calc code { margin-right: 6px; color: var(--suave); }
+/* aba Banco */
+.tabela-banco { margin-bottom: 18px; }
+.tabela-banco h3 { margin: 0 0 6px; font-size: 0.95rem; color: var(--ciano); }
+.tabela-banco h3 small { color: var(--suave); font-weight: 400; }
+.tabela-rolagem { overflow: auto; border: 1px solid var(--linha); border-radius: 6px; }
+.tabela-banco table { border-collapse: collapse; width: 100%; font-size: 0.82rem; }
+.tabela-banco th, .tabela-banco td { padding: 5px 10px; text-align: left; border-bottom: 1px solid var(--linha); white-space: nowrap; }
+.tabela-banco th { background: var(--fundo-escuro); color: var(--rosa); position: sticky; top: 0; }
+.tabela-banco th .tipo { color: var(--suave); font-weight: 400; margin-left: 4px; }
+.tabela-banco td.numero { color: var(--roxo); }
 
 /* editor */
 .editor { flex: 1; min-height: 0; overflow: hidden; }
@@ -566,130 +559,51 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }
 .editor .cm-editor.cm-focused { outline: none; }
 .painel-codigo:focus-within { border-color: var(--roxo); }
 
-/* saída do Terraform: terminal, grafo, estado e outputs */
-.seletor-workspace { display: flex; align-items: center; gap: 4px; margin-left: auto; padding: 0 8px; font-size: 0.82rem; color: var(--suave); }
-.seletor-workspace select {
-  font: inherit;
+/* preview */
+.saida-resultado { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.endereco {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--fundo-escuro);
+  border-bottom: 1px solid var(--linha);
+  flex-shrink: 0;
+}
+.endereco .origem { color: var(--suave); font-size: 0.82rem; }
+.endereco input {
+  flex: 1 1 140px;
+  min-width: 0;
   font-family: var(--fonte-codigo);
+  font-size: 0.85rem;
   color: var(--amarelo);
   background: var(--fundo);
   border: 1px solid var(--linha);
-  border-radius: 6px;
-  padding: 2px 6px;
+  border-radius: 14px;
+  padding: 3px 12px;
 }
-.contador { margin-left: 4px; padding: 0 6px; border-radius: 999px; font-size: 0.75rem; background: var(--linha); color: var(--texto); }
-.contador:empty { display: none; }
-.terminal {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-  margin: 0;
-  padding: 10px 14px 24px;
-  background: var(--fundo-mais-escuro);
-  color: var(--texto);
-  font-family: var(--fonte-codigo);
-  font-size: calc(13px * var(--escala));
-  line-height: 1.45;
-  white-space: pre;
-  tab-size: 2;
-  font-variant-ligatures: none; /* como num terminal: "..." continua sendo três pontos */
-}
-.terminal .linha { display: inline; }
-.terminal:focus-within, .terminal:focus-visible { outline: 2px solid var(--roxo); outline-offset: -2px; }
-.saida-terminal { margin: 0; font: inherit; white-space: pre; }
-.saida-terminal[aria-busy="true"] { cursor: progress; }
-/* o prompt e o campo na mesma linha, como num terminal */
-.linha-prompt { display: flex; align-items: baseline; }
-.prompt-terminal { white-space: pre; }
-.campo-terminal {
-  flex: 1;
-  min-width: 4ch;
-  padding: 0;
-  border: 0;
-  font: inherit;
-  color: var(--texto);
-  background: transparent;
-  caret-color: var(--texto);
-}
-.campo-terminal:focus { outline: none; } /* o contorno fica no terminal inteiro (:focus-within) */
-.campo-terminal:disabled { opacity: 0; }
-@keyframes piscar-caret { 50% { caret-color: transparent; } }
-.campo-terminal:focus { animation: piscar-caret 1.05s steps(1) infinite; }
-:root.a11y-sem-movimento .campo-terminal:focus { animation: none; }
-@media (prefers-reduced-motion: reduce) { .campo-terminal:focus { animation: none; } }
+.medidor { font-size: 0.78rem; color: var(--suave); white-space: nowrap; }
+.medidor[data-faixa="pequena"] { color: var(--laranja); }
+.medidor[data-faixa="grande"] { color: var(--verde); }
+.resultado { flex: 1; width: 100%; border: 0; background: #fff; }
+.saida { flex: 1; min-height: 0; overflow: auto; margin: 0; }
+.fonte { padding: 12px; font-size: 0.93em; white-space: pre-wrap; word-break: break-word; color: var(--texto); }
 
-/* janela do terminal: barra com as "luzes", o título (usuário e pasta) e o ⏩ Pular */
-.janela-terminal { flex: 1; min-height: 0; display: flex; flex-direction: column; background: var(--fundo-mais-escuro); }
-.janela-terminal[hidden] { display: none; }
-.barra-terminal {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 30px;
-  padding: 4px 10px;
-  border-bottom: 1px solid var(--linha);
-  background: var(--fundo-escuro);
-  font-family: var(--fonte-codigo);
-  font-size: 0.78rem;
-  color: var(--suave);
-}
-.luzes { display: inline-flex; gap: 6px; flex-shrink: 0; }
-.luzes i { width: 11px; height: 11px; border-radius: 50%; background: var(--vermelho); opacity: 0.85; }
-.luzes i:nth-child(2) { background: var(--amarelo); }
-.luzes i:nth-child(3) { background: var(--verde); }
-.titulo-terminal { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }
-.btn-pular {
-  flex-shrink: 0;
-  font: inherit;
-  color: var(--texto);
-  background: var(--linha);
-  border: 1px solid transparent;
-  border-radius: 6px;
-  padding: 2px 8px;
-  cursor: pointer;
-}
-.btn-pular:hover { border-color: var(--roxo); }
-.btn-pular kbd { font: inherit; font-size: 0.75rem; color: var(--suave); border: 1px solid var(--suave); border-radius: 3px; padding: 0 3px; margin-left: 2px; }
-
-/* prompt do shell e cursor piscando */
-.p-usuario { color: var(--verde); font-weight: 700; }
-.p-pasta { color: var(--roxo); font-weight: 700; }
-.p-cifrao { color: var(--texto); }
-.l-comando { color: var(--texto); }
-.cursor {
-  display: inline-block;
-  width: 0.6em;
-  height: 1.15em;
-  margin-left: 1px;
-  vertical-align: text-bottom;
-  background: var(--texto);
-  animation: piscar 1.05s steps(1) infinite;
-}
-@keyframes piscar { 50% { opacity: 0; } }
-.l-titulo { font-weight: 700; }
-.l-sucesso { color: var(--verde); }
-.l-forte { font-weight: 700; }
-.l-criar { color: var(--verde); }
-.l-alterar { color: var(--amarelo); }
-.l-destruir { color: var(--vermelho); }
-.l-substituir { color: var(--laranja); }
-.l-ler { color: var(--ciano); }
-.l-comentario { color: var(--suave); }
-.l-erro { color: var(--vermelho); }
-.l-aviso { color: var(--amarelo); }
-.l-explicacao { color: var(--texto); }
-.l-trecho { color: var(--ciano); }
-.l-saida { color: var(--ciano); }
-.saida { flex: 1; min-height: 0; overflow: auto; margin: 0; padding: 10px 14px; }
-.saida .vazio { color: var(--suave); }
-.lista-estado { padding-left: 18px; font-family: var(--fonte-codigo); font-size: 0.86rem; }
-.lista-estado li { padding: 2px 0; }
-.id-estado { color: var(--suave); margin-left: 6px; word-break: break-all; }
-
-/* resultados dos testes */
-.resultados { flex: 1; min-height: 0; overflow: auto; padding: 14px 18px; }
-.casos { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.caso { border: 1px solid var(--linha); border-radius: 8px; background: var(--fundo); }
+/* aba de testes funcionais (no painel de descrição) */
+.aba .resumo-testes { margin-left: 4px; font-size: 0.8rem; }
+.resumo-testes { font-size: 0.85rem; color: var(--suave); }
+.resumo-testes.ok { color: var(--verde); font-weight: 600; }
+.resumo-testes.falha { color: var(--vermelho); font-weight: 600; }
+.testes { padding: 10px 14px; }
+.casos { display: grid; gap: 8px; align-items: start; }
+.veredito { font-size: 1.15rem; font-weight: 700; margin: 0 0 4px; }
+.veredito.ok { color: var(--verde); }
+.veredito.falha { color: var(--vermelho); }
+/* sem pressão: o erro não aparece em vermelho, para não soar como bronca */
+:root.a11y-sem-pressao .veredito.falha { color: var(--laranja); }
+.veredito-sub { color: var(--suave); margin: 0 0 10px; font-size: 0.85rem; }
+.caso { border: 1px solid var(--linha); border-radius: 6px; background: var(--fundo-escuro); }
 .caso summary { cursor: pointer; padding: 7px 12px; list-style: none; }
 .caso summary::-webkit-details-marker { display: none; }
 .caso summary .url { color: var(--amarelo); margin-left: 6px; }
@@ -730,6 +644,19 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }
 .caso.falha { border-color: var(--vermelho); }
 .caso.falha summary { color: var(--vermelho); }
 .proximo-problema { margin-left: 8px; }
+
+.erros {
+  margin: 0;
+  max-height: 30%;
+  overflow: auto;
+  padding: 8px 12px;
+  background: color-mix(in srgb, var(--vermelho) 15%, transparent);
+  color: var(--texto);
+  border-top: 2px solid var(--vermelho);
+  font-size: 0.9em;
+  white-space: pre-wrap;
+  flex-shrink: 0;
+}
 
 /* ---------- diálogos (tutorial e acessibilidade) ---------- */
 .dialogo {

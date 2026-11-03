@@ -35,7 +35,8 @@ describe('PIX copia e cola (BR Code)', () => {
     const codigo = codigoPix({ ...PIX, chave: CHAVE_TESTE });
     const c = campos(codigo);
     expect(c['00']).toBe('01');
-    expect(campos(c['26'])).toEqual({ '00': 'br.gov.bcb.pix', '01': CHAVE_TESTE, '02': 'Apoio Sertao sera cloud' });
+    // Go playground: descricao do PIX é 'Apoio DivergeGo' (não 'Apoio Sertao sera cloud')
+    expect(campos(c['26'])).toEqual({ '00': 'br.gov.bcb.pix', '01': CHAVE_TESTE, '02': 'Apoio DivergeGo' });
     expect(c['52']).toBe('0000');
     expect(c['53']).toBe('986');
     expect(c['58']).toBe('BR');
@@ -131,11 +132,12 @@ describe('página do instrutor', () => {
     expect(document.querySelector('.qr-pix')).toBeNull();
   });
 
-  it('a landing tem a seção "Quem é o instrutor?" e os links no rodapé', () => {
+  it('a landing tem os links do instrutor e apoio no rodapé', () => {
+    // Go playground: renderLanding não inclui secaoInstrutor() inline, apenas links no rodapé
     const el = { innerHTML: '' };
     renderLanding(el);
-    expect(el.innerHTML).toContain(secaoInstrutor().trim().slice(0, 60));
     expect(el.innerHTML).toContain('href="#/instrutor"');
     expect(el.innerHTML).toContain('href="#/apoie"');
+    expect(el.innerHTML).toContain('Quem é o instrutor?');
   });
 });

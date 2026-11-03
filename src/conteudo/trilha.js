@@ -42,14 +42,23 @@ export const LIVRE = {
   },
 };
 
-// Adicionando os problemas extras aos seus respectivos módulos para enriquecer a trilha
-// Nota: Em uma implementação real, esses problemas seriam injetados nos arrays de itens dos módulos.
-// Por enquanto, mantemos a estrutura original mas garantimos que os IDs existam no mapa global se necessário.
+// Problemas extras injetados na trilha (garantindo que existam no mapa global e nos módulos).
+const PROBLEMAS_EXTRAS = [probVariaveis, probSlices, probStructs, probInterfaces];
+
+// Injeta os problemas extras no primeiro módulo (basico) se ainda não estiverem presentes.
+if (moduloBasico && Array.isArray(moduloBasico.itens)) {
+  const idsExistentes = new Set(moduloBasico.itens.map((i) => i.id));
+  for (const p of PROBLEMAS_EXTRAS) {
+    if (!idsExistentes.has(p.id)) {
+      moduloBasico.itens.push(p);
+    }
+  }
+}
 
 export const itens = modulos.flatMap((m) => m.itens.map((item) => ({ ...item, modulo: m.id })));
 export const problemas = itens.filter((i) => i.tipo === 'problema');
 
-const porId = new Map([...itens, LIVRE].map((i) => [i.id, i]));
+const porId = new Map([...itens, LIVRE, ...PROBLEMAS_EXTRAS].map((i) => [i.id, i]));
 export const buscarItem = (id) => porId.get(id);
 
 /** Item anterior e próximo na trilha (para os botões ‹ ›). */
