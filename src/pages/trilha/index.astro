@@ -1,47 +1,12 @@
 ---
 // Página da trilha: lista todos os módulos e itens com links para os exercícios.
 import Base from '../../layouts/Base.astro';
-import { modulosPublicados, proximosModulos, todosOsItens } from '../../lib/conteudo';
-import { url } from '../../lib/rotas';
+import TrilhaGo from '../../islands/TrilhaGo';
 
 const titulo = 'Trilha de Go — DivergeGo';
 const descricao = 'Aprenda Go do básico à concorrência com lições, exercícios e projetos gamificados.';
 ---
 
 <Base titulo={titulo} descricao={descricao} menu="trilha">
- <section class="trilha">
- <h1>🗺️ Trilha de Go</h1>
- <p class="subtitulo">{todosOsItens.length} atividades distribuídas em {modulosPublicados.length} módulos publicados.</p>
-
- {modulosPublicados.map((modulo) => (
- <article class="modulo" id={modulo.id}>
- <header>
- <h2>{modulo.icone ?? ''} {modulo.titulo}</h2>
- </header>
- <ul class="itens">
- {modulo.itens.map((item) => (
- <li class={`item ${item.tipo}`}>
- <a href={url.exercicio(item.id)}>
- <span class="tipo">{item.tipo === 'licao' ? '📖' : '🧩'}</span>
- <span class="titulo">{item.titulo}</span>
- </a>
- </li>
- ))}
- </ul>
- </article>
- ))}
-
- {proximosModulos.length > 0 && (
- <section class="em-breve">
- <h2>Em breve</h2>
- <ul>
- {proximosModulos.map((m) => (
- <li class="modulo-futuro">
- <span aria-hidden="true">{m.icone}</span> {m.titulo}
- </li>
- ))}
- </ul>
- </section>
- )}
- </section>
+ <TrilhaGo client:visible />
 </Base>
