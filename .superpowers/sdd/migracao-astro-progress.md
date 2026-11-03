@@ -10,3 +10,4 @@ Fase 1: complete (commits up to 100e6d5..latest, astro.config.mjs + Base.astro +
 Fase 2: complete (src/lib/conteudo.ts bridge + trilha/livre/validar/instrutor static pages; all 5 routes verified HTTP 200 on dev server).
 Fase 3: complete (src/stores/progresso.ts + src/stores/preferencias.ts nanostores; src/islands/ProgressoTopo.tsx + PainelAcessibilidade.tsx React islands wired into Base.astro with client:idle; all 5 routes verified HTTP 200 after island integration).
 Fase 4: complete (src/pages/p/[id].astro dynamic exercise page with getStaticPaths from content bridge; routes /p/licao-ola-mundo/, /p/prob-soma/, /p/licao-variaveis/ verified HTTP 200 on dev server port 4322).
+Fase 5: complete (src/islands/EditorGo.tsx wrapping EditorArquivos as React island; wired into src/pages/p/[id].astro and src/pages/livre/index.astro with client:visible; all 8 routes verified HTTP 200).
