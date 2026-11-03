@@ -12,6 +12,7 @@ import PainelAcessibilidade from '../islands/PainelAcessibilidade';
 import MenuMobile from '../islands/MenuMobile';
 import TutorialGo from '../islands/TutorialGo';
 import NeuroA11y from '../islands/NeuroA11y';
+import AtalhosTeclado from '../islands/AtalhosTeclado';
 import { todosOsItens } from '../lib/conteudo';
 import { PREFIXO_ARMAZENAMENTO } from '../ambiente.js';
 
@@ -71,6 +72,7 @@ const atual = (nome: string) => (menu === nome ? { 'aria-current': 'page' as con
     <PainelAcessibilidade client:idle />
     <TutorialGo client:visible base={import.meta.env.BASE_URL} />
     <NeuroA11y client:visible />
+    <AtalhosTeclado client:idle />
     <slot name="flutuantes" />
   </aside>
 </body>
