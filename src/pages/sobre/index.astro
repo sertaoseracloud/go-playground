@@ -1,0 +1,12 @@
+---
+// Página Sobre: informações do projeto, equipe e missão.
+import Base from '../../layouts/Base.astro';
+import SobreGo from '../../islands/SobreGo';
+
+const titulo = 'Sobre — DivergeGo';
+const descricao = 'Conheça a missão, equipe e história do DivergeGo.';
+---
+
+<Base titulo={titulo} descricao={descricao} menu="sobre">
+ <SobreGo client:visible />
+</Base>

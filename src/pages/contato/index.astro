@@ -1,0 +1,12 @@
+---
+// Página de contato: canais de comunicação e suporte.
+import Base from '../../layouts/Base.astro';
+import ContatoGo from '../../islands/ContatoGo';
+
+const titulo = 'Contato — DivergeGo';
+const descricao = 'Entre em contato com a equipe do DivergeGo: suporte, parcerias e imprensa.';
+---
+
+<Base titulo={titulo} descricao={descricao} menu="contato">
+ <ContatoGo client:visible />
+</Base>
