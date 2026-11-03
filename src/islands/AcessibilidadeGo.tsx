@@ -1,64 +1,118 @@
-// Página de declaração de acessibilidade: WCAG 2.2 AA, perfis neurodivergentes e recursos disponíveis.
-// Substitui o markup estático com conteúdo reativo e links para recursos externos.
+// Configurações de acessibilidade: preferências visuais e de navegação.
+// Substitui o markup estático com controles reativos e persistência local.
+import { useState, useEffect } from 'react';
+
+interface Preferencias {
+  fonteGrande: boolean;
+  altoContraste: boolean;
+  reduzirAnimacoes: boolean;
+  leitorTela: boolean;
+  atalhosTeclado: boolean;
+}
+
+const PADRAO: Preferencias = {
+  fonteGrande: false,
+  altoContraste: false,
+  reduzirAnimacoes: false,
+  leitorTela: false,
+  atalhosTeclado: true,
+};
+
 export default function AcessibilidadeGo() {
- return (
- <section className="acessibilidade-declaracao">
- <h1>♿ Declaração de acessibilidade</h1>
- <p className="subtitulo">
- O DivergeGo foi projetado para ser acessível a todas as pessoas, incluindo aquelas com deficiências visuais, auditivas, motoras e cognitivas.
- </p>
+  const [prefs, setPrefs] = useState<Preferencias>(PADRAO);
+  const [salvo, setSalvo] = useState(false);
 
- <article className="topico">
- <h2>Conformidade WCAG 2.2 AA</h2>
- <p>
- Todas as páginas do DivergeGo atendem aos critérios de sucesso da{' '}
- <a href="https://www.w3.org/TR/WCAG22/" target="_blank" rel="noopener noreferrer">
- WCAG 2.2 nível AA
- </a>. Isso inclui contraste mínimo de 4.5:1 para texto normal, navegação completa por teclado,
- rótulos descritivos em todos os controles interativos e suporte a leitores de tela.
- </p>
- </article>
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('divergego-acessibilidade');
+      if (stored) setPrefs(JSON.parse(stored));
+    } catch {}
+  }, []);
 
- <article className="topico">
- <h2>Recursos disponíveis</h2>
- <ul>
- <li><b>Temas:</b> Dracula (escuro), Claro, Alto contraste e Suavo (tons pastéis).</li>
- <li><b>Tamanho de texto:</b> ajuste de 100% a 175% sem perda de layout.</li>
- <li><b>Perfis neurodivergentes:</b> Foco (TDAH), Leitura facilitada (dislexia), Calmo (autismo) e Sem pressão (ansiedade).</li>
- <li><b>VLibras:</b> tradução automática para Libras integrada em todas as páginas.</li>
- <li><b>Navegação por teclado:</b> Tab, Shift+Tab, Enter e Escape funcionam em todos os componentes.</li>
- <li><b>Leitor de tela:</b> ARIA labels, roles e live regions em formulários, terminais e resultados de testes.</li>
- </ul>
- </article>
+  useEffect(() => {
+    document.documentElement.classList.toggle('fonte-grande', prefs.fonteGrande);
+    document.documentElement.classList.toggle('alto-contraste', prefs.altoContraste);
+    document.documentElement.classList.toggle('reduzir-animacoes', prefs.reduzirAnimacoes);
+  }, [prefs]);
 
- <article className="topico">
- <h2>Como ativar</h2>
- <p>
- Clique no botão ♿ no canto superior direito de qualquer página para abrir o painel de acessibilidade.
- Nele você escolhe tema, tamanho de texto e perfil. As preferências são salvas no seu navegador e
- aplicadas automaticamente nas próximas visitas.
- </p>
- </article>
+  const atualizar = (chave: keyof Preferencias) => {
+    setPrefs((prev) => ({ ...prev, [chave]: !prev[chave] }));
+    setSalvo(false);
+  };
 
- <article className="topico">
- <h2>Reportar problemas</h2>
- <p>
- Se encontrar uma barreira de acessibilidade que não conseguimos resolver,{' '}
- <a href="https://github.com/sertaoseracloud/go-playground/issues/new" target="_blank" rel="noopener noreferrer">
- abra uma issue no GitHub
- </a>{' '}
- descrevendo o problema, o leitor de tela ou dispositivo usado e o comportamento esperado.
- Respondemos em até 5 dias úteis.
- </p>
- </article>
+  const salvar = () => {
+    try {
+      localStorage.setItem('divergego-acessibilidade', JSON.stringify(prefs));
+      setSalvo(true);
+      setTimeout(() => setSalvo(false), 2000);
+    } catch {}
+  };
 
- <article className="topico">
- <h2>Auditorias</h2>
- <p>
- Auditorias automáticas de acessibilidade rodam semanalmente via Lighthouse CI.
- O último relatório está disponível no repositório do projeto.
- </p>
- </article>
- </section>
- );
+  const resetar = () => {
+    setPrefs(PADRAO);
+    setSalvo(false);
+    try {
+      localStorage.removeItem('divergego-acessibilidade');
+    } catch {}
+  };
+
+  return (
+    <section className="acessibilidade">
+      <header className="acessibilidade-header">
+        <h1>♿ Acessibilidade</h1>
+        <p className="subtitulo">
+          Ajuste a experiência do DivergeGo para suas necessidades. As preferências ficam salvas no seu navegador.
+        </p>
+      </header>
+
+      <form className="acessibilidade-formulario" onSubmit={(e) => { e.preventDefault(); salvar(); }}>
+        <fieldset>
+          <legend>Preferências visuais</legend>
+          <label className="toggle-item">
+            <input type="checkbox" checked={prefs.fonteGrande} onChange={() => atualizar('fonteGrande')} />
+            <span className="toggle-label">Fonte grande</span>
+            <span className="toggle-desc">Aumenta o tamanho base do texto em todo o site.</span>
+          </label>
+          <label className="toggle-item">
+            <input type="checkbox" checked={prefs.altoContraste} onChange={() => atualizar('altoContraste')} />
+            <span className="toggle-label">Alto contraste</span>
+            <span className="toggle-desc">Fundo escuro com texto claro para melhor legibilidade.</span>
+          </label>
+          <label className="toggle-item">
+            <input type="checkbox" checked={prefs.reduzirAnimacoes} onChange={() => atualizar('reduzirAnimacoes')} />
+            <span className="toggle-label">Reduzir animações</span>
+            <span className="toggle-desc">Desativa transições e efeitos de movimento.</span>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Navegação e interação</legend>
+          <label className="toggle-item">
+            <input type="checkbox" checked={prefs.leitorTela} onChange={() => atualizar('leitorTela')} />
+            <span className="toggle-label">Otimizar para leitor de tela</span>
+            <span className="toggle-desc">Adiciona landmarks e descrições extras para tecnologias assistivas.</span>
+          </label>
+          <label className="toggle-item">
+            <input type="checkbox" checked={prefs.atalhosTeclado} onChange={() => atualizar('atalhosTeclado')} />
+            <span className="toggle-label">Atalhos de teclado</span>
+            <span className="toggle-desc">Habilita navegação rápida por teclas de atalho.</span>
+          </label>
+        </fieldset>
+
+        <div className="acessibilidade-acoes">
+          <button type="submit" className="btn btn-verde">💾 Salvar preferências</button>
+          <button type="button" className="btn btn-fantasma" onClick={resetar}>Restaurar padrão</button>
+          {salvo && <span className="feedback-sucesso" role="status">✅ Preferências salvas!</span>}
+        </div>
+      </form>
+
+      <article className="topico">
+        <h2>Compromisso com acessibilidade</h2>
+        <p>
+          O DivergeGo segue as diretrizes WCAG 2.1 nível AA. Se você encontrar alguma barreira de acesso,
+          entre em contato pelo email acessibilidade@divergego.dev. Sua experiência importa.
+        </p>
+      </article>
+    </section>
+  );
 }
