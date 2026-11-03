@@ -7,6 +7,9 @@ import '../caminho.css';
 import '../cenarios.css';
 import '../landing.css';
 import '../acessibilidade-ux.css';
+import ProgressoTopo from '../islands/ProgressoTopo';
+import PainelAcessibilidade from '../islands/PainelAcessibilidade';
+import { todosOsItens } from '../lib/conteudo';
 import { PREFIXO_ARMAZENAMENTO } from '../ambiente.js';
 
 interface Props { titulo: string; descricao: string; menu?: 'trilha' | 'livre' | 'validar' | 'instrutor' }
@@ -14,6 +17,7 @@ const { titulo, descricao, menu } = Astro.props;
 const HOMOLOGACAO = __HOMOLOGACAO__;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const chavePrefs = `${PREFIXO_ARMAZENAMENTO}pref:acessibilidade`;
+const exercicios = todosOsItens.filter((i) => i.tipo === 'problema').map((i) => i.id);
 const atual = (nome: string) => (menu === nome ? { 'aria-current': 'page' as const, class: 'ativo' } : {});
 ---
 <!doctype html>
@@ -54,11 +58,13 @@ const atual = (nome: string) => (menu === nome ? { 'aria-current': 'page' as con
       <a href={`${import.meta.env.BASE_URL}validar/`} {...atual('validar')}>🔎 Validar certificado</a>
       <a href={`${import.meta.env.BASE_URL}instrutor/`} {...atual('instrutor')}>👨‍🏫 Instrutor</a>
     </nav>
+    <ProgressoTopo client:idle exercicios={exercicios} />
   </header>
   <div id="conteudo" class="conteudo" tabindex="-1">
     <slot />
   </div>
   <aside class="flutuantes" aria-label="Ajuda e preferências">
+    <PainelAcessibilidade client:idle />
     <slot name="flutuantes" />
   </aside>
 </body>

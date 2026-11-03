@@ -7,3 +7,4 @@
 
 ## Task progress
 Fase 1: complete (commits up to 100e6d5..latest, astro.config.mjs + Base.astro + index.astro + rotas.ts + package.json scripts + deps installed + .gitignore updated; landing verified HTTP 200 at /go-playground/).
+Fase 2: complete (src/lib/conteudo.ts bridge + trilha/livre/validar/instrutor static pages; all 5 routes verified HTTP 200 on dev server).
