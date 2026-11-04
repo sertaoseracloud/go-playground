@@ -47,10 +47,7 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
     erros: $('erros'),
     terminal: $('janela-terminal'),
     saidaTerminal: $('saida-terminal'),
-    apply: $('btn-apply'),
-    destroy: $('btn-destroy'),
-    resetarEstado: $('btn-resetar-estado'),
-  };
+      };
 
   // O compilador mock (compiler-browser.js) funciona imediatamente no navegador,
   // então os botões começam habilitados. Quando o runtime WASM real estiver integrado,
@@ -126,22 +123,7 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
     }
   }
 
-  // ---------- botões do terminal ----------
-  el.apply.onclick = () => {
-    terminal.focar();
-    executar({ falar: false });
-  };
-  el.destroy.onclick = () => {
-    terminal.focar();
-    terminal.escrever('$ go clean\n');
-    terminal.escrever('Estado limpo.\n');
-  };
-  el.resetarEstado.onclick = () => {
-    if (!confirm('Apagar o estado simulado (como se nada tivesse sido criado)?')) return;
-    terminal.limpar();
-    terminal.escrever('Estado limpo.\n');
-  };
-
+  
   // 🔊 Ouvir: lê a aba visível do painel de descrição.
   const leitura = iniciarLeitura($('btn-ouvir'), () =>
     [el.titulo.textContent, ...Object.values(paineisDescricao()).filter((p) => !p.hidden).map((p) => p.innerText)].join('. '));
