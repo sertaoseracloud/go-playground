@@ -1,5 +1,9 @@
 // Módulo 1: Go básico. Sintaxe fundamental, tipos, controle de fluxo, funções e pacotes.
 import { go, licao, problema } from './util.js';
+import { probVariaveis } from './problemas/variaveis.js';
+import { probSlices } from './problemas/slices.js';
+import { probStructs } from './problemas/structs.js';
+import { probInterfaces } from './problemas/interfaces.js';
 
 export const moduloBasico = {
  id: 'basico',
@@ -125,5 +129,9 @@ export const moduloBasico = {
  `,
  testes: [{ entrada: '', saida: 'par\nimpar' }],
  }),
+ probVariaveis,
+ probSlices,
+ probStructs,
+ probInterfaces,
  ],
 };

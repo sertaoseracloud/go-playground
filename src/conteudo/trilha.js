@@ -5,12 +5,6 @@ import { moduloWeb } from './web.js';
 import { moduloConcorrencia } from './concorrencia.js';
 import { go } from './util.js';
 
-// Importando os novos problemas para garantir que estejam disponíveis na trilha
-import { probVariaveis } from './problemas/variaveis.js';
-import { probSlices } from './problemas/slices.js';
-import { probStructs } from './problemas/structs.js';
-import { probInterfaces } from './problemas/interfaces.js';
-
 export const modulos = [moduloBasico, moduloWeb, moduloConcorrencia];
 
 /** Módulos das próximas versões (só título e ícone, para a landing e a trilha). */
@@ -42,23 +36,10 @@ export const LIVRE = {
   },
 };
 
-// Problemas extras injetados na trilha (garantindo que existam no mapa global e nos módulos).
-const PROBLEMAS_EXTRAS = [probVariaveis, probSlices, probStructs, probInterfaces];
-
-// Injeta os problemas extras no primeiro módulo (basico) se ainda não estiverem presentes.
-if (moduloBasico && Array.isArray(moduloBasico.itens)) {
-  const idsExistentes = new Set(moduloBasico.itens.map((i) => i.id));
-  for (const p of PROBLEMAS_EXTRAS) {
-    if (!idsExistentes.has(p.id)) {
-      moduloBasico.itens.push(p);
-    }
-  }
-}
-
 export const itens = modulos.flatMap((m) => m.itens.map((item) => ({ ...item, modulo: m.id })));
 export const problemas = itens.filter((i) => i.tipo === 'problema');
 
-const porId = new Map([...itens, LIVRE, ...PROBLEMAS_EXTRAS].map((i) => [i.id, i]));
+const porId = new Map([...itens, LIVRE].map((i) => [i.id, i]));
 export const buscarItem = (id) => porId.get(id);
 
 /** Item anterior e próximo na trilha (para os botões ‹ ›). */
