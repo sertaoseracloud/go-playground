@@ -51,27 +51,8 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
     menuMaisAcoes: $('menu-mais-acoes'),
   };
 
-  // ---------- menu ⋯ Mais ações ----------
-  if (el.maisAcoes && el.menuMaisAcoes) {
-    el.maisAcoes.onclick = () => {
-      const aberto = el.menuMaisAcoes.hidden;
-      el.menuMaisAcoes.hidden = !aberto;
-      el.maisAcoes.setAttribute('aria-expanded', String(aberto));
-    };
-    el.menuMaisAcoes.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        el.menuMaisAcoes.hidden = true;
-        el.maisAcoes.setAttribute('aria-expanded', 'false');
-        el.maisAcoes.focus();
-      }
-    });
-    document.addEventListener('click', (e) => {
-      if (!el.menuMaisAcoes.hidden && !e.target.closest('.mais-acoes')) {
-        el.menuMaisAcoes.hidden = true;
-        el.maisAcoes.setAttribute('aria-expanded', 'false');
-      }
-    });
-  }
+  // O menu "⋯ Mais ações" é inicializado por iniciarMaisAcoes() em main.js;
+  // este bloco foi removido para evitar duplicação e conflitos de handlers.
 
   // O compilador mock (compiler-browser.js) funciona imediatamente no navegador,
   // então os botões começam habilitados. Quando o runtime WASM real estiver integrado,
@@ -367,7 +348,7 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
     terminal.limpar();
     terminal.escrever('Go Playground · digite "help" para ver os comandos.\n');
     // Inicia o prompt interativo para que o terminal aceite comandos imediatamente.
-    iniciarPromptTerminal();
+    iniciarPromptTerminal().catch(() => {});
     return true;
   }
 
@@ -620,10 +601,10 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
   }
 
   // ---------- eventos ----------
-  el.executar.onclick = () => executarPeloAluno();
-  el.enviar.onclick = () => enviar();
+  if (el.executar) el.executar.onclick = () => executarPeloAluno();
+  if (el.enviar) el.enviar.onclick = () => enviar();
 
-  el.restaurar.onclick = () => {
+  if (el.restaurar) el.restaurar.onclick = () => {
     if (!confirm('Voltar ao código original? Suas alterações serão perdidas.')) return;
     rascunhos.cancelar(estado.item.id);
     apagarRascunho(estado.item.id);
@@ -631,7 +612,7 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
     executar({ url: `/${editor.principal}` });
   };
 
-  el.compartilhar.onclick = async () => {
+  if (el.compartilhar) el.compartilhar.onclick = async () => {
     const link = `${location.origin}${location.pathname}${linkCompartilhado({ item: estado.item.id, arquivos: editor.arquivos })}`;
     try {
       await navigator.clipboard.writeText(link);
