@@ -47,7 +47,31 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
     erros: $('erros'),
     terminal: $('janela-terminal'),
     saidaTerminal: $('saida-terminal'),
-      };
+    maisAcoes: $('btn-mais-acoes'),
+    menuMaisAcoes: $('menu-mais-acoes'),
+  };
+
+  // ---------- menu ⋯ Mais ações ----------
+  if (el.maisAcoes && el.menuMaisAcoes) {
+    el.maisAcoes.onclick = () => {
+      const aberto = el.menuMaisAcoes.hidden;
+      el.menuMaisAcoes.hidden = !aberto;
+      el.maisAcoes.setAttribute('aria-expanded', String(aberto));
+    };
+    el.menuMaisAcoes.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        el.menuMaisAcoes.hidden = true;
+        el.maisAcoes.setAttribute('aria-expanded', 'false');
+        el.maisAcoes.focus();
+      }
+    });
+    document.addEventListener('click', (e) => {
+      if (!el.menuMaisAcoes.hidden && !e.target.closest('.mais-acoes')) {
+        el.menuMaisAcoes.hidden = true;
+        el.maisAcoes.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
 
   // O compilador mock (compiler-browser.js) funciona imediatamente no navegador,
   // então os botões começam habilitados. Quando o runtime WASM real estiver integrado,

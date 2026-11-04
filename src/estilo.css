@@ -397,6 +397,42 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }
 .titulo-item h1 { font-size: 1.05rem; margin: 0; }
 .acoes { display: flex; flex-wrap: wrap; gap: 6px; }
 
+.mais-acoes { position: relative; display: inline-block; }
+.menu-mais-acoes {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 220px;
+  background: var(--bg-painel, #282a36);
+  border: 1px solid var(--linha, #44475a);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.4);
+  z-index: 100;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.menu-mais-acoes[hidden] { display: none; }
+.menu-mais-acoes .btn-fantasma {
+  justify-content: flex-start;
+  text-align: left;
+  padding: 8px 12px;
+  border-radius: 6px;
+  gap: 8px;
+  font-size: .9rem;
+}
+.menu-mais-acoes .btn-fantasma small {
+  display: block;
+  opacity: .6;
+  font-size: .75rem;
+  margin-top: 2px;
+}
+.menu-mais-acoes .btn-fantasma:hover,
+.menu-mais-acoes .btn-fantasma:focus-visible {
+  background: var(--linha, #44475a);
+}
+
 .grupo-layout { display: flex; border: 1px solid var(--linha); border-radius: 6px; overflow: hidden; }
 .btn-layout {
   font: inherit;
