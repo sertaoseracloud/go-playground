@@ -6,7 +6,9 @@ import { compilarGo } from '../go/compiler-browser.js';
 import { executarGo } from '../go/runtime.js';
 import {
   statusDe, marcar, lerRascunho, gravarRascunho, apagarRascunho,
+  lerHistorico, gravarHistorico,
 } from '../progresso.js';
+import { criarTerminal } from './terminal.js';
 import { EditorArquivos } from './editor.js';
 import { criarGravadorRascunho } from '../rascunho.js';
 import { iniciarAvisoArmazenamento } from './aviso-armazenamento.js';
@@ -43,9 +45,17 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
     fonte: $('saida-fonte'),
     testes: $('saida-testes'),
     erros: $('erros'),
+    terminal: $('janela-terminal'),
+    saidaTerminal: $('saida-terminal'),
+    apply: $('btn-apply'),
+    destroy: $('btn-destroy'),
+    resetarEstado: $('btn-resetar-estado'),
   };
 
-  const estado = { item: null, ocupado: false };
+  // O compilador mock (compiler-browser.js) funciona imediatamente no navegador,
+  // então os botões começam habilitados. Quando o runtime WASM real estiver integrado,
+  // aoMudarEstadoGo(false) será chamado antes do carregamento e aoMudarEstadoGo(true) depois.
+  const estado = { item: null, ocupado: false, goPronto: true };
 
   const rascunhos = criarGravadorRascunho(gravarRascunho);
   iniciarAvisoArmazenamento($('editor'));
@@ -63,6 +73,74 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
       rascunhos.agendar(estado.item.id, arquivos);
     },
   });
+
+  // 🖥️ O terminal: comandos go run, go build, ls, cat, clear, help com os arquivos do editor.
+  const arquivosDoTerminal = () => ({ ...editor.arquivos, ...(estado.item?.dados ?? {}) });
+  const terminal = criarTerminal($('terminal'), {
+    historico: lerHistorico(),
+    aoMudarHistorico: gravarHistorico,
+    completar: (texto) => {
+      const comandos = ['go run', 'go build', 'go test', 'go fmt', 'go vet', 'go mod init', 'go version', 'ls', 'cat', 'clear', 'help'];
+      return comandos.filter((c) => c.startsWith(texto));
+    },
+  });
+
+  // ---------- prompt interativo do terminal ----------
+  const COMANDOS_TERMINAL = ['go run', 'go build', 'go test', 'go fmt', 'go vet', 'go mod init', 'go version', 'ls', 'cat', 'clear', 'help'];
+
+  async function iniciarPromptTerminal() {
+    while (estado.item) {
+      const linha = await terminal.ler({ prompt: '$ ', rotulo: 'Comando do terminal Go' });
+      if (linha === null || !estado.item) break;
+      const cmd = linha.trim();
+      if (!cmd) continue;
+      if (cmd === 'clear') {
+        terminal.limpar();
+      } else if (cmd === 'help') {
+        terminal.escrever('Comandos disponíveis:\n');
+        terminal.escrever('  go run       Compila e executa o código Go\n');
+        terminal.escrever('  go build     Compila o código Go\n');
+        terminal.escrever('  go test      Roda os testes visíveis\n');
+        terminal.escrever('  go fmt       Formata o código\n');
+        terminal.escrever('  go vet       Analisa o código\n');
+        terminal.escrever('  go version   Mostra a versão do Go\n');
+        terminal.escrever('  ls           Lista os arquivos do editor\n');
+        terminal.escrever('  cat <arq>    Mostra o conteúdo de um arquivo\n');
+        terminal.escrever('  clear        Limpa o terminal\n');
+        terminal.escrever('  help         Mostra esta ajuda\n');
+      } else if (cmd === 'ls') {
+        const nomes = Object.keys(arquivosDoTerminal());
+        terminal.escrever(nomes.length ? nomes.join('\n') + '\n' : '(nenhum arquivo)\n');
+      } else if (cmd.startsWith('cat ')) {
+        const nome = cmd.slice(4).trim();
+        const conteudo = arquivosDoTerminal()[nome];
+        if (conteudo !== undefined) terminal.escrever(conteudo + '\n');
+        else terminal.escrever(`Arquivo não encontrado: ${nome}\n`, 't-vermelho');
+      } else if (cmd === 'go version') {
+        terminal.escrever('go version go1.22.0 js/wasm (simulado no navegador)\n');
+      } else if (cmd.startsWith('go run') || cmd.startsWith('go build') || cmd.startsWith('go test')) {
+        await executar({ falar: false, limpar: false });
+      } else {
+        terminal.escrever(`Comando desconhecido: ${cmd}. Digite "help" para ver os comandos.\n`, 't-amarelo');
+      }
+    }
+  }
+
+  // ---------- botões do terminal ----------
+  el.apply.onclick = () => {
+    terminal.focar();
+    executar({ falar: false });
+  };
+  el.destroy.onclick = () => {
+    terminal.focar();
+    terminal.escrever('$ go clean\n');
+    terminal.escrever('Estado limpo.\n');
+  };
+  el.resetarEstado.onclick = () => {
+    if (!confirm('Apagar o estado simulado (como se nada tivesse sido criado)?')) return;
+    terminal.limpar();
+    terminal.escrever('Estado limpo.\n');
+  };
 
   // 🔊 Ouvir: lê a aba visível do painel de descrição.
   const leitura = iniciarLeitura($('btn-ouvir'), () =>
@@ -110,7 +188,7 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
     aoMudar: () => atualizarSolucao({ avisar: true }),
   });
 
-  const saidas = { resultado: $('saida-resultado'), fonte: el.fonte };
+  const saidas = { resultado: $('saida-resultado'), fonte: el.fonte, terminal: $('janela-terminal') };
   function mostrarSaida(nome) {
     for (const [chave, painel] of Object.entries(saidas)) painel.hidden = chave !== nome;
     document.querySelectorAll('[data-saida]').forEach((b) => {
@@ -266,6 +344,9 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
     el.abaSolucao.hidden = !solucaoLiberada(item);
     cronometro.iniciar(item);
     el.abaTestes.hidden = !ehProblema();
+    // No go-playground, não há estado PHP; os botões ficam habilitados assim que a tela abre.
+    el.executar.disabled = false;
+    el.enviar.disabled = false;
     layout.aplicar();
     leitura.parar();
     if (ehProblema()) {
@@ -276,7 +357,11 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
     el.fonte.textContent = '';
     mostrarErros('');
     mostrarDesc('enunciado');
-    mostrarSaida('resultado');
+    mostrarSaida('terminal');
+    terminal.limpar();
+    terminal.escrever('Go Playground · digite "help" para ver os comandos.\n');
+    // Inicia o prompt interativo para que o terminal aceite comandos imediatamente.
+    iniciarPromptTerminal();
     return true;
   }
 
@@ -552,9 +637,10 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
 
   return {
     abrir,
+    terminal,
     redesenharDescricao: () => estado.item && renderDescricao(),
-    aoMudarEstadoPhp(pronto) {
-      // No go-playground, não há estado PHP; mantido para compatibilidade.
+    aoMudarEstadoGo(pronto) {
+      estado.goPronto = pronto;
       el.executar.disabled = !pronto;
       el.enviar.disabled = !pronto;
     },

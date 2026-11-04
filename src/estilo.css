@@ -881,3 +881,123 @@ h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }
    linhas quando a coluna é estreita, em vez de esconder abas numa rolagem lateral. */
 #painel-descricao .abas { flex-wrap: wrap; overflow-x: visible; }
 #painel-descricao .aba { padding: 7px 10px; }
+
+/* =========================================================
+   Terminal: janela estilo macOS com barra, luzes, saída e prompt
+   ========================================================= */
+.janela-terminal {
+  display: flex;
+  flex-direction: column;
+  /* Terminal sempre escuro, independente do tema da página (como python-playground). */
+  --terminal-fundo: #191a21;
+  --terminal-barra: #21222c;
+  --terminal-texto: #f8f8f2;
+  --terminal-linha: #44475a;
+  --terminal-verde: #50fa7b;
+  --terminal-ciano: #8be9fd;
+  --terminal-suave: #a9b1d6;
+  background: var(--terminal-fundo);
+  border: 1px solid var(--terminal-linha);
+  border-radius: 8px;
+  overflow: hidden;
+  font-family: var(--fonte-codigo), 'Fira Code', monospace;
+  font-size: calc(0.85rem * var(--escala));
+  min-height: 180px;
+  color: var(--terminal-texto);
+}
+.barra-terminal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  background: var(--terminal-barra, var(--fundo-escuro));
+  border-bottom: 1px solid var(--terminal-linha, var(--linha));
+  user-select: none;
+}
+.luzes {
+  display: flex;
+  gap: 6px;
+}
+.luzes i {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+.luzes i:nth-child(1) { background: #ff5f57; }
+.luzes i:nth-child(2) { background: #febc2e; }
+.luzes i:nth-child(3) { background: #28c840; }
+.titulo-terminal {
+  flex: 1;
+  text-align: center;
+  color: var(--terminal-suave, var(--suave));
+  font-size: calc(0.78rem * var(--escala));
+  letter-spacing: 0.02em;
+}
+.btn-pular {
+  padding: 2px 8px;
+  font-size: calc(0.75rem * var(--escala));
+  color: var(--terminal-texto, var(--texto));
+  background: var(--terminal-linha, var(--linha));
+  border: 1px solid var(--terminal-linha, var(--linha));
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn-pular:hover { background: var(--roxo); border-color: var(--roxo); }
+.btn-pular kbd {
+  font-family: inherit;
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+.terminal {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  margin: 0;
+  padding: 10px 14px;
+  background: var(--terminal-fundo);
+  color: var(--terminal-texto);
+  font-family: var(--fonte-codigo);
+  font-size: calc(0.9rem * var(--escala));
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.terminal:focus-visible, .terminal:focus-within { outline: 2px solid var(--roxo); outline-offset: -2px; }
+.terminal:has(.com-erro), .terminal.com-erro { border-top: 2px solid var(--vermelho); }
+:root.a11y-sem-pressao .terminal:has(.com-erro), :root.a11y-sem-pressao .terminal.com-erro { border-top-color: var(--laranja); }
+.saida-terminal { margin: 0; font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; }
+.saida-terminal .erro { color: var(--vermelho); }
+.saida-terminal .aviso { color: var(--suave); }
+:root.a11y-sem-pressao .saida-terminal .erro { color: var(--laranja); }
+.linha-prompt { display: flex; align-items: baseline; }
+.prompt-terminal { white-space: pre; color: var(--terminal-verde, var(--verde, var(--texto))); }
+.p-usuario { color: var(--terminal-verde, var(--verde)); font-weight: 700; }
+.p-pasta { color: var(--terminal-ciano, var(--ciano)); }
+.p-cifrao { color: var(--terminal-texto, var(--texto)); margin-left: 2px; }
+.campo-terminal {
+  flex: 1;
+  min-width: 4ch;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  color: var(--terminal-texto);
+  background: transparent;
+  caret-color: var(--terminal-texto);
+}
+.campo-terminal:focus { outline: none; }
+.campo-terminal:disabled { opacity: 0; }
+@keyframes piscar-cursor { 50% { caret-color: transparent; } }
+.campo-terminal:focus { animation: piscar-cursor 1s step-end infinite; }
+:root.a11y-sem-movimento .campo-terminal:focus { animation: none; }
+@media (prefers-reduced-motion: reduce) { .campo-terminal:focus { animation: none; } }
+
+/* Saída com cores semânticas para mensagens do terminal (sempre sobre fundo escuro) */
+.saida-terminal .t-verde { color: var(--terminal-verde, var(--verde)); }
+.saida-terminal .t-vermelho { color: #ff5555; }
+.saida-terminal .t-amarelo { color: #f1fa8c; }
+.saida-terminal .t-ciano { color: var(--terminal-ciano, var(--ciano)); }
+.saida-terminal .t-roxo { color: #bd93f9; }
+.saida-terminal .t-suave { color: var(--terminal-suave, var(--suave)); }
+.saida-terminal .t-negrito { font-weight: 700; }
+.saida-terminal .erro { color: #ff5555; }
+.saida-terminal .aviso { color: var(--terminal-suave, var(--suave)); }
