@@ -20,6 +20,20 @@ export function licao({ id, titulo, resumo, codigo }) {
   return { id, tipo: 'licao', titulo, resumo, arquivos: arquivos(codigo) };
 }
 
+/**
+ * Cria um problema da trilha.
+ * @param {Object} opts
+ * @param {string} opts.id - Identificador único no formato `{modulo}-{topico}-{numero}`.
+ * @param {string} opts.titulo
+ * @param {'facil'|'medio'|'dificil'} opts.dificuldade
+ * @param {string} opts.enunciado - HTML com a descrição do problema.
+ * @param {string} opts.dica - HTML com dica opcional.
+ * @param {string|Object} opts.inicial - Código Go inicial (string vira main.go).
+ * @param {string|Object} opts.solucao - Código Go da solução.
+ * @param {Array<{entrada?: string, saida?: string, args?: string[], oculto?: boolean, regras?: Array}>} opts.testes
+ *   Cada teste aceita `entrada`/`saida` para stdin/stdout ou `args` para argumentos de linha de comando.
+ *   Campos extras são ignorados pelo runtime.
+ */
 export function problema({
   id,
   titulo,
