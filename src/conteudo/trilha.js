@@ -1,11 +1,12 @@
 // A trilha completa do DivergeGo. Os módulos já publicados ficam em `modulos`; os
 // próximos módulos aparecem na landing como "em breve" (PROXIMOS_MODULOS).
 import { moduloBasico } from './basico.js';
+import { moduloEstruturas } from './estruturas.js';
 import { moduloWeb } from './web.js';
 import { moduloConcorrencia } from './concorrencia.js';
 import { go } from './util.js';
 
-export const modulos = [moduloBasico, moduloWeb, moduloConcorrencia];
+export const modulos = [moduloBasico, moduloEstruturas, moduloWeb, moduloConcorrencia];
 
 /** Módulos das próximas versões (só título e ícone, para a landing e a trilha). */
 export const PROXIMOS_MODULOS = [
