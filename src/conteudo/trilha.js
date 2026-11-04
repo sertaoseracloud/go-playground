@@ -46,6 +46,15 @@ export const problemas = itens.filter((i) => i.tipo === 'problema');
 const porId = new Map([...itens, LIVRE].map((i) => [i.id, i]));
 export const buscarItem = (id) => porId.get(id);
 
+// Dev-only: catch duplicate exercise IDs early.
+if (typeof globalThis.process !== 'undefined' && process.env?.NODE_ENV !== 'production') {
+  const seen = new Set();
+  for (const item of itens) {
+    if (seen.has(item.id)) throw new Error(`Duplicate exercise ID: ${item.id}`);
+    seen.add(item.id);
+  }
+}
+
 /** Item anterior e próximo na trilha (para os botões ‹ ›). */
 export function vizinhos(id) {
   const i = itens.findIndex((item) => item.id === id);
