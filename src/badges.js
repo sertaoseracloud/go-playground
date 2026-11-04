@@ -5,6 +5,10 @@ import { CERTIFICADOS, EMISSOR } from './certificados.js';
 
 export const BADGES = {
   basico: { cor: '#50fa7b', simbolo: 'Go', faixa: 'GO BÁSICO' },
+  estruturas: { cor: '#6272a4', simbolo: 'DS', faixa: 'ESTRUTURA DE DADOS' },
+  bancos: { cor: '#ff5555', simbolo: 'DB', faixa: 'BANCOS E CACHE' },
+  nuvem: { cor: '#8be9fd', simbolo: '☁️', faixa: 'NUVEM E GRPC' },
+  arquitetura: { cor: '#bd93f9', simbolo: 'Arc', faixa: 'ARQUITETURA' },
   web: { cor: '#8be9fd', simbolo: 'Web', faixa: 'WEB COM GO' },
   concorrencia: { cor: '#ff79c6', simbolo: 'Conc', faixa: 'CONCORRÊNCIA' },
   avancado: { cor: '#bd93f9', simbolo: 'Adv', faixa: 'TÓPICOS AVANÇADOS' },

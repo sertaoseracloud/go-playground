@@ -34,7 +34,13 @@ describe('glossário', () => {
     });
     // Itens introdutórios (ola-mundo, par-impar, servidor-http, rota-status) não usam termos avançados do glossário Go
     const idsSemTermos = semTermos.map((i) => i.id);
-    const idsEsperados = ['licao-ola-mundo', 'prob-par-impar', 'licao-servidor-http', 'prob-rota-status'];
+    const idsEsperados = [
+      'arquitetura-clean-licao', 'arquitetura-cqrs', 'arquitetura-ddd-licao',
+      'arquitetura-repositorio', 'bancos-mongo-crud-licao', 'bancos-redis-cache',
+      'bancos-sql-basico-licao', 'bancos-sql-insert', 'licao-ola-mundo',
+      'licao-servidor-http', 'nuvem-aws-sdk-licao', 'nuvem-grpc-cliente',
+      'nuvem-grpc-conceitos-licao', 'prob-par-impar', 'prob-rota-status',
+    ];
     expect(idsSemTermos.sort()).toEqual(idsEsperados.sort());
   });
 });

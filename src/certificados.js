@@ -54,6 +54,34 @@ export const CERTIFICADOS = {
     hashtags: ['Go', 'Concurrency', 'Goroutines'],
     conteudos: ['Goroutines e WaitGroups', 'Channels e select', 'Padrões de concorrência', 'Context e cancelamento', 'Race detector'],
   },
+  estruturas: {
+    titulo: 'Estrutura de Dados em Go',
+    cargaHoraria: 2,
+    resumo: 'concluiu o módulo de Estrutura de Dados, resolvendo os exercícios práticos',
+    hashtags: ['Go', 'DataStructures', 'Backend'],
+    conteudos: ['Arrays e Slices', 'Maps', 'Structs e métodos', 'Interfaces', 'Generics e ponteiros'],
+  },
+  bancos: {
+    titulo: 'Bancos e Cache com Go',
+    cargaHoraria: 2,
+    resumo: 'concluiu o módulo de Bancos e Cache, resolvendo os exercícios práticos',
+    hashtags: ['Go', 'SQL', 'Database', 'Redis'],
+    conteudos: ['database/sql', 'PostgreSQL e SQLite', 'MongoDB CRUD', 'Redis/cache', 'Migrations'],
+  },
+  nuvem: {
+    titulo: 'Nuvem e gRPC com Go',
+    cargaHoraria: 2,
+    resumo: 'concluiu o módulo de Nuvem e gRPC, resolvendo os exercícios práticos',
+    hashtags: ['Go', 'Cloud', 'gRPC', 'AWS'],
+    conteudos: ['gRPC e protobuf', 'AWS SDK', 'Azure SDK', 'Configuração e secrets', 'Deploy na nuvem'],
+  },
+  arquitetura: {
+    titulo: 'Arquitetura e Padrões em Go',
+    cargaHoraria: 2,
+    resumo: 'concluiu o módulo de Arquitetura e Padrões, resolvendo os exercícios práticos',
+    hashtags: ['Go', 'Architecture', 'DDD', 'CleanArchitecture'],
+    conteudos: ['Clean Architecture', 'Domain-Driven Design', 'CQRS e Event Sourcing', 'Microserviços', 'Padrões de projeto'],
+  },
   avancado: {
     titulo: 'Tópicos Avançados em Go',
     cargaHoraria: 1,
@@ -70,7 +98,7 @@ export const CERTIFICADOS = {
   },
   final: {
     titulo: 'Programação Go: trilha completa',
-    cargaHoraria: 6,
+    cargaHoraria: 14,
     resumo: 'concluiu a trilha completa de Go',
     hashtags: ['Go', 'Golang', 'Backend', 'Cloud', 'DevOps'],
     conteudos: ['Fundamentos de Go', 'Web e APIs', 'Concorrência', 'Tópicos avançados', 'Projetos completos'],
