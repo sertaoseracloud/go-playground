@@ -7,7 +7,8 @@ import { itens } from '../../src/conteudo/trilha.js';
 
 const LICAO = itens.find((i) => i.tipo === 'licao');
 // Um código que não roda, para ver a tela de erro.
-const CODIGO_COM_ERRO = '<?php echo ;';
+// Rascunho com erro de compilação, no mesmo formato que o editor grava ({ nome do arquivo: código }).
+const CODIGO_COM_ERRO = { 'main.go': 'package main\n\nfunc main() {\n\tfmt.Println(\n}\n' };
 const TELAS_EXTRAS = [
   `#/p/${LICAO.id}`, '#/livre', '#/validar', '#/validar/codigo-invalido', '#/certificado/codigo-invalido',
   '#/novidades', '#/privacidade', '#/licenca', '#/termos', '#/acessibilidade', '#/instrutor', '#/apoie', '#/nao-existe',
