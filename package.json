@@ -6,7 +6,7 @@
     "predev": "node scripts/construir-go-wasm.mjs --se-faltar --opcional",
     "dev": "vite --port 5178 --host",
     "prebuild": "node scripts/construir-go-wasm.mjs --se-faltar",
-    "build": "vite build",
+    "build": "vite build && node scripts/prerender.mjs",
     "preview": "vite preview --port 4178 --strictPort",
     "test": "vitest run",
     "test:cobertura": "vitest run --coverage",
