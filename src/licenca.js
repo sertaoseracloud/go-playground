@@ -33,4 +33,6 @@ export const TERCEIROS = [
   { nome: 'Fontes Fira Code e Atkinson Hyperlegible', pacotes: ['@fontsource/fira-code', '@fontsource/atkinson-hyperlegible'], licenca: 'OFL-1.1' },
   { nome: 'QR Code do PIX (qrcode-generator)', pacotes: ['qrcode-generator'], licenca: 'MIT' },
   { nome: 'Desenho dos cenários da trilha (PixiJS)', pacotes: ['pixi.js'], licenca: 'MIT' },
+  // Código próprio da Sertão será cloud, compartilhado entre os playgrounds.
+  { nome: 'Design system dos playgrounds (@sertaoseracloud/playground-ui)', pacotes: ['@sertaoseracloud/playground-ui'], licenca: 'AGPL-3.0-or-later' },
 ];
