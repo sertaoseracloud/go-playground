@@ -17,6 +17,8 @@ package main
 
 import "fmt"
 
+var _ = fmt.Println // TODO: use o pacote fmt e apague esta linha
+
 func main() {
   // TODO: declare as variáveis e imprima
 }
@@ -29,7 +31,7 @@ import "fmt"
 func main() {
   nome := "DivergeGo"
   versao := 1
-  fmt.Println(nome, "v"+versao)
+  fmt.Printf("%s v%d\\n", nome, versao)
 }
 `,
   testes: [{ entrada: '', saida: 'DivergeGo v1' }],

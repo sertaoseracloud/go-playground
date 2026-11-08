@@ -18,6 +18,8 @@ package main
 
 import "fmt"
 
+var _ = fmt.Println // TODO: use o pacote fmt e apague esta linha
+
 // TODO: defina a interface Forma
 
 // TODO: defina as structs e implemente Area()
@@ -60,7 +62,7 @@ func main() {
     Circulo{Raio: 3},
   }
   for _, f := range formas {
-    fmt.Printf("Área: %.2f\n", f.Area())
+    fmt.Printf("Área: %.2f\\n", f.Area())
   }
 }
 `,

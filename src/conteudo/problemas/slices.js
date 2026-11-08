@@ -16,6 +16,8 @@ package main
 
 import "fmt"
 
+var _ = fmt.Println // TODO: use o pacote fmt e apague esta linha
+
 func main() {
   // TODO: crie o slice e use o loop for-range
 }

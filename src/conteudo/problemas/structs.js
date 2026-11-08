@@ -17,6 +17,8 @@ package main
 
 import "fmt"
 
+var _ = fmt.Println // TODO: use o pacote fmt e apague esta linha
+
 // TODO: defina a struct Pessoa
 
 // TODO: defina o método Saudacao

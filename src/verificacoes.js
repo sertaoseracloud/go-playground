@@ -11,6 +11,8 @@
 //   { igual: 'texto' }               a saída é exatamente 'texto' (após trim)
 //   { regex: 'padrao' }              a saída casa com a regex
 //   { exitCode: numero }             o código de saída é igual ao esperado
+//   { saidaIgual: 'texto' }          a saída é igual, linha a linha (sem espaços no fim das linhas)
+import { normalizarSaida } from './conteudo/util.js';
 
 function documento(html) {
   if (typeof DOMParser !== 'undefined') {
@@ -101,6 +103,23 @@ export function verificarRegra(regra, pagina) {
     return resultado(ok, regra, 'O programa não deve mostrar erros nem avisos', ok ? undefined : erros.trim().split('\n')[0]);
   }
 
+  if ('saidaIgual' in regra) {
+    // Igual ao python-playground: compara linha a linha, ignorando espaços no fim das linhas.
+    const obtida = normalizarSaida(pagina.stdout ?? pagina.html);
+    const esperada = normalizarSaida(regra.saidaIgual);
+    const ok = obtida === esperada;
+    let detalhe;
+    if (!ok) {
+      const [lo, le] = [obtida.split('\n'), esperada.split('\n')];
+      const i = le.findIndex((l, k) => lo[k] !== l);
+      const n = i < 0 ? le.length : i;
+      detalhe = i < 0
+        ? `a saída tem ${lo.length - le.length} linha(s) a mais`
+        : `linha ${n + 1}: esperado "${le[n]}", veio "${lo[n] ?? '(nada)'}"`;
+    }
+    return resultado(ok, regra, 'A saída é exatamente a pedida', detalhe);
+  }
+
   if ('igual' in regra) {
     const padrao = normalizar(regra.igual);
     const ok = saida === padrao;
@@ -132,13 +151,15 @@ export function detalharRegra(regra, pagina) {
  const msg = regra.msg;
 
  if (r.ok) {
- return { ok: true, regra, msg };
+ return { ok: true, regra, msg, mensagem: r.mensagem };
  }
 
  return {
  ok: false,
  regra,
  msg: msg || r.detalhe,
+ mensagem: r.mensagem,
+ detalhe: r.detalhe,
  categoria: r.regra,
  obtido: r.padrao !== undefined && r.regra !== 'semErros' ? String(r.padrao) : undefined,
  };
@@ -162,6 +183,7 @@ export function descreverRegra(regra) {
  return (min ?? 1) === 1 ? `Tem um elemento ${regra.seletor}` : `Tem pelo menos ${min} elementos ${regra.seletor}`;
  }
  if ('semErros' in regra) return 'O programa roda sem erros nem avisos';
+ if ('saidaIgual' in regra) return 'A saída é exatamente a pedida';
  if ('igual' in regra) return `A saída é exatamente "${regra.igual}"`;
  if ('regex' in regra) return `A saída casa com /${regra.regex}/`;
  if ('codigo' in regra) return `O código usa ${regra.codigo}`;

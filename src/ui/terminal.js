@@ -246,8 +246,9 @@ export function criarTerminal(elemento, { historico = [], aoMudarHistorico = () 
   }
 
   // Clicar no terminal põe o foco no campo (mas deixa selecionar texto para copiar).
+  // O foco funciona mesmo sem leitura ativa: o prompt loop reativa o campo ao receber input.
   elemento.addEventListener('click', () => {
-    if (leitura && campo && !String(globalThis.getSelection?.() ?? '')) campo.focus();
+    if (campo && !campo.disabled && !String(globalThis.getSelection?.() ?? '')) campo.focus();
   });
 
   return api;
