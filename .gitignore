@@ -8,3 +8,5 @@ playwright-report/
 test-results/
 .lighthouseci/.astro/
 .astro/
+public/go/
+go-wasm/simbolos/

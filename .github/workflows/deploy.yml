@@ -38,6 +38,10 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - uses: actions/setup-go@v6 # o prebuild gera o runtime Go do navegador (scripts/construir-go-wasm.mjs)
+        with:
+          go-version: '1.26.x'
+          cache-dependency-path: go-wasm/go.sum
       - run: npm run build
         env:
           # Palavra secreta do selo dos certificados (Settings > Secrets > Actions).
@@ -76,6 +80,11 @@ jobs:
           cache: npm
       - if: steps.develop.outputs.existe == 'true'
         run: npm ci
+      - uses: actions/setup-go@v6 # o prebuild gera o runtime Go do navegador (scripts/construir-go-wasm.mjs)
+        if: steps.develop.outputs.existe == 'true'
+        with:
+          go-version: '1.26.x'
+          cache-dependency-path: go-wasm/go.sum
       - if: steps.develop.outputs.existe == 'true'
         run: npm run build
         env:

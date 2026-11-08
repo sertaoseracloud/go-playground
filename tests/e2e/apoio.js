@@ -22,6 +22,11 @@ export async function abrir(page, hash, { tutorial = false, privacidade = true, 
   }, { tutorial, privacidade, extras, muralApoio });
   await page.goto(`/${hash}`);
   await page.reload();
+  // Numa tela de exercício, o runtime Go (WASM) carrega antes de Executar/Enviar ficarem
+  // disponíveis; na primeira vez ele é baixado e compilado, o que pode levar alguns segundos.
+  if (/^#\/(p|s)\/|^#\/livre/.test(hash)) {
+    await page.waitForFunction(() => document.getElementById('btn-executar')?.disabled === false, null, { timeout: 60_000 });
+  }
   if (!muralApoio) {
     await page.locator('#flutuantes').evaluate(async (element) => {
       await Promise.all(element.getAnimations().map((animacao) => animacao.finished.catch(() => {})));

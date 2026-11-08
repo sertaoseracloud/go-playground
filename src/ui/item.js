@@ -2,8 +2,8 @@
 import { minutosDoItem } from '../cargaHoraria.js';
 import { buscarItem, modulos, vizinhos, DIFICULDADES } from '../conteudo/trilha.js';
 import { linkItem, linkCompartilhado } from '../compartilhar.js';
-import { compilarGo } from '../go/compiler-browser.js';
-import { executarGo } from '../go/runtime.js';
+import { compilarGo, executarGo, goCarregado, prepararGo } from '../go/compiler-browser.js';
+import { corrigir } from '../corrigir.js';
 import {
   statusDe, marcar, lerRascunho, gravarRascunho, apagarRascunho,
   lerHistorico, gravarHistorico,
@@ -54,10 +54,36 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
   // O menu "⋯ Mais ações" é inicializado por iniciarMaisAcoes() em main.js;
   // este bloco foi removido para evitar duplicação e conflitos de handlers.
 
-  // O compilador mock (compiler-browser.js) funciona imediatamente no navegador,
-  // então os botões começam habilitados. Quando o runtime WASM real estiver integrado,
-  // aoMudarEstadoGo(false) será chamado antes do carregamento e aoMudarEstadoGo(true) depois.
-  const estado = { item: null, ocupado: false, goPronto: true };
+  // O runtime Go (WASM, em src/go/compiler-browser.js) é baixado quando o primeiro exercício
+  // abre e fica no cache. Até ele carregar, Executar e Enviar ficam desabilitados, como nos
+  // outros playgrounds enquanto o motor carrega.
+  const estado = { item: null, ocupado: false, goPronto: false };
+
+  function definirGoPronto(pronto) {
+    estado.goPronto = pronto;
+    el.executar.disabled = !pronto;
+    if (el.enviar) el.enviar.disabled = !pronto;
+  }
+
+  function prepararRuntime() {
+    if (goCarregado()) return definirGoPronto(true);
+    definirGoPronto(false);
+    definirStatus('Baixando o Go (uns 6 MB, só na primeira vez)…', { falar: false });
+    prepararGo().then(
+      () => {
+        definirGoPronto(true);
+        if (estado.item) definirStatus('Go pronto', { falar: false });
+      },
+      (erro) => {
+        // Sem o runtime, os botões voltam: a execução mostra o erro de carregamento.
+        definirGoPronto(true);
+        if (estado.item) definirStatus(erro.message, { falar: false });
+      },
+    );
+  }
+
+  /** Status enquanto compila; na primeira vez, avisa que o Go está sendo baixado. */
+  const statusCompilando = () => definirStatus(goCarregado() ? 'Compilando…' : 'Baixando o Go (uns 6 MB, só na primeira vez)…', { falar: false });
 
   const rascunhos = criarGravadorRascunho(gravarRascunho);
   iniciarAvisoArmazenamento($('editor'));
@@ -82,8 +108,7 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
     historico: lerHistorico(),
     aoMudarHistorico: gravarHistorico,
     completar: (texto) => {
-      const comandos = ['go run', 'go build', 'go test', 'go fmt', 'go vet', 'go mod init', 'go version', 'ls', 'cat', 'clear', 'help'];
-      return comandos.filter((c) => c.startsWith(texto));
+      return COMANDOS_TERMINAL.filter((c) => c.startsWith(texto));
     },
   });
 
@@ -119,9 +144,23 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
         if (conteudo !== undefined) terminal.escrever(conteudo + '\n');
         else terminal.escrever(`Arquivo não encontrado: ${nome}\n`, 't-vermelho');
       } else if (cmd === 'go version') {
-        terminal.escrever('go version go1.22.0 js/wasm (simulado no navegador)\n');
+        terminal.escrever('go version: Go no navegador (interpretador yaegi em WebAssembly, biblioteca padrão real)\n');
       } else if (cmd.startsWith('go run') || cmd.startsWith('go build') || cmd.startsWith('go test')) {
-        await executar({ falar: false, limpar: false });
+        // O editor atualiza editor.arquivos a cada mudança (o DOM do CodeMirror só tem as linhas visíveis).
+        const arquivos = { ...editor.arquivos };
+        const fontePrincipal = arquivos['main.go'] || '';
+        try {
+          const { js, erros } = await compilarGo(fontePrincipal, arquivos);
+          if (erros.length > 0) {
+            terminal.escrever(erros.join('\n') + '\n', 't-vermelho');
+          } else {
+            const resultado = await executarGo(js);
+            if (resultado.stdout) terminal.escrever(resultado.stdout);
+            if (resultado.stderr) terminal.escrever(resultado.stderr + '\n', 't-vermelho');
+          }
+        } catch (erro) {
+          terminal.escrever(`Erro: ${erro?.message || erro}\n`, 't-vermelho');
+        }
       } else {
         terminal.escrever(`Comando desconhecido: ${cmd}. Digite "help" para ver os comandos.\n`, 't-amarelo');
       }
@@ -331,9 +370,7 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
     el.abaSolucao.hidden = !solucaoLiberada(item);
     cronometro.iniciar(item);
     el.abaTestes.hidden = !ehProblema();
-    // No go-playground, não há estado PHP; os botões ficam habilitados assim que a tela abre.
-    el.executar.disabled = false;
-    el.enviar.disabled = false;
+    prepararRuntime();
     layout.aplicar();
     leitura.parar();
     if (ehProblema()) {
@@ -389,10 +426,12 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
   async function executar(_req = undefined, { abrirTestes = false, falar = false } = {}) {
     if (!estado.item) return;
     const item = estado.item;
+    // O editor atualiza editor.arquivos a cada mudança (o DOM do CodeMirror só tem as linhas visíveis).
     const arquivos = { ...editor.arquivos };
-    definirStatus('Compilando…', { falar: false });
+    const fontePrincipal = arquivos['main.go'] || '';
+    statusCompilando();
     try {
-      const { js, erros } = await compilarGo(arquivos['main.go'] || '', arquivos);
+      const { js, erros } = await compilarGo(fontePrincipal, arquivos);
       if (estado.item !== item) return;
       if (erros.length > 0) {
         mostrarErros(erros.join('\n'));
@@ -405,6 +444,10 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
       el.resultado.srcdoc = `<pre style="font-family:monospace;padding:1em">${esc(resultado.stdout || '')}</pre>`;
       el.fonte.textContent = resultado.stdout || '';
       mostrarErros(resultado.stderr || '');
+      // Espelha a execução no terminal para integrar os dois caminhos
+      terminal.escrever('$ go run main.go\n');
+      if (resultado.stdout) terminal.escrever(resultado.stdout + '\n');
+      if (resultado.stderr) terminal.escrever(resultado.stderr + '\n', 't-vermelho');
       const fala = falaDoGo(resultado);
       const comTestes = item.tipo === 'problema';
       definirStatus(`Go · ${resultado.ms || 0} ms`, { falar: falar && !comTestes && fala });
@@ -414,8 +457,9 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
         aoMudarProgresso();
       }
       if (comTestes) {
-        const resultadoTestes = await rodarTestes({ incluirOcultos: false, saida: resultado.stdout });
+        const resultadoTestes = await rodarTestes({ incluirOcultos: false, arquivos, execucao: resultado });
         if (estado.item !== item) return;
+        renderTestes(resultadoTestes, false);
         if (falar) anunciar(`${fala} ${falarTestes(resultadoTestes, false)}`);
         if (abrirTestes) abrirAbaTestes();
       }
@@ -424,26 +468,21 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
     }
   }
 
-  async function rodarTestes({ incluirOcultos, saida }) {
+  /**
+   * Corrige com o mesmo `corrigir()` dos outros playgrounds (regras `saidaIgual`, `semErros`…).
+   * `execucao` é a execução que acabou de rodar ({ stdout, stderr, exitCode }); ela é reaproveitada
+   * nos casos sem stdin, para não compilar de novo. Casos com `entrada` rodam o programa outra vez.
+   */
+  async function rodarTestes({ incluirOcultos, arquivos, execucao }) {
+    const executarCaso = async (arqs, req) => {
+      if (execucao && !req?.stdin) return execucao;
+      const { js, erros } = await compilarGo(arqs['main.go'] || '', arqs);
+      if (erros.length) return { stdout: '', stderr: erros.join('\n'), exitCode: 1 };
+      return executarGo(js, req?.stdin);
+    };
     const item = estado.item;
-    const resultados = item.testes
-      .filter((t) => incluirOcultos || !t.oculto)
-      .map((t) => {
-        const passou = t.regras.every((r) => {
-          if (r.codigo) {
-            // Verificação no código fonte
-            return item.arquivos['main.go']?.includes(r.valor);
-          }
-          if (r.saida) {
-            // Verificação na saída
-            return saida?.includes(r.valor);
-          }
-          return false;
-        });
-        return { ok: passou, mensagem: t.descricao || 'Verificação', resultados: t.regras.map((r) => ({ ok: passou, mensagem: r.mensagem || 'Verificação' })) };
-      });
-    const aprovado = resultados.every((r) => r.ok);
-    return { aprovado, relatorio: resultados };
+    const casos = { ...item, testes: item.testes.map((t) => ({ ...t, stdin: t.entrada ?? t.stdin })) };
+    return corrigir(casos, arquivos, executarCaso, { incluirOcultos });
   }
 
   // ---------- casos de teste ----------
@@ -561,14 +600,17 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
     definirStatus('Enviando…');
     try {
       // Executa primeiro para obter a saída
+      // O editor atualiza editor.arquivos a cada mudança (o DOM do CodeMirror só tem as linhas visíveis).
       const arquivos = { ...editor.arquivos };
-      const { js, erros } = await compilarGo(arquivos['main.go'] || '', arquivos);
+      const fontePrincipal = arquivos['main.go'] || '';
+      const { js, erros } = await compilarGo(fontePrincipal, arquivos);
       if (erros.length > 0) {
         mostrarErros(erros.join('\n'));
         throw new Error(erros[0]);
       }
       const resultadoExec = await executarGo(js);
-      const resultado = await rodarTestes({ incluirOcultos: true, saida: resultadoExec.stdout });
+      const resultado = await rodarTestes({ incluirOcultos: true, arquivos, execucao: resultadoExec });
+      renderTestes(resultado, true);
       const { aprovado } = resultado;
       let conquista = '';
       marcar(estado.item.id, aprovado ? 'resolvido' : 'tentado');
@@ -626,10 +668,6 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
     abrir,
     terminal,
     redesenharDescricao: () => estado.item && renderDescricao(),
-    aoMudarEstadoGo(pronto) {
-      estado.goPronto = pronto;
-      el.executar.disabled = !pronto;
-      el.enviar.disabled = !pronto;
-    },
+    aoMudarEstadoGo: definirGoPronto,
   };
 }

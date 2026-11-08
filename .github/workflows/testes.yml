@@ -50,6 +50,10 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       # Segredo aleatório, gerado aqui e descartado: os testes não dependem do de produção.
+      - uses: actions/setup-go@v6 # o prebuild gera o runtime Go do navegador (scripts/construir-go-wasm.mjs)
+        with:
+          go-version: '1.26.x'
+          cache-dependency-path: go-wasm/go.sum
       - name: Build
         run: CERTIFICADO_SEGREDO=$(node -e "console.log(require('crypto').randomBytes(32).toString('hex'))") npm run build
       - name: E2E no Chromium (bloqueia)
@@ -76,6 +80,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps
+      - uses: actions/setup-go@v6 # o prebuild gera o runtime Go do navegador (scripts/construir-go-wasm.mjs)
+        with:
+          go-version: '1.26.x'
+          cache-dependency-path: go-wasm/go.sum
       - name: Build
         run: CERTIFICADO_SEGREDO=$(node -e "console.log(require('crypto').randomBytes(32).toString('hex'))") npm run build
       - name: E2E no Firefox, WebKit e celular (informativo)
@@ -100,6 +108,10 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - uses: actions/setup-go@v6 # o prebuild gera o runtime Go do navegador (scripts/construir-go-wasm.mjs)
+        with:
+          go-version: '1.26.x'
+          cache-dependency-path: go-wasm/go.sum
       - name: Build
         run: CERTIFICADO_SEGREDO=$(node -e "console.log(require('crypto').randomBytes(32).toString('hex'))") npm run build
       - name: Lighthouse CI (SEO e acessibilidade >= 0,9; CLS <= 0,1)

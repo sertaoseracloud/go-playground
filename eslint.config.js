@@ -23,7 +23,7 @@ export default [
     },
   },
   {
-    files: ['src/php/worker.js'],
+    files: ['src/php/worker.js', 'src/go/go-worker.js'],
     languageOptions: { globals: { ...globals.worker } },
   },
   {
