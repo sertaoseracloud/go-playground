@@ -7,7 +7,7 @@ import { calcularJornada, sequenciaDeDias, LIMITE_DESBLOQUEIO, NIVEIS } from '..
 import { CERTIFICADOS, ORDEM, linkCertificado } from '../certificados.js';
 import { svgBadge } from '../badges.js';
 import { textoHoras } from '../cargaHoraria.js';
-import { statusDe, dataDe, diasAtivos, hoje, lerNome, gravarNome, gravarPreferencia } from '../progresso.js';
+import { statusDe, dataDe, diasAtivos, hoje, lerNome, gravarNome, lerPreferencia, gravarPreferencia } from '../progresso.js';
 import { esc, $ } from './util.js';
 import { CENARIO_DO_MODULO } from '../conteudo/cenarios.js';
 import { htmlDoCenario } from './cenarios/index.js';
@@ -274,6 +274,9 @@ export function renderInicio(el) {
           <span><i class="mini">⭐</i> fácil · <i class="mini">🔥</i> médio · <i class="mini">💎</i> difícil</span>
           <span>O módulo seguinte abre com ${LIMITE_DESBLOQUEIO}% dos exercícios.</span>
         </p>
+        <p class="cenario-controle">
+          <button type="button" class="btn-pausar-cenario" aria-pressed="false"><span class="icone-pausa" aria-hidden="true">⏸</span> Pausar animação do cenário</button>
+        </p>
         ${j.modulos.map((m, i) => unidade(m, j.modulos[i - 1], m.id === atual, certs[i])).join('')}
         ${diploma(j)}
       </div>
@@ -325,14 +328,19 @@ function ligarControlesDaVila(el) {
       lista.hidden = !aberta;
     });
   });
-  el.querySelectorAll('.btn-pausar-cenario').forEach((b) => {
-    b.addEventListener('click', () => {
-      const pausado = b.getAttribute('aria-pressed') !== 'true';
-      b.setAttribute('aria-pressed', String(pausado));
-      b.textContent = pausado ? '▶ Retomar animação' : '⏸ Pausar animação';
-      gravarPreferencia('cenarios-pausados', pausado);
-      el.cenarios?.pausar?.(pausado);
-    });
+  // A classe cenario-pausado no <html> é o que o palco confere para parar os personagens.
+  const pausa = el.querySelector('.btn-pausar-cenario');
+  const aplicar = (pausado) => {
+    document.documentElement.classList.toggle('cenario-pausado', pausado);
+    pausa?.setAttribute('aria-pressed', String(pausado));
+    const icone = pausa?.querySelector('.icone-pausa');
+    if (icone) icone.textContent = pausado ? '▶' : '⏸';
+  };
+  aplicar(Boolean(lerPreferencia('cenario-pausado', false)));
+  pausa?.addEventListener('click', () => {
+    const pausado = pausa.getAttribute('aria-pressed') !== 'true';
+    gravarPreferencia('cenario-pausado', pausado);
+    aplicar(pausado);
   });
 }
 

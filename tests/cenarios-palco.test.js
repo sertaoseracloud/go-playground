@@ -172,15 +172,14 @@ describe('vila viva', () => {
     camada.dataset.feitos = '0';
   });
 
-  it('clicar num personagem sem fala não mostra balão; clique em nó também não', () => {
-    // Go playground: personagens da vila (mestre-go, aprendiz-basico, gopher-mascote) não têm entradas em FALAS_DA_VILA
+  it('clicar num personagem mostra o balão da fala; clique em nó não', () => {
     const r = ligarCenarios(tela(), { janela: janelaFalsa(), webgl: () => false });
     const mod = r.modulos()[0];
     const m = mod.vila.moradores.find((x) => x.visivel);
     const secao = mod.camada.parentElement;
     const alvo = secao.querySelector('.trilha');
     alvo.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: mod.plano.esquerdaDoMundo + m.c * TILE + 16, clientY: m.l * TILE + 16 }));
-    // Personagem sem fala em FALAS_DA_VILA não gera balão
+    // Só quem tem falas em FALAS_DA_VILA gera balão (hoje, todos os moradores têm).
     const fala = secao.querySelector('.fala-vila');
     if (FALAS_DA_VILA[m.id]) {
       expect(fala).not.toBeNull();
@@ -195,14 +194,10 @@ describe('vila viva', () => {
     r.desligar();
   });
 
-  it('falaDoMorador retorna a fala do item ou null para ID inexistente', () => {
-    // Go playground: FALAS_DA_VILA é mapa simples {itemId: string}, não {falas[], semente}
-    const idsComFalas = Object.keys(FALAS_DA_VILA);
-    if (idsComFalas.length > 0) {
-      const resultado = falaDoMorador(idsComFalas[0], 'teste');
-      expect(resultado).not.toBeNull();
-      expect(resultado.fala).toBeTruthy();
-    }
+  it('falaDoMorador devolve nome e uma das falas do morador, ou null para ID inexistente', () => {
+    const resultado = falaDoMorador('mestre-go', 'teste');
+    expect(resultado.nome).toBe('Mestre Go');
+    expect(FALAS_DA_VILA['mestre-go'].falas).toContain(resultado.fala);
     expect(falaDoMorador('ninguem')).toBeNull();
   });
 });
@@ -234,29 +229,33 @@ describe('onde a fala aparece', () => {
 });
 
 describe('falas e "Conhecer a vila"', () => {
-  it('todo cenário tem emojis de conversa definidos', () => {
-    // Go playground: FALAS_DA_VILA usa IDs de lições/problemas, não IDs de personagens.
-    // Valida apenas que cada cenário tem emojis definidos.
+  it('todo cenário tem emojis de conversa, e todo morador tem nome e falas', () => {
     for (const cen of Object.values(CENARIOS)) {
       expect(EMOJIS_DA_CONVERSA[cen.id], cen.id).toBeTruthy();
       expect(Array.isArray(EMOJIS_DA_CONVERSA[cen.id])).toBe(true);
       expect(EMOJIS_DA_CONVERSA[cen.id].length).toBeGreaterThan(0);
+      for (const p of cen.personagens) {
+        const info = FALAS_DA_VILA[p.id];
+        expect(info?.nome, p.id).toBeTruthy();
+        expect(info.falas.length, p.id).toBeGreaterThan(0);
+      }
     }
   });
 
   it('todas as falas da vila são curtas e não revelam gabarito', () => {
-    // Go playground: FALAS_DA_VILA é mapa simples {itemId: string}
-    for (const [id, fala] of Object.entries(FALAS_DA_VILA)) {
-      if (typeof fala !== 'string') continue;
-      expect(fala.length, id).toBeLessThanOrEqual(200);
-      expect(fala, id).not.toMatch(/gabarito|resposta (é|certa)|validador|validação|solução/i);
+    for (const [id, info] of Object.entries(FALAS_DA_VILA)) {
+      for (const fala of info.falas) {
+        expect(fala.length, id).toBeLessThanOrEqual(200);
+        expect(fala, id).not.toMatch(/gabarito|resposta (é|certa)|validador|validação|solução/i);
+      }
     }
   });
 
-  it('a lista de cada módulo traz a estrutura da vila e o quanto ela cresceu', () => {
-    // Go playground: htmlConhecerVila não inclui falas individuais (personagens não têm entradas em FALAS_DA_VILA)
+  it('a lista de cada módulo traz os moradores com as falas e o quanto a vila cresceu', () => {
     const cen = Object.values(CENARIOS).find((c) => c.personagens.some((p) => p.tipo === 'pessoa') && c.personagens.some((p) => p.tipo !== 'pessoa'));
     const html = htmlConhecerVila(cen.id, 'modulo', 7);
+    const primeiro = FALAS_DA_VILA[cen.personagens[0].id];
+    expect(html).toContain(`<li><b>${primeiro.nome}</b> — `);
     expect(html).toContain('aria-expanded="false"');
     expect(html).toContain('aria-controls="vila-modulo"');
     expect(html).toContain('hidden');
@@ -277,18 +276,16 @@ describe('falas e "Conhecer a vila"', () => {
     botao.click();
     expect(lista.hidden).toBe(true);
 
-    // Go playground: btn-pausar-cenario pode não estar presente no HTML
     const pausa = tela().querySelector('.btn-pausar-cenario');
-    if (pausa) {
-      expect(pausa.getAttribute('aria-pressed')).toBe('false');
-      pausa.click();
-      expect(pausa.getAttribute('aria-pressed')).toBe('true');
-      expect(document.documentElement.classList.contains('cenario-pausado')).toBe(true);
-      renderInicio(tela()); // lembrada: continua pausado
-      expect(tela().querySelector('.btn-pausar-cenario').getAttribute('aria-pressed')).toBe('true');
-      tela().querySelector('.btn-pausar-cenario').click();
-      expect(document.documentElement.classList.contains('cenario-pausado')).toBe(false);
-    }
+    expect(pausa).not.toBeNull();
+    expect(pausa.getAttribute('aria-pressed')).toBe('false');
+    pausa.click();
+    expect(pausa.getAttribute('aria-pressed')).toBe('true');
+    expect(document.documentElement.classList.contains('cenario-pausado')).toBe(true);
+    renderInicio(tela()); // lembrada: continua pausado
+    expect(tela().querySelector('.btn-pausar-cenario').getAttribute('aria-pressed')).toBe('true');
+    tela().querySelector('.btn-pausar-cenario').click();
+    expect(document.documentElement.classList.contains('cenario-pausado')).toBe(false);
   });
 });
 

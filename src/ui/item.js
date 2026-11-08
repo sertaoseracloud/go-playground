@@ -436,6 +436,14 @@ export function criarTelaItem({ layout, definirStatus, aoMudarProgresso }) {
       if (erros.length > 0) {
         mostrarErros(erros.join('\n'));
         definirStatus('Erro de compilação', { falar: frase(`Erro: ${erros[0]}`) });
+        // Nos problemas, os casos de teste aparecem como falhos (e não pendentes), como nos outros playgrounds.
+        if (item.tipo === 'problema') {
+          const execucao = { stdout: '', stderr: erros.join('\n'), exitCode: 1 };
+          const resultadoTestes = await rodarTestes({ incluirOcultos: false, arquivos, execucao });
+          if (estado.item !== item) return;
+          renderTestes(resultadoTestes, false);
+          if (abrirTestes) abrirAbaTestes();
+        }
         return;
       }
       // Executa o JS gerado (simulando o runtime Go)

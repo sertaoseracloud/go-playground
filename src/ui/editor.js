@@ -10,7 +10,8 @@ import { php } from '@codemirror/lang-php';
 import { temaEditor } from './tema-editor.js';
 import { anunciar } from './anuncios.js';
 
-const NOME_VALIDO = /^[\w-]+\.(go|mod|sum|txt|md)$/;
+// .json entra porque o editor já sabe destacar JSON (veja o mapa de linguagens), como nos outros playgrounds.
+const NOME_VALIDO = /^[\w-]+\.(go|mod|sum|json|txt|md)$/;
 
 export class EditorArquivos {
   constructor({ abas, editor, aoMudar = () => {}, aoExecutar = () => {}, aoEnviar = () => {} }) {
@@ -143,7 +144,7 @@ export class EditorArquivos {
     const nome = prompt('Nome do novo arquivo (ex.: main.go, go.mod):', 'main.go')?.trim();
     if (!nome) return;
     if (!NOME_VALIDO.test(nome)) {
-      alert('Use só letras, números, - e _, com extensão .go, .mod, .sum, .txt ou .md.');
+      alert('Use só letras, números, - e _, com extensão .go, .mod, .sum, .json, .txt ou .md.');
       return;
     }
     if (nome in this.arquivos) {
