@@ -5,7 +5,8 @@ test('modo por arquivo, desfazer entre abas e foco depois de excluir', async ({ 
   await abrir(page, `#/p/${PRIMEIRO.id}`);
   const editor = page.locator('#editor .cm-content');
   const principal = await page.locator('#abas-arquivos .aba.ativa').textContent();
-  const original = await editor.innerText();
+  // textContent, o mesmo que o toHaveText compara (o innerText do CodeMirror põe quebras entre as linhas).
+  const original = await editor.textContent();
   await editor.fill('edição para desfazer');
   page.once('dialog', (dialog) => dialog.accept('dados.json'));
   await page.getByRole('button', { name: 'Novo arquivo', exact: true }).click();
