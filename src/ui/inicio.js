@@ -7,7 +7,7 @@ import { calcularJornada, sequenciaDeDias, LIMITE_DESBLOQUEIO, NIVEIS } from '..
 import { CERTIFICADOS, ORDEM, linkCertificado } from '../certificados.js';
 import { svgBadge } from '../badges.js';
 import { textoHoras } from '../cargaHoraria.js';
-import { statusDe, dataDe, diasAtivos, hoje, lerNome, gravarNome, lerPreferencia, gravarPreferencia } from '../progresso.js';
+import { statusDe, dataDe, diasAtivos, hoje, lerNome, gravarNome, gravarPreferencia } from '../progresso.js';
 import { esc, $ } from './util.js';
 import { CENARIO_DO_MODULO } from '../conteudo/cenarios.js';
 import { htmlDoCenario } from './cenarios/index.js';

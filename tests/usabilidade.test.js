@@ -8,7 +8,6 @@ import { resolve } from 'node:path';
 import { renderNaoEncontrada } from '../src/ui/nao-encontrada.js';
 import { iniciarFlutuantes } from '../src/ui/menu.js';
 import { iniciarMuralApoio } from '../src/ui/mural-apoio.js';
-import { iniciarMaisAcoes } from '../src/ui/mais-acoes.js';
 
 const html = readFileSync(resolve(process.cwd(), 'index.html'), 'utf8');
 const corpo = html.slice(html.indexOf('>', html.indexOf('<body')) + 1, html.lastIndexOf('</body>')).replace(/<script[\s\S]*?<\/script>/g, '');

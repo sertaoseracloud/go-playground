@@ -14,7 +14,7 @@ import { textoHoras } from '../cargaHoraria.js';
 import { esc, $, dataPorExtenso } from './util.js';
 import { modulos } from '../conteudo/trilha.js';
 import { lerNome, restaurarItens } from '../progresso.js';
-import { planoDeRestauracao, situacaoDoNome, itensDoPlano } from '../restaurar.js';
+import { planoDeRestauracao, situacaoDoNome } from '../restaurar.js';
 import { pedirNome } from './inicio.js';
 import { anunciar } from './anuncios.js';
 

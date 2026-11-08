@@ -9,14 +9,14 @@ import { createPublicKey, verify } from 'node:crypto';
 import { resultadoDoLink, resultadoDoImpresso, resultadoDoXml, renderValidador } from '../src/ui/validador.js';
 import { lerRota } from '../src/compartilhar.js';
 
-const PHP = { nome: 'Maria da Conceição', modulo: 'php', data: '2026-10-12', cadeia: ['2026-10-01', '2026-10-05'] };
-const HTML = { nome: 'Maria da Conceição', modulo: 'html', data: '2026-10-01' };
+const CONCORRENCIA = { nome: 'Maria da Conceição', modulo: 'concorrencia', data: '2026-10-12', cadeia: ['2026-10-01', '2026-10-05'] };
+const BASICO = { nome: 'Maria da Conceição', modulo: 'basico', data: '2026-10-01' };
 
 describe('extrairCodigo', () => {
-  const codigo = codificarCertificado(PHP);
+  const codigo = codificarCertificado(CONCORRENCIA);
   it.each([
     ['link do certificado', `${SITE}#/certificado/${codigo}`],
-    ['link do badge do LinkedIn', linkPublico(PHP)],
+    ['link do badge do LinkedIn', linkPublico(CONCORRENCIA)],
     ['link do validador', `${SITE}#/validar/${codigo}`],
     ['só o código, com espaços', `  ${codigo}  `],
   ])('%s', (_nome, texto) => {
@@ -31,16 +31,16 @@ describe('extrairCodigo', () => {
 
 describe('validar pelo link', () => {
   it('certificado válido mostra aluno e a cadeia', () => {
-    const html = resultadoDoLink(`${SITE}#/certificado/${codificarCertificado(PHP)}`);
+    const html = resultadoDoLink(`${SITE}#/certificado/${codificarCertificado(CONCORRENCIA)}`);
     expect(html).toContain('Certificado válido');
     expect(html).toContain('Maria da Conceição');
-    expect(html.match(/<li[ >]/g)).toHaveLength(3); // HTML → W3.CSS → PHP
+    expect(html.match(/<li[ >]/g)).toHaveLength(3); // basico → web → concorrencia
   });
 
   it('link alterado é inválido', () => {
-    const outro = codificarCertificado({ ...PHP, nome: 'Outra Pessoa' });
+    const outro = codificarCertificado({ ...CONCORRENCIA, nome: 'Outra Pessoa' });
     const dados = JSON.parse(atob(outro.replace(/-/g, '+').replace(/_/g, '/')));
-    const original = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(codificarCertificado(PHP).replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0))));
+    const original = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(codificarCertificado(CONCORRENCIA).replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0))));
     // selo da Maria com o nome de outra pessoa
     const adulterado = btoa(unescape(encodeURIComponent(JSON.stringify({ ...original, n: dados.n })))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     expect(resultadoDoLink(adulterado)).toContain('Certificado inválido');
@@ -52,31 +52,31 @@ describe('validar pelo link', () => {
 });
 
 describe('validar certificado impresso', () => {
-  const elos = montarCadeia(PHP);
-  const impressoPhp = { nome: PHP.nome, modulo: 'php', data: PHP.data, selo: elos[2].hash, anterior: elos[1].hash };
+  const elos = montarCadeia(CONCORRENCIA);
+  const impressoConcorrencia = { nome: CONCORRENCIA.nome, modulo: 'concorrencia', data: CONCORRENCIA.data, selo: elos[2].hash, anterior: elos[1].hash };
 
   it('o primeiro da cadeia não precisa de "Anterior"', () => {
-    const selo = montarCadeia(HTML)[0].hash;
-    expect(validarImpresso({ ...HTML, selo }).valido).toBe(true);
+    const selo = montarCadeia(BASICO)[0].hash;
+    expect(validarImpresso({ ...BASICO, selo }).valido).toBe(true);
   });
 
   it('aceita o selo do jeito que está impresso (em grupos, maiúsculas)', () => {
-    const emGrupos = impressoPhp.selo.match(/.{16}/g).join(' ').toUpperCase();
-    expect(validarImpresso({ ...impressoPhp, selo: emGrupos }).valido).toBe(true);
+    const emGrupos = impressoConcorrencia.selo.match(/.{16}/g).join(' ').toUpperCase();
+    expect(validarImpresso({ ...impressoConcorrencia, selo: emGrupos }).valido).toBe(true);
   });
 
   it('nome, data ou anterior diferentes não conferem', () => {
-    expect(validarImpresso({ ...impressoPhp, nome: 'Maria da Conceicao' }).valido).toBe(false);
-    expect(validarImpresso({ ...impressoPhp, data: '2026-10-13' }).valido).toBe(false);
-    expect(validarImpresso({ ...impressoPhp, anterior: elos[0].hash }).valido).toBe(false);
+    expect(validarImpresso({ ...impressoConcorrencia, nome: 'Maria da Conceicao' }).valido).toBe(false);
+    expect(validarImpresso({ ...impressoConcorrencia, data: '2026-10-13' }).valido).toBe(false);
+    expect(validarImpresso({ ...impressoConcorrencia, anterior: elos[0].hash }).valido).toBe(false);
   });
 
   it('avisa o que falta', () => {
-    expect(validarImpresso({ ...impressoPhp, anterior: '' }).motivo).toMatch(/Anterior/);
-    expect(validarImpresso({ ...impressoPhp, selo: 'abc' }).motivo).toMatch(/64 caracteres/);
-    expect(resultadoDoImpresso(impressoPhp)).toContain('Selo confere');
-    expect(resultadoDoImpresso({ ...impressoPhp, selo: 'abc' })).toContain('resultado-validacao ilegivel');
-    expect(resultadoDoImpresso({ ...impressoPhp, nome: 'Outra' })).toContain('resultado-validacao invalido');
+    expect(validarImpresso({ ...impressoConcorrencia, anterior: '' }).motivo).toMatch(/Anterior/);
+    expect(validarImpresso({ ...impressoConcorrencia, selo: 'abc' }).motivo).toMatch(/64 caracteres/);
+    expect(resultadoDoImpresso(impressoConcorrencia)).toContain('Selo confere');
+    expect(resultadoDoImpresso({ ...impressoConcorrencia, selo: 'abc' })).toContain('resultado-validacao ilegivel');
+    expect(resultadoDoImpresso({ ...impressoConcorrencia, nome: 'Outra' })).toContain('resultado-validacao invalido');
   });
 });
 
@@ -88,16 +88,16 @@ describe('página', () => {
 
   it('com código na rota, o resultado vem primeiro, com o badge', () => {
     document.body.innerHTML = '<main id="tela"></main>';
-    renderValidador(document.getElementById('tela'), codificarCertificado(HTML));
+    renderValidador(document.getElementById('tela'), codificarCertificado(BASICO));
     const inicial = document.getElementById('resultado-inicial');
     expect(inicial.textContent).toContain('Certificado válido');
     expect(inicial.querySelector('.resultado-badge svg')).not.toBeNull();
     expect(document.getElementById('titulo-metodos').textContent).toBe('Validar outro certificado');
     // O campo do link fica livre para validar outro (sem o código enorme ocupando a tela).
     expect(document.getElementById('campo-link').value).toBe('');
-    // HTML é o primeiro da cadeia: o campo "Anterior" some quando ele é escolhido
+    // basico é o primeiro da cadeia: o campo "Anterior" some quando ele é escolhido
     const form = document.getElementById('form-impresso');
-    form.modulo.value = 'html';
+    form.modulo.value = 'basico';
     form.modulo.onchange();
     expect(document.getElementById('rotulo-anterior').hidden).toBe(true);
   });
@@ -131,7 +131,7 @@ describe('página', () => {
     document.body.innerHTML = '<main id="tela"></main>';
     renderValidador(document.getElementById('tela'));
     const campo = document.getElementById('campo-link');
-    campo.value = codificarCertificado(HTML);
+    campo.value = codificarCertificado(BASICO);
     document.getElementById('form-link').onsubmit({ preventDefault() {} });
     expect(document.getElementById('saida-link').textContent).toContain('Certificado válido');
     campo.value += 'x';
@@ -155,20 +155,20 @@ describe('página', () => {
   it('"não consegui ler" não usa a cor de "adulterado"', () => {
     expect(resultadoDoLink('qualquer coisa')).toContain('resultado-validacao ilegivel');
     expect(resultadoDoXml('<html></html>')).toContain('resultado-validacao ilegivel');
-    const outro = codificarCertificado({ ...HTML, nome: 'Outra Pessoa' });
+    const outro = codificarCertificado({ ...BASICO, nome: 'Outra Pessoa' });
     const dados = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(outro.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0))));
-    const original = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(codificarCertificado(HTML).replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0))));
+    const original = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(codificarCertificado(BASICO).replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0))));
     const adulterado = btoa(unescape(encodeURIComponent(JSON.stringify({ ...original, n: dados.n })))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     expect(resultadoDoLink(adulterado)).toContain('resultado-validacao invalido');
   });
 
   it('não repete o anúncio para leitores de tela (só a região aria-live anuncia)', () => {
-    expect(resultadoDoLink(codificarCertificado(HTML))).not.toContain('role="status"');
+    expect(resultadoDoLink(codificarCertificado(BASICO))).not.toContain('role="status"');
   });
 });
 
 describe('XML do certificado', () => {
-  const codigo = codificarCertificado(PHP);
+  const codigo = codificarCertificado(CONCORRENCIA);
   const xml = certificadoXml(decodificarCertificado(codigo), codigo);
 
   it('não leva o segredo, a chave do selo nem a semente da assinatura', () => {
@@ -189,7 +189,7 @@ describe('XML do certificado', () => {
 
   it('assinatura não confere com mensagem alterada nem com outra chave', () => {
     const { xml: dados } = lerCertificadoXml(xml);
-    const alterada = { ...dados, blocos: dados.blocos.map((b) => ({ ...b, mensagem: b.mensagem.replace(PHP.nome, 'Outra') })) };
+    const alterada = { ...dados, blocos: dados.blocos.map((b) => ({ ...b, mensagem: b.mensagem.replace(CONCORRENCIA.nome, 'Outra') })) };
     expect(conferirAssinaturas(alterada).todas).toBe(false);
     expect(conferirAssinaturas(dados, 'ab'.repeat(32)).chaveConfere).toBe(false);
   });
@@ -201,16 +201,16 @@ describe('XML do certificado', () => {
   it('é XML válido, com os dados, o selo e a cadeia', () => {
     const lido = lerCertificadoXml(xml);
     expect(lido.erro).toBeUndefined();
-    const elos = montarCadeia(PHP);
-    expect(lido.xml).toMatchObject({ aluno: PHP.nome, modulo: 'php', data: PHP.data, selo: elos[2].hash, anterior: elos[1].hash });
-    expect(lido.xml.blocos.map((b) => b.modulo)).toEqual(['html', 'w3css', 'php']);
+    const elos = montarCadeia(CONCORRENCIA);
+    expect(lido.xml).toMatchObject({ aluno: CONCORRENCIA.nome, modulo: 'concorrencia', data: CONCORRENCIA.data, selo: elos[2].hash, anterior: elos[1].hash });
+    expect(lido.xml.blocos.map((b) => b.modulo)).toEqual(['basico', 'web', 'concorrencia']);
     expect(cadeiaCoerente(lido.xml.blocos)).toBe(true);
     expect(xml).toContain(`<url>${SITE}#/validar/${codigo}</url>`);
   });
 
   it('a mensagem assinada é exatamente o que o selo cobre', () => {
-    expect(mensagemAssinada(PHP, montarCadeia(PHP)[1].hash)).toBe(
-      JSON.stringify([PHP.data, 'Cláudio Raposo', 'Sertão será cloud', PHP.nome, 'php', montarCadeia(PHP)[1].hash]),
+    expect(mensagemAssinada(CONCORRENCIA, montarCadeia(CONCORRENCIA)[1].hash)).toBe(
+      JSON.stringify([CONCORRENCIA.data, 'Cláudio Raposo', 'Sertão será cloud', CONCORRENCIA.nome, 'concorrencia', montarCadeia(CONCORRENCIA)[1].hash]),
     );
   });
 
@@ -222,7 +222,7 @@ describe('XML do certificado', () => {
 
   it('o validador aceita o XML e detecta edição no arquivo', () => {
     expect(resultadoDoXml(xml)).toContain('XML e certificado válidos');
-    expect(resultadoDoXml(xml.replace(`<aluno>${PHP.nome}</aluno>`, '<aluno>Outra Pessoa</aluno>'))).toContain('XML alterado');
+    expect(resultadoDoXml(xml.replace(`<aluno>${CONCORRENCIA.nome}</aluno>`, '<aluno>Outra Pessoa</aluno>'))).toContain('XML alterado');
     expect(resultadoDoXml('<html></html>')).toContain('XML inválido');
   });
 });
@@ -231,7 +231,7 @@ describe('certificado impresso', () => {
   it('tem a rubrica da instituição e não cita o instrutor', async () => {
     const { renderCertificado } = await import('../src/ui/certificado.js');
     document.body.innerHTML = '<main id="tela"></main>';
-    renderCertificado(document.getElementById('tela'), codificarCertificado(HTML));
+    renderCertificado(document.getElementById('tela'), codificarCertificado(BASICO));
     const impresso = document.querySelector('article.certificado');
     expect(impresso.querySelector('.cert-assinatura svg.rubrica')).not.toBeNull();
     expect(impresso.textContent).toContain('Sertão será cloud');
@@ -247,14 +247,14 @@ describe('textos para o aluno: simples e sem detalhes da validação', () => {
   it('página do certificado (cartão, explicação e impresso)', async () => {
     const { renderCertificado } = await import('../src/ui/certificado.js');
     document.body.innerHTML = '<main id="tela"></main>';
-    renderCertificado(document.getElementById('tela'), codificarCertificado(PHP));
+    renderCertificado(document.getElementById('tela'), codificarCertificado(CONCORRENCIA));
     const texto = document.getElementById('tela').textContent;
     expect(texto).toContain('Como sei que este certificado é verdadeiro?');
     expect(texto).not.toMatch(TECNICO);
   });
 
   it('resultados do validador', () => {
-    const codigo = codificarCertificado(PHP);
+    const codigo = codificarCertificado(CONCORRENCIA);
     for (const html of [resultadoDoLink(codigo), resultadoDoXml(certificadoXml(decodificarCertificado(codigo), codigo))]) {
       expect(html.replace(/<[^>]+>/g, ' ')).not.toMatch(TECNICO);
     }

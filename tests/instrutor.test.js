@@ -3,7 +3,7 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { PIX, apoioDisponivel, codigoPix, crc16, semAcentos, svgQrCode } from '../src/apoio.js';
 import { INSTRUTOR } from '../src/instrutor.js';
-import { renderInstrutor, secaoInstrutor } from '../src/ui/instrutor.js';
+import { renderInstrutor } from '../src/ui/instrutor.js';
 import { renderLanding } from '../src/ui/landing.js';
 import { lerRota } from '../src/compartilhar.js';
 import { existsSync } from 'node:fs';

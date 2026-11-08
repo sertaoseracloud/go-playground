@@ -79,7 +79,7 @@ export function createFakeDB() {
   function begin() {
     const txRows = [];
     return {
-      Exec(sql, args) {
+      Exec(sql, _args) {
         const trimmed = sql.trim();
         if (/^INSERT\s+INTO/i.test(trimmed)) {
           const match = trimmed.match(/INSERT\s+INTO\s+(\w+)\s*VALUES\s*\(([^)]+)\)/i);

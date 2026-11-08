@@ -82,7 +82,7 @@ const definirStatus = (texto, { falar = texto } = {}) => {
   if (falar) anunciar(falar);
 };
 /** Status padrão fora do exercício. */
-let statusPadrao = 'Go pronto';
+const statusPadrao = 'Go pronto';
 
 function atualizarProgressoTopo() {
   const { resolvidos, total, licoesLidas, totalLicoes } = resumoProgresso();
@@ -92,13 +92,10 @@ function atualizarProgressoTopo() {
   topo.setAttribute('aria-label', topo.title);
 }
 
-// Declarado antes do layout: a tela do item precisa dele.
-let telaDoItem;
-
 const layout = criarLayout();
 // O exercício só escreve no status enquanto está na tela: uma execução que termina depois que
 // o aluno foi para outra página não deixa "Executado em 12 ms" no validador, por exemplo.
-telaDoItem = criarTelaItem({
+const telaDoItem = criarTelaItem({
   layout,
   definirStatus: (texto, opcoes) => { if (!telaItem.hidden) definirStatus(texto, opcoes); },
   aoMudarProgresso: atualizarProgressoTopo,

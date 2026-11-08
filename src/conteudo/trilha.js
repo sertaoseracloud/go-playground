@@ -47,7 +47,7 @@ const porId = new Map([...itens, LIVRE].map((i) => [i.id, i]));
 export const buscarItem = (id) => porId.get(id);
 
 // Dev-only: catch duplicate exercise IDs early.
-if (typeof globalThis.process !== 'undefined' && process.env?.NODE_ENV !== 'production') {
+if (typeof globalThis.process !== 'undefined' && globalThis.process.env?.NODE_ENV !== 'production') {
   const seen = new Set();
   for (const item of itens) {
     if (seen.has(item.id)) throw new Error(`Duplicate exercise ID: ${item.id}`);
